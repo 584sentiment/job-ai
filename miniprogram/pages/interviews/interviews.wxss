@@ -1,1 +1,246 @@
-.main-content { padding: 16px; }
+/* pages/interviews/interviews.wxss */
+
+.main-content {
+  padding: 16px;
+  padding-bottom: 80px;
+}
+
+/* Tab切换 */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab-item.active {
+  color: var(--ai-primary);
+  border-bottom-color: var(--ai-primary);
+}
+
+.tab-count {
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+/* AI卡片 */
+.ai-card {
+  background: var(--ai-bg-subtle);
+  border-left: 4px solid var(--ai-secondary);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.1);
+}
+
+.ai-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ai-title-row {
+  display: flex;
+  align-items: center;
+}
+
+.ai-icon {
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+.ai-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.priority-badge {
+  padding: 4px 12px;
+  background: #FEE2E2;
+  color: #991B1B;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* 面试信息 */
+.interview-info {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.interview-company {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.interview-position {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* AI准备清单 */
+.prep-list {
+  margin-bottom: 16px;
+}
+
+.prep-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.prep-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.prep-item {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+}
+
+.prep-checkbox {
+  margin-right: 8px;
+}
+
+.prep-text {
+  flex: 1;
+  color: var(--text-primary);
+}
+
+.prep-text.completed {
+  color: #9CA3AF;
+  text-decoration: line-through;
+}
+
+/* AI操作按钮 */
+.ai-action-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: var(--ai-gradient);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+}
+
+.ai-action-btn text {
+  margin: 0 4px;
+}
+
+/* 面试卡片 */
+.interview-card {
+  margin-bottom: 12px;
+}
+
+.interview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.interview-company-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.interview-company {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.interview-position {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.status-upcoming {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.status-completed {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+/* 面试元信息 */
+.interview-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.meta-icon {
+  margin-right: 4px;
+}
+
+.meta-text {
+  color: var(--text-secondary);
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+}
+
+.empty-icon {
+  display: block;
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-text {
+  display: block;
+  font-size: 15px;
+  color: var(--text-secondary);
+}

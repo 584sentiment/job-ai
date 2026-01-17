@@ -1,1 +1,106 @@
-<view class="container"><view class="main-content"><view class="empty-state"><text>暂无面试记录</text></view></view></view>
+<!--pages/interviews/interviews.wxml-->
+<view class="container">
+  <view class="main-content">
+    <!-- Tab切换 -->
+    <view class="tabs">
+      <view
+        class="tab-item {{currentTab === 'upcoming' ? 'active' : ''}}"
+        bindtap="onTabChange"
+        data-tab="upcoming"
+      >
+        <text class="tab-text">即将到来</text>
+        <text class="tab-count">({{upcomingCount}})</text>
+      </view>
+      <view
+        class="tab-item {{currentTab === 'completed' ? 'active' : ''}}"
+        bindtap="onTabChange"
+        data-tab="completed"
+      >
+        <text class="tab-text">已完成</text>
+        <text class="tab-count">({{completedCount}})</text>
+      </view>
+    </view>
+
+    <!-- AI准备清单卡片 -->
+    <view class="ai-card" wx:if="{{currentTab === 'upcoming' && nextInterview}}">
+      <view class="ai-header">
+        <view class="ai-title-row">
+          <text class="ai-icon">⏰</text>
+          <text class="ai-title">面试倒计时：{{nextInterview.relativeTime}}</text>
+        </view>
+        <view class="priority-badge">高优先级</view>
+      </view>
+
+      <view class="interview-info">
+        <text class="interview-company">{{nextInterview.company}}</text>
+        <text class="interview-position">{{nextInterview.position}}（{{nextInterview.round}}）</text>
+      </view>
+
+      <!-- AI准备清单 -->
+      <view class="prep-list" wx:if="{{nextInterview.aiPrepList && nextInterview.aiPrepList.length > 0}}">
+        <view class="prep-title">📋 AI准备清单</view>
+        <view class="prep-items">
+          <label
+            class="prep-item"
+            wx:for="{{nextInterview.aiPrepList}}"
+            wx:key="id"
+            bindtap="togglePrepItem"
+            data-id="{{item.id}}"
+          >
+            <checkbox class="prep-checkbox" checked="{{item.completed}}" />
+            <text class="prep-text {{item.completed ? 'completed' : ''}}">{{item.text}}</text>
+          </label>
+        </view>
+      </view>
+
+      <button class="ai-action-btn" bindtap="startMockInterview">
+        <text>💬</text>
+        <text>开始模拟面试</text>
+      </button>
+    </view>
+
+    <!-- 面试列表 -->
+    <view class="interview-list">
+      <block wx:if="{{interviews.length > 0}}">
+        <view
+          class="interview-card card"
+          wx:for="{{interviews}}"
+          wx:key="id"
+          bindtap="onInterviewTap"
+          data-id="{{item.id}}"
+        >
+          <view class="interview-header">
+            <view class="interview-company-info">
+              <text class="interview-company">{{item.company}}</text>
+              <text class="interview-position">{{item.position}} - {{item.round}}</text>
+            </view>
+            <view class="status-badge status-{{item.status}}">
+              {{item.statusText}}
+            </view>
+          </view>
+
+          <view class="interview-meta">
+            <view class="meta-item">
+              <text class="meta-icon">📅</text>
+              <text class="meta-text">{{item.date}}</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">⏰</text>
+              <text class="meta-text">{{item.time}}</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">📍</text>
+              <text class="meta-text">{{item.location}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <!-- 空状态 -->
+      <view class="empty-state" wx:else>
+        <text class="empty-icon">📅</text>
+        <text class="empty-text">{{currentTab === 'upcoming' ? '暂无即将到来的面试' : '暂无已完成的面试'}}</text>
+      </view>
+    </view>
+  </view>
+</view>
