@@ -1,1 +1,9 @@
 .main-content { padding: 16px; }
+.search-box { margin-bottom: 16px; }
+.search-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; }
+.tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.tab-item { flex: 1; text-align: center; padding: 12px; font-size: 14px; color: var(--text-secondary); }
+.tab-item.active { color: var(--ai-primary); border-bottom: 2px solid var(--ai-primary); }
+.empty-state { text-align: center; padding: 60px 24px; }
+.empty-icon { display: block; font-size: 64px; margin-bottom: 16px; }
+.empty-text { display: block; font-size: 15px; color: var(--text-secondary); }

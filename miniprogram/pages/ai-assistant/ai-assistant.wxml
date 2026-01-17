@@ -1,1 +1,55 @@
-<view class="container"><view class="main-content"><view class="ai-card"><text>欢迎使用AI求职助手！</text></view></view></view>
+<view class="container">
+  <view class="main-content" style="padding-bottom: 120px;">
+    <!-- 欢迎卡片 -->
+    <view class="ai-card" wx:if="{{conversations.length <= 1}}">
+      <view class="welcome-content">
+        <text class="welcome-icon">🤖</text>
+        <text class="welcome-title">欢迎使用AI求职助手！</text>
+        <text class="welcome-desc">我可以帮你准备面试、优化简历、分析岗位匹配度</text>
+      </view>
+      <view class="quick-actions">
+        <view class="action-btn" bindtap="quickAsk" data-question="如何准备前端面试？">
+          <text class="action-icon">📝</text>
+          <text class="action-text">简历优化</text>
+        </view>
+        <view class="action-btn" bindtap="quickAsk" data-question="面试前如何准备？">
+          <text class="action-icon">💡</text>
+          <text class="action-text">面试准备</text>
+        </view>
+        <view class="action-btn" bindtap="quickAsk" data-question="帮我分析岗位匹配度">
+          <text class="action-icon">📊</text>
+          <text class="action-text">匹配分析</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 对话历史 -->
+    <view class="chat-container" id="chatContainer">
+      <view class="message-bubble {{item.role === 'user' ? 'user' : 'ai'}}" wx:for="{{conversations}}" wx:key="id">
+        <block wx:if="{{item.role === 'assistant'}}">
+          <view class="ai-avatar">🤖</view>
+          <view class="message-content">
+            <text class="message-text">{{item.content}}</text>
+          </view>
+        </block>
+        <block wx:else>
+          <view class="message-content">
+            <text class="message-text">{{item.content}}</text>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部输入框 -->
+  <view class="input-area">
+    <input
+      class="chat-input"
+      placeholder="输入你的问题..."
+      value="{{inputText}}"
+      bindinput="onInput"
+      bindconfirm="send"
+    />
+    <button class="send-btn" bindtap="send">发送</button>
+  </view>
+</view>

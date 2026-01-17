@@ -1,1 +1,62 @@
-<view class="container"><view class="main-content"><view class="card"><text>个人中心</text></view></view></view>
+<view class="container">
+  <view class="main-content">
+    <!-- 用户信息卡片 -->
+    <view class="card user-card">
+      <image class="user-avatar" src="{{userProfile.avatar || '/assets/icons/default-avatar.png'}}" />
+      <view class="user-info">
+        <text class="user-name">{{userProfile.nickname || '求职者'}}</text>
+        <text class="user-bio">{{userProfile.bio || '求职路上，AI与你同行'}}</text>
+      </view>
+    </view>
+
+    <!-- 数据统计 -->
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-value">{{stats.totalJobs}}</text>
+        <text class="stat-label">全部岗位</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.interviewJobs}}</text>
+        <text class="stat-label">面试中</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.experiences}}</text>
+        <text class="stat-label">面经</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.favorites}}</text>
+        <text class="stat-label">收藏</text>
+      </view>
+    </view>
+
+    <!-- AI功能说明 -->
+    <view class="ai-card">
+      <view class="ai-header">
+        <text class="ai-icon">✨</text>
+        <text class="ai-title">AI 增强功能</text>
+      </view>
+      <view class="ai-features">
+        <text class="feature-item">• JD 智能解析 - 自动提取关键信息</text>
+        <text class="feature-item">• 岗位匹配度分析 - 多维度评估</text>
+        <text class="feature-item">• AI 面试准备 - 智能生成清单</text>
+        <text class="feature-item">• AI 助手对话 - 随时解答疑问</text>
+      </view>
+    </view>
+
+    <!-- 功能菜单 -->
+    <view class="card menu-card">
+      <view class="menu-item" bindtap="navigateTo" data-url="/pages/index/index">
+        <text class="menu-icon">💼</text>
+        <text class="menu-text">我的岗位</text>
+      </view>
+      <view class="menu-item" bindtap="navigateTo" data-url="/pages/interviews/interviews">
+        <text class="menu-icon">📅</text>
+        <text class="menu-text">面试记录</text>
+      </view>
+      <view class="menu-item" bindtap="navigateTo" data-url="/pages/experience/experience">
+        <text class="menu-icon">📖</text>
+        <text class="menu-text">收藏面经</text>
+      </view>
+    </view>
+  </view>
+</view>
