@@ -1,8 +1,11 @@
 /* pages/add-job/add-job.wxss */
 
 .main-content {
+  height: calc(100vh - 12px - env(safe-area-inset-bottom));
   padding: 16px;
   padding-bottom: 80px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .form-section {
@@ -25,6 +28,7 @@
 
 .ai-parse-btn {
   display: inline-flex;
+  margin: 0;
   align-items: center;
   padding: 6px 12px;
   background: var(--ai-gradient);
@@ -60,11 +64,13 @@
 .form-picker,
 .form-textarea {
   width: 100%;
-  padding: 12px;
+  height: 48px;
+  padding: 0 12px;
   border: 1px solid #D1D5DB;
   border-radius: 8px;
   font-size: 15px;
   background: #fff;
+  box-sizing: border-box;
 }
 
 .form-picker {

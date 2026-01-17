@@ -1,6 +1,6 @@
 <!--pages/job-detail/job-detail.wxml-->
 <view class="container">
-  <view class="main-content">
+  <scroll-view class="main-content" scroll-with-animation scroll-y>
     <!-- 基础信息卡片 -->
     <view class="card">
       <view class="detail-header">
@@ -41,11 +41,13 @@
       <view class="match-scores">
         <view class="match-score-item">
           <text class="match-score-label">技能</text>
-          <text class="match-score-value {{job.aiMatchScore.skills >= 80 ? 'high' : 'medium'}}">{{job.aiMatchScore.skills}}%</text>
+          <text
+            class="match-score-value {{job.aiMatchScore.skills >= 80 ? 'high' : 'medium'}}">{{job.aiMatchScore.skills}}%</text>
         </view>
         <view class="match-score-item">
           <text class="match-score-label">经验</text>
-          <text class="match-score-value {{job.aiMatchScore.experience >= 80 ? 'high' : 'medium'}}">{{job.aiMatchScore.experience}}%</text>
+          <text
+            class="match-score-value {{job.aiMatchScore.experience >= 80 ? 'high' : 'medium'}}">{{job.aiMatchScore.experience}}%</text>
         </view>
         <view class="match-score-item">
           <text class="match-score-label">学历</text>
@@ -53,7 +55,8 @@
         </view>
         <view class="match-score-item">
           <text class="match-score-label">薪资</text>
-          <text class="match-score-value {{job.aiMatchScore.salary >= 80 ? 'high' : job.aiMatchScore.salary >= 60 ? 'medium' : 'low'}}">{{job.aiMatchScore.salary}}%</text>
+          <text
+            class="match-score-value {{job.aiMatchScore.salary >= 80 ? 'high' : job.aiMatchScore.salary >= 60 ? 'medium' : 'low'}}">{{job.aiMatchScore.salary}}%</text>
         </view>
       </view>
 
@@ -109,5 +112,5 @@
       <button class="btn btn-secondary" bindtap="onEdit">编辑</button>
       <button class="btn btn-primary" bindtap="onAddInterview">添加面试</button>
     </view>
-  </view>
+  </scroll-view>
 </view>

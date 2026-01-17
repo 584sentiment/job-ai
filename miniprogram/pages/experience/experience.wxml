@@ -1,6 +1,7 @@
 <view class="container">
   <view class="main-content">
     <view class="search-box">
+      <image class="search-icon" src="/assets/icons/search.png" />
       <input class="search-input" placeholder="搜索公司或岗位..." />
     </view>
 

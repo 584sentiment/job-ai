@@ -1,6 +1,6 @@
 <!--pages/add-job/add-job.wxml-->
 <view class="container">
-  <view class="main-content">
+  <scroll-view class="main-content" scroll-y>
     <form bindsubmit="onSubmit">
       <!-- 基础信息 -->
       <view class="form-section card">
@@ -18,7 +18,7 @@
 
         <view class="form-group">
           <label class="form-label required">投递渠道</label>
-          <picker class="form-picker" name="channel" bindchange="onChannelChange">
+          <picker class="form-picker" name="channel" bindchange="onChannelChange" range="{{channels}}" value="{{channel}}">
             <view class="picker-value">{{channel || '请选择'}}</view>
           </picker>
         </view>
@@ -45,7 +45,7 @@
       <view class="form-section card">
         <view class="section-header">
           <view class="section-title">岗位JD</view>
-          <button class="ai-parse-btn" bindtap="onParseJD">
+          <button class="ai-parse-btn" bindtap="onParseJD" size="mini">
             <text>✨</text>
             <text>AI智能解析</text>
           </button>
@@ -90,5 +90,5 @@
         <button class="btn btn-primary" formType="submit">保存</button>
       </view>
     </form>
-  </view>
+  </scroll-view>
 </view>

@@ -15,12 +15,8 @@
     <!-- 搜索框 -->
     <view class="search-box">
       <image class="search-icon" src="/assets/icons/search.png" />
-      <input
-        class="search-input"
-        placeholder="搜索公司或岗位名称..."
-        value="{{searchKeyword}}"
-        bindinput="onSearchInput"
-      />
+      <input class="search-input" placeholder="搜索公司或岗位名称..." value="{{searchKeyword}}" bindinput="onSearchInput"
+        adjust-position="{{false}}" />
     </view>
 
     <!-- AI智能分析卡片 -->
@@ -40,39 +36,23 @@
 
     <!-- 筛选标签 -->
     <scroll-view class="filter-tags" scroll-x enable-flex>
-      <view
-        class="filter-tag {{currentFilter === 'all' ? 'active' : ''}}"
-        bindtap="onFilterChange"
-        data-filter="all"
-      >
+      <view class="filter-tag {{currentFilter === 'all' ? 'active' : ''}}" bindtap="onFilterChange" data-filter="all">
         全部
       </view>
-      <view
-        class="filter-tag {{currentFilter === 'pending' ? 'active' : ''}}"
-        bindtap="onFilterChange"
-        data-filter="pending"
-      >
+      <view class="filter-tag {{currentFilter === 'pending' ? 'active' : ''}}" bindtap="onFilterChange"
+        data-filter="pending">
         待投递
       </view>
-      <view
-        class="filter-tag {{currentFilter === 'applied' ? 'active' : ''}}"
-        bindtap="onFilterChange"
-        data-filter="applied"
-      >
+      <view class="filter-tag {{currentFilter === 'applied' ? 'active' : ''}}" bindtap="onFilterChange"
+        data-filter="applied">
         已投递
       </view>
-      <view
-        class="filter-tag {{currentFilter === 'interview' ? 'active' : ''}}"
-        bindtap="onFilterChange"
-        data-filter="interview"
-      >
+      <view class="filter-tag {{currentFilter === 'interview' ? 'active' : ''}}" bindtap="onFilterChange"
+        data-filter="interview">
         面试中
       </view>
-      <view
-        class="filter-tag {{currentFilter === 'offered' ? 'active' : ''}}"
-        bindtap="onFilterChange"
-        data-filter="offered"
-      >
+      <view class="filter-tag {{currentFilter === 'offered' ? 'active' : ''}}" bindtap="onFilterChange"
+        data-filter="offered">
         已录用
       </view>
     </scroll-view>
@@ -80,13 +60,7 @@
     <!-- 岗位列表 -->
     <view class="jobs-list">
       <block wx:if="{{jobs.length > 0}}">
-        <view
-          class="job-card card clickable"
-          wx:for="{{jobs}}"
-          wx:key="id"
-          bindtap="onJobTap"
-          data-id="{{item.id}}"
-        >
+        <view class="job-card card clickable" wx:for="{{jobs}}" wx:key="id" bindtap="onJobTap" data-id="{{item.id}}">
           <view class="job-header">
             <view class="company-info">
               <view class="company-logo" style="background: {{item.logoColor}}">{{item.logoText}}</view>
