@@ -1,0 +1,10 @@
+/* pages/job-detail/job-detail.wxss */
+.main-content { padding: 16px; }
+.detail-header { display: flex; justify-content: space-between; margin-bottom: 16px; }
+.company-info { display: flex; flex-direction: column; }
+.company-name { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+.position-name { font-size: 14px; color: var(--text-secondary); }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.detail-item { display: flex; flex-direction: column; }
+.detail-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+.detail-value { font-size: 14px; font-weight: 500; }

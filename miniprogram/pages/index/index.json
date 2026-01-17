@@ -1,0 +1,6 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "我的岗位",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}

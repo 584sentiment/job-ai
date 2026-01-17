@@ -1,0 +1,131 @@
+/* pages/add-job/add-job.wxss */
+
+.main-content {
+  padding: 16px;
+  padding-bottom: 80px;
+}
+
+.form-section {
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.ai-parse-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: var(--ai-gradient);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  border: none;
+}
+
+.ai-parse-btn text {
+  margin: 0 2px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-label.required::after {
+  content: '*';
+  color: #EF4444;
+  margin-left: 4px;
+}
+
+.form-input,
+.form-picker,
+.form-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  font-size: 15px;
+  background: #fff;
+}
+
+.form-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.picker-value {
+  color: var(--text-primary);
+}
+
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-hint {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.form-hint text {
+  margin-right: 4px;
+}
+
+.bottom-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+
+.btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--ai-gradient);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: #F3F4F6;
+  color: #374151;
+  border: 1px solid #D1D5DB;
+}

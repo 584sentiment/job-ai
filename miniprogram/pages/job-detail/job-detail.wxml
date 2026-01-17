@@ -1,0 +1,32 @@
+<!--pages/job-detail/job-detail.wxml-->
+<view class="container">
+  <view class="main-content">
+    <view class="card">
+      <view class="detail-header">
+        <view class="company-info">
+          <text class="company-name">{{job.company}}</text>
+          <text class="position-name">{{job.position}}</text>
+        </view>
+        <view class="status-badge status-{{job.status}}">{{job.statusText}}</view>
+      </view>
+      <view class="detail-grid">
+        <view class="detail-item">
+          <text class="detail-label">地点</text>
+          <text class="detail-value">{{job.location}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">薪资</text>
+          <text class="detail-value">{{job.salary}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">渠道</text>
+          <text class="detail-value">{{job.channel}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">日期</text>
+          <text class="detail-value">{{job.applyDate}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,48 @@
+/* styles/variables.wxss - CSS 变量定义 */
+
+/* 常规功能色彩 */
+--primary-blue: #0369A1;
+--secondary-blue: #0EA5E9;
+--success: #10B981;
+--warning: #F59E0B;
+--error: #EF4444;
+--background: #F8FAFC;
+--text-primary: #1E293B;
+--text-secondary: #6B7280;
+--border: #E5E7EB;
+
+/* AI功能主题色彩 */
+--ai-primary: #6366F1;
+--ai-secondary: #8B5CF6;
+--ai-gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+--ai-bg-subtle: linear-gradient(135deg, #F5F3FF 0%, #FAFAFF 100%);
+
+/* 状态标签配色 */
+--status-pending-bg: #FEF3C7;
+--status-pending-text: #92400E;
+--status-applied-bg: #DBEAFE;
+--status-applied-text: #1E40AF;
+--status-interview-bg: #E0E7FF;
+--status-interview-text: #3730A3;
+--status-offered-bg: #D1FAE5;
+--status-offered-text: #065F46;
+--status-rejected-bg: #FEE2E2;
+--status-rejected-text: #991B1B;
+
+/* 圆角 */
+--radius-sm: 8px;
+--radius-md: 12px;
+--radius-lg: 16px;
+--radius-full: 9999px;
+
+/* 间距 */
+--spacing-xs: 4px;
+--spacing-sm: 8px;
+--spacing-md: 12px;
+--spacing-lg: 16px;
+--spacing-xl: 24px;
+
+/* 阴影 */
+--shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+--shadow-md: 0 2px 6px rgba(0, 0, 0, 0.15);
+--shadow-lg: 0 4px 12px rgba(139, 92, 246, 0.4);

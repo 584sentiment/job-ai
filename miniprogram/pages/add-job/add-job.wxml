@@ -1,0 +1,94 @@
+<!--pages/add-job/add-job.wxml-->
+<view class="container">
+  <view class="main-content">
+    <form bindsubmit="onSubmit">
+      <!-- 基础信息 -->
+      <view class="form-section card">
+        <view class="section-title">基础信息</view>
+
+        <view class="form-group">
+          <label class="form-label required">公司名称</label>
+          <input class="form-input" name="company" placeholder="请输入公司名称" required />
+        </view>
+
+        <view class="form-group">
+          <label class="form-label required">岗位名称</label>
+          <input class="form-input" name="position" placeholder="请输入岗位名称" required />
+        </view>
+
+        <view class="form-group">
+          <label class="form-label required">投递渠道</label>
+          <picker class="form-picker" name="channel" bindchange="onChannelChange">
+            <view class="picker-value">{{channel || '请选择'}}</view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <label class="form-label">工作地点</label>
+          <input class="form-input" name="location" placeholder="请输入工作地点" />
+        </view>
+
+        <view class="form-group">
+          <label class="form-label">薪资范围</label>
+          <input class="form-input" name="salary" placeholder="例如：20-35K" />
+        </view>
+
+        <view class="form-group">
+          <label class="form-label required">投递日期</label>
+          <picker class="form-picker" mode="date" name="applyDate" value="{{applyDate}}" bindchange="onDateChange">
+            <view class="picker-value">{{applyDate || '请选择日期'}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <!-- JD输入 -->
+      <view class="form-section card">
+        <view class="section-header">
+          <view class="section-title">岗位JD</view>
+          <button class="ai-parse-btn" bindtap="onParseJD">
+            <text>✨</text>
+            <text>AI智能解析</text>
+          </button>
+        </view>
+        <view class="form-group">
+          <textarea
+            class="form-textarea"
+            name="jd"
+            placeholder="粘贴JD文本，AI将自动提取关键信息..."
+            value="{{jd}}"
+            bindinput="onJDInput"
+          ></textarea>
+          <view class="form-hint">
+            <text>💡</text>
+            <text>AI将自动提取：岗位职责、技能要求、薪资范围</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 其他信息 -->
+      <view class="form-section card">
+        <view class="section-title">其他信息</view>
+
+        <view class="form-group">
+          <label class="form-label">联系人</label>
+          <input class="form-input" name="contact" placeholder="HR姓名和联系方式" />
+        </view>
+
+        <view class="form-group">
+          <label class="form-label">备注</label>
+          <textarea
+            class="form-textarea"
+            name="remark"
+            placeholder="内推人、岗位亮点等"
+          ></textarea>
+        </view>
+      </view>
+
+      <!-- 提交按钮 -->
+      <view class="bottom-actions">
+        <button class="btn btn-secondary" formType="button" bindtap="onCancel">取消</button>
+        <button class="btn btn-primary" formType="submit">保存</button>
+      </view>
+    </form>
+  </view>
+</view>

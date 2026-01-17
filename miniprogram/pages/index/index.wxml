@@ -1,0 +1,141 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 页面头部 -->
+  <view class="page-header">
+    <view class="header-content">
+      <text class="page-title">我的岗位</text>
+      <view class="header-actions">
+        <image class="avatar-icon" src="{{userProfile.avatar}}" />
+      </view>
+    </view>
+  </view>
+
+  <!-- 主内容区 -->
+  <view class="main-content">
+    <!-- 搜索框 -->
+    <view class="search-box">
+      <image class="search-icon" src="/assets/icons/search.png" />
+      <input
+        class="search-input"
+        placeholder="搜索公司或岗位名称..."
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+      />
+    </view>
+
+    <!-- AI智能分析卡片 -->
+    <view class="ai-card">
+      <view class="ai-header">
+        <text class="ai-icon">🤖</text>
+        <text class="ai-title">AI 智能分析</text>
+      </view>
+      <view class="ai-content">
+        <text class="ai-text">你有 <text class="ai-highlight">{{interviewCount}}</text> 个岗位进入面试阶段</text>
+      </view>
+      <view class="ai-stats">
+        <text class="ai-stat-icon">📊</text>
+        <text class="ai-stat-text">本周数据分析：投递 {{jobs.length}} 个 | 面试 {{interviewCount}} 场</text>
+      </view>
+    </view>
+
+    <!-- 筛选标签 -->
+    <scroll-view class="filter-tags" scroll-x enable-flex>
+      <view
+        class="filter-tag {{currentFilter === 'all' ? 'active' : ''}}"
+        bindtap="onFilterChange"
+        data-filter="all"
+      >
+        全部
+      </view>
+      <view
+        class="filter-tag {{currentFilter === 'pending' ? 'active' : ''}}"
+        bindtap="onFilterChange"
+        data-filter="pending"
+      >
+        待投递
+      </view>
+      <view
+        class="filter-tag {{currentFilter === 'applied' ? 'active' : ''}}"
+        bindtap="onFilterChange"
+        data-filter="applied"
+      >
+        已投递
+      </view>
+      <view
+        class="filter-tag {{currentFilter === 'interview' ? 'active' : ''}}"
+        bindtap="onFilterChange"
+        data-filter="interview"
+      >
+        面试中
+      </view>
+      <view
+        class="filter-tag {{currentFilter === 'offered' ? 'active' : ''}}"
+        bindtap="onFilterChange"
+        data-filter="offered"
+      >
+        已录用
+      </view>
+    </scroll-view>
+
+    <!-- 岗位列表 -->
+    <view class="jobs-list">
+      <block wx:if="{{jobs.length > 0}}">
+        <view
+          class="job-card card clickable"
+          wx:for="{{jobs}}"
+          wx:key="id"
+          bindtap="onJobTap"
+          data-id="{{item.id}}"
+        >
+          <view class="job-header">
+            <view class="company-info">
+              <view class="company-logo" style="background: {{item.logoColor}}">{{item.logoText}}</view>
+              <view class="company-details">
+                <text class="company-name">{{item.company}}</text>
+                <text class="position-name">{{item.position}}</text>
+              </view>
+            </view>
+            <view class="status-badge status-{{item.status}}">{{item.statusText}}</view>
+          </view>
+
+          <view class="job-meta">
+            <view class="meta-item">
+              <image class="meta-icon" src="/assets/icons/location.png" />
+              <text class="meta-text">{{item.location}}</text>
+            </view>
+            <view class="meta-item">
+              <image class="meta-icon" src="/assets/icons/salary.png" />
+              <text class="meta-text">{{item.salary}}</text>
+            </view>
+            <view class="meta-item">
+              <image class="meta-icon" src="/assets/icons/calendar.png" />
+              <text class="meta-text">{{item.applyDate}}</text>
+            </view>
+          </view>
+
+          <view class="job-progress" wx:if="{{item.aiMatchScore}}">
+            <view class="progress-header">
+              <text class="progress-label">AI匹配度</text>
+              <text class="progress-value">{{item.aiMatchScore.overall}}%</text>
+            </view>
+            <view class="progress-bar">
+              <view class="progress-fill" style="width: {{item.aiMatchScore.overall}}%"></view>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <!-- 空状态 -->
+      <view class="empty-state" wx:else>
+        <image class="empty-icon" src="/assets/icons/empty.png" />
+        <text class="empty-text">暂无岗位数据</text>
+        <text class="empty-hint">点击右下角按钮添加新岗位</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 浮动添加按钮 -->
+  <view class="fab" bindtap="onAddJob">
+    <image class="fab-icon" src="/assets/icons/add-white.png" />
+  </view>
+</view>

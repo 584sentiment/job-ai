@@ -1,0 +1,54 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/add-job/add-job",
+    "pages/job-detail/job-detail",
+    "pages/interviews/interviews",
+    "pages/experience/experience",
+    "pages/ai-assistant/ai-assistant",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#6366F1",
+    "navigationBarTitleText": "求职追踪助手",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F8FAFC",
+    "backgroundTextStyle": "dark",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#9CA3AF",
+    "selectedColor": "#8B5CF6",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "岗位",
+        "iconPath": "assets/icons/briefcase.png",
+        "selectedIconPath": "assets/icons/briefcase-active.png"
+      },
+      {
+        "pagePath": "pages/interviews/interviews",
+        "text": "面试",
+        "iconPath": "assets/icons/calendar.png",
+        "selectedIconPath": "assets/icons/calendar-active.png"
+      },
+      {
+        "pagePath": "pages/experience/experience",
+        "text": "面经",
+        "iconPath": "assets/icons/book.png",
+        "selectedIconPath": "assets/icons/book-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/icons/user.png",
+        "selectedIconPath": "assets/icons/user-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}
