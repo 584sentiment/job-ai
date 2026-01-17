@@ -1,0 +1,2 @@
+/* pages/edit-job/edit-job.wxss */
+@import "../../add-job/add-job.wxss";

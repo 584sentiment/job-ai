@@ -1,0 +1,126 @@
+/* pages/interview-detail/interview-detail.wxss */
+@import "../../job-detail/job-detail.wxss";
+
+.interview-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.round-badge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 4px 12px;
+  background: var(--ai-bg-subtle);
+  color: var(--ai-primary);
+  font-size: 12px;
+  border-radius: 12px;
+  align-self: flex-start;
+}
+
+.contact-info {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.contact-label {
+  color: var(--text-secondary);
+}
+
+.contact-value {
+  color: var(--text-primary);
+}
+
+/* 关联岗位 */
+.related-job {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background: var(--ai-bg-subtle);
+  border-radius: 8px;
+}
+
+.job-company {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.job-position {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* AI准备清单 */
+.prep-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.prep-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.prep-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #D1D5DB;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.prep-checkbox.checked {
+  background: var(--ai-primary);
+  border-color: var(--ai-primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.prep-text {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.prep-text.completed {
+  text-decoration: line-through;
+  color: var(--text-secondary);
+}
+
+.prep-progress {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.progress-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.progress-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ai-primary);
+}
+
+/* 面试备注和记录 */
+.remark-content,
+.notes-content {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  white-space: pre-line;
+}

@@ -62,9 +62,44 @@ Page({
    * 编辑岗位
    */
   onEdit() {
-    wx.showToast({
-      title: '编辑功能开发中',
-      icon: 'none'
+    wx.navigateTo({
+      url: '/pages/edit-job/edit-job?id=' + this.data.job.id
+    });
+  },
+
+  /**
+   * 删除岗位
+   */
+  onDelete() {
+    const that = this;
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这个岗位吗？删除后不可恢复。',
+      confirmText: '删除',
+      confirmColor: '#EF4444',
+      success(res) {
+        if (res.confirm) {
+          // 删除岗位
+          const success = DataManager.deleteJob(that.data.job.id);
+
+          if (success) {
+            wx.showToast({
+              title: '删除成功',
+              icon: 'success',
+              duration: 1500
+            });
+
+            setTimeout(() => {
+              wx.navigateBack();
+            }, 1500);
+          } else {
+            wx.showToast({
+              title: '删除失败',
+              icon: 'none'
+            });
+          }
+        }
+      }
     });
   },
 
@@ -72,9 +107,8 @@ Page({
    * 添加面试
    */
   onAddInterview() {
-    wx.showToast({
-      title: '添加面试功能开发中',
-      icon: 'none'
+    wx.navigateTo({
+      url: '/pages/add-interview/add-interview?jobId=' + this.data.job.id
     });
   }
 });

@@ -82,6 +82,101 @@ const DataManager = {
   },
 
   /**
+   * 根据ID获取面试
+   */
+  getInterviewById(id) {
+    const interviews = Storage.get(STORAGE_KEYS.INTERVIEWS) || [];
+    return interviews.find(interview => interview.id === id);
+  },
+
+  /**
+   * 根据岗位ID获取面试列表
+   */
+  getInterviewsByJobId(jobId) {
+    const interviews = Storage.get(STORAGE_KEYS.INTERVIEWS) || [];
+    return interviews.filter(interview => interview.jobId === jobId);
+  },
+
+  /**
+   * 添加面试
+   */
+  addInterview(interview) {
+    const interviews = Storage.get(STORAGE_KEYS.INTERVIEWS) || [];
+    const newInterview = {
+      id: Date.now(),
+      ...interview,
+      status: interview.status || 'upcoming',
+      createTime: new Date().toISOString(),
+      updateTime: new Date().toISOString()
+    };
+    interviews.unshift(newInterview);
+    Storage.set(STORAGE_KEYS.INTERVIEWS, interviews);
+
+    // 更新关联的岗位状态为"面试中"
+    if (interview.jobId) {
+      this.updateJob(interview.jobId, {
+        status: 'interview',
+        timeline: [
+          ...(this.getJobById(interview.jobId).timeline || []),
+          {
+            status: '面试中',
+            date: new Date().toISOString().split('T')[0],
+            desc: `安排${interview.round}面试`
+          }
+        ]
+      });
+    }
+
+    return newInterview;
+  },
+
+  /**
+   * 更新面试
+   */
+  updateInterview(id, updates) {
+    const interviews = Storage.get(STORAGE_KEYS.INTERVIEWS) || [];
+    const index = interviews.findIndex(i => i.id === id);
+    if (index !== -1) {
+      interviews[index] = {
+        ...interviews[index],
+        ...updates,
+        updateTime: new Date().toISOString()
+      };
+      Storage.set(STORAGE_KEYS.INTERVIEWS, interviews);
+
+      // 如果状态变更为已完成，更新关联岗位状态
+      if (updates.status === 'completed' && interviews[index].jobId) {
+        const job = this.getJobById(interviews[index].jobId);
+        if (job) {
+          this.updateJob(job.id, {
+            timeline: [
+              ...(job.timeline || []),
+              {
+                status: '面试完成',
+                date: new Date().toISOString().split('T')[0],
+                desc: `${interviews[index].round}面试完成`
+              }
+            ]
+          });
+        }
+      }
+
+      return true;
+    }
+    return false;
+  },
+
+  /**
+   * 删除面试
+   */
+  deleteInterview(id) {
+    const interviews = Storage.get(STORAGE_KEYS.INTERVIEWS) || [];
+    const filtered = interviews.filter(i => i.id !== id);
+    Storage.set(STORAGE_KEYS.INTERVIEWS, filtered);
+    return true;
+  },
+
+  /**
    * 获取所有面经
    */
   getExperiences() {

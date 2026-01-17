@@ -293,6 +293,17 @@
   color: #9CA3AF;
 }
 
+/* 加载更多 */
+.load-more {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.loading-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
 /* 浮动按钮 */
 .fab {
   position: fixed;

@@ -7,8 +7,13 @@ Page({
     searchKeyword: '',
     currentFilter: 'all',
     jobs: [],
+    allJobs: [], // 用于分页的所有数据
     interviewCount: 0,
-    userProfile: {}
+    userProfile: {},
+    currentPage: 1,
+    pageSize: 10,
+    hasMore: true,
+    loading: false
   },
 
   onLoad() {
@@ -44,10 +49,56 @@ Page({
       statusText: this.getStatusText(job.status)
     }));
 
+    // 重置分页状态
     this.setData({
-      jobs: jobsWithDisplay,
+      allJobs: jobsWithDisplay,
+      jobs: jobsWithDisplay.slice(0, this.data.pageSize),
+      currentPage: 1,
+      hasMore: jobsWithDisplay.length > this.data.pageSize,
       interviewCount
     });
+  },
+
+  /**
+   * 下拉刷新
+   */
+  onPullDownRefresh() {
+    // 模拟网络请求
+    setTimeout(() => {
+      this.loadJobs();
+      wx.stopPullDownRefresh();
+      wx.showToast({
+        title: '刷新成功',
+        icon: 'success',
+        duration: 1500
+      });
+    }, 500);
+  },
+
+  /**
+   * 上拉加载更多
+   */
+  onReachBottom() {
+    if (this.data.loading || !this.data.hasMore) {
+      return;
+    }
+
+    this.setData({ loading: true });
+
+    // 模拟网络请求
+    setTimeout(() => {
+      const nextPage = this.data.currentPage + 1;
+      const start = nextPage * this.data.pageSize;
+      const end = start + this.data.pageSize;
+      const newJobs = this.data.allJobs.slice(start, end);
+
+      this.setData({
+        jobs: [...this.data.jobs, ...newJobs],
+        currentPage: nextPage,
+        hasMore: end < this.data.allJobs.length,
+        loading: false
+      });
+    }, 500);
   },
 
   /**
@@ -77,6 +128,7 @@ Page({
       'applied': '已投递',
       'screening': '初筛中',
       'test': '笔试',
+      'interview': '面试中',
       'interview1': '一面',
       'interview2': '二面',
       'interview3': '三面',
@@ -96,7 +148,19 @@ Page({
 
     if (keyword) {
       const jobs = DataManager.searchJobs(keyword);
-      this.setData({ jobs });
+      const jobsWithDisplay = jobs.map(job => ({
+        ...job,
+        logoText: job.company.charAt(0),
+        logoColor: this.getLogoColor(job.company),
+        statusText: this.getStatusText(job.status)
+      }));
+
+      this.setData({
+        allJobs: jobsWithDisplay,
+        jobs: jobsWithDisplay.slice(0, this.data.pageSize),
+        currentPage: 1,
+        hasMore: jobsWithDisplay.length > this.data.pageSize
+      });
     } else {
       this.loadJobs();
     }

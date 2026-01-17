@@ -1,0 +1,22 @@
+/* pages/add-interview/add-interview.wxss */
+@import "../../add-job/add-job.wxss";
+
+.job-info {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background: var(--ai-bg-subtle);
+  border-radius: 8px;
+}
+
+.job-company {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.job-position {
+  font-size: 14px;
+  color: var(--text-secondary);
+}

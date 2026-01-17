@@ -1,0 +1,74 @@
+<!--pages/add-interview/add-interview.wxml-->
+<view class="container">
+  <scroll-view class="main-content" scroll-y>
+    <form bindsubmit="onSubmit">
+      <!-- 关联岗位信息 -->
+      <view class="form-section card" wx:if="{{job}}">
+        <view class="section-title">关联岗位</view>
+        <view class="job-info">
+          <text class="job-company">{{job.company}}</text>
+          <text class="job-position">{{job.position}}</text>
+        </view>
+      </view>
+
+      <!-- 面试信息 -->
+      <view class="form-section card">
+        <view class="section-title">面试信息</view>
+
+        <view class="form-group">
+          <label class="form-label required">面试轮次</label>
+          <picker class="form-picker" name="round" bindchange="onRoundChange" range="{{rounds}}" value="{{roundIndex}}">
+            <view class="picker-value">{{round || '请选择'}}</view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <label class="form-label required">面试日期</label>
+          <picker class="form-picker" mode="date" name="date" value="{{date}}" bindchange="onDateChange" start="{{minDate}}">
+            <view class="picker-value">{{date || '请选择日期'}}</view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <label class="form-label required">面试时间</label>
+          <picker class="form-picker" mode="time" name="time" value="{{time}}" bindchange="onTimeChange">
+            <view class="picker-value">{{time || '请选择时间'}}</view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <label class="form-label required">面试形式</label>
+          <picker class="form-picker" name="form" bindchange="onFormChange" range="{{forms}}" value="{{formIndex}}">
+            <view class="picker-value">{{form || '请选择'}}</view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <label class="form-label">面试地点</label>
+          <input class="form-input" name="location" placeholder="请输入面试地点" value="{{location}}" />
+        </view>
+
+        <view class="form-group">
+          <label class="form-label">联系人</label>
+          <input class="form-input" name="contact" placeholder="HR或面试官联系方式" value="{{contact}}" />
+        </view>
+
+        <view class="form-group">
+          <label class="form-label">备注</label>
+          <textarea
+            class="form-textarea"
+            name="remark"
+            placeholder="其他注意事项..."
+            value="{{remark}}"
+          ></textarea>
+        </view>
+      </view>
+
+      <!-- 提交按钮 -->
+      <view class="bottom-actions">
+        <button class="btn btn-secondary" formType="button" bindtap="onCancel">取消</button>
+        <button class="btn btn-primary" formType="submit">保存</button>
+      </view>
+    </form>
+  </scroll-view>
+</view>

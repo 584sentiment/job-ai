@@ -1,0 +1,93 @@
+<!--pages/interview-detail/interview-detail.wxml-->
+<view class="container">
+  <scroll-view class="main-content" scroll-y>
+    <!-- 基础信息卡片 -->
+    <view class="card">
+      <view class="detail-header">
+        <view class="interview-info">
+          <text class="company-name">{{interview.company}}</text>
+          <text class="position-name">{{interview.position}}</text>
+          <text class="round-badge">{{interview.round}}</text>
+        </view>
+        <view class="status-badge status-{{interview.status}}">{{statusText}}</view>
+      </view>
+
+      <view class="detail-grid">
+        <view class="detail-item">
+          <text class="detail-label">日期</text>
+          <text class="detail-value">{{interview.date}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">时间</text>
+          <text class="detail-value">{{interview.time}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">形式</text>
+          <text class="detail-value">{{interview.form}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">地点</text>
+          <text class="detail-value">{{interview.location}}</text>
+        </view>
+      </view>
+
+      <view class="contact-info" wx:if="{{interview.contact}}">
+        <text class="contact-label">联系人：</text>
+        <text class="contact-value">{{interview.contact}}</text>
+      </view>
+    </view>
+
+    <!-- 关联岗位信息 -->
+    <view class="card clickable" bindtap="onJobTap" wx:if="{{job}}">
+      <view class="section-title">关联岗位</view>
+      <view class="related-job">
+        <view class="job-company">{{job.company}}</view>
+        <view class="job-position">{{job.position}}</view>
+      </view>
+    </view>
+
+    <!-- AI准备清单 -->
+    <view class="ai-card" wx:if="{{interview.aiPrepList && interview.aiPrepList.length > 0}}">
+      <view class="ai-header">
+        <text class="ai-icon">✅</text>
+        <text class="ai-title">AI 面试准备清单</text>
+      </view>
+
+      <view class="prep-list">
+        <view class="prep-item" wx:for="{{interview.aiPrepList}}" wx:key="id" bindtap="onTogglePrep" data-index="{{index}}">
+          <view class="prep-checkbox {{item.completed ? 'checked' : ''}}">
+            <text wx:if="{{item.completed}}">✓</text>
+          </view>
+          <text class="prep-text {{item.completed ? 'completed' : ''}}">{{item.text}}</text>
+        </view>
+      </view>
+
+      <view class="prep-progress">
+        <text class="progress-label">完成进度</text>
+        <text class="progress-value">{{prepProgress}}%</text>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{prepProgress}}%"></view>
+      </view>
+    </view>
+
+    <!-- 面试备注 -->
+    <view class="card" wx:if="{{interview.remark}}">
+      <view class="section-title">备注</view>
+      <text class="remark-content">{{interview.remark}}</text>
+    </view>
+
+    <!-- 面试记录 -->
+    <view class="card" wx:if="{{interview.notes}}">
+      <view class="section-title">面试记录</view>
+      <text class="notes-content">{{interview.notes}}</text>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="bottom-actions">
+      <button class="btn btn-secondary" bindtap="onEditNotes">记录面试</button>
+      <button class="btn btn-secondary" bindtap="onUpdateStatus" wx:if="{{interview.status === 'upcoming'}}">标记完成</button>
+      <button class="btn btn-danger" bindtap="onDelete">删除</button>
+    </view>
+  </scroll-view>
+</view>

@@ -161,6 +161,13 @@
 /* 面试卡片 */
 .interview-card {
   margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.interview-card:active {
+  transform: scale(0.98);
+  opacity: 0.8;
 }
 
 .interview-header {

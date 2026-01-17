@@ -327,3 +327,9 @@
   color: #374151;
   border: 1px solid #D1D5DB;
 }
+
+.btn-danger {
+  background: #FEF2F2;
+  color: #EF4444;
+  border: 1px solid #FCA5A5;
+}

@@ -2,8 +2,11 @@
   "pages": [
     "pages/index/index",
     "pages/add-job/add-job",
+    "pages/edit-job/edit-job",
     "pages/job-detail/job-detail",
     "pages/interviews/interviews",
+    "pages/add-interview/add-interview",
+    "pages/interview-detail/interview-detail",
     "pages/experience/experience",
     "pages/ai-assistant/ai-assistant",
     "pages/profile/profile"

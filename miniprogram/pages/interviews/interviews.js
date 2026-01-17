@@ -107,13 +107,63 @@ Page({
   },
 
   /**
+   * 切换准备清单项
+   */
+  togglePrepItem(e) {
+    const itemId = e.currentTarget.dataset.id;
+    const prepList = this.data.nextInterview.aiPrepList;
+    const item = prepList.find(i => i.id === itemId);
+
+    if (item) {
+      item.completed = !item.completed;
+      this.setData({
+        'nextInterview.aiPrepList': prepList
+      });
+
+      // 保存到存储
+      DataManager.updateInterview(this.data.nextInterview.id, {
+        aiPrepList: prepList
+      });
+
+      wx.showToast({
+        title: item.completed ? '已完成' : '未完成',
+        icon: 'none',
+        duration: 1000
+      });
+    }
+  },
+
+  /**
+   * 开始模拟面试
+   */
+  startMockInterview() {
+    wx.navigateTo({
+      url: '/pages/ai-assistant/ai-assistant?mode=mock'
+    });
+  },
+
+  /**
    * 点击面试卡片
    */
   onInterviewTap(e) {
     const interviewId = e.currentTarget.dataset.id;
-    wx.showToast({
-      title: '面试详情功能开发中',
-      icon: 'none'
+    wx.navigateTo({
+      url: '/pages/interview-detail/interview-detail?id=' + interviewId
     });
+  },
+
+  /**
+   * 下拉刷新
+   */
+  onPullDownRefresh() {
+    setTimeout(() => {
+      this.loadInterviews();
+      wx.stopPullDownRefresh();
+      wx.showToast({
+        title: '刷新成功',
+        icon: 'success',
+        duration: 1500
+      });
+    }, 500);
   }
 });

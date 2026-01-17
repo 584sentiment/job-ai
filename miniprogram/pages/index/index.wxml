@@ -97,6 +97,15 @@
             </view>
           </view>
         </view>
+
+        <!-- 加载更多提示 -->
+        <view class="load-more" wx:if="{{hasMore}}">
+          <text class="loading-text" wx:if="{{loading}}">加载中...</text>
+          <text class="loading-text" wx:else>上拉加载更多</text>
+        </view>
+        <view class="load-more" wx:else>
+          <text class="loading-text">没有更多了</text>
+        </view>
       </block>
 
       <!-- 空状态 -->
