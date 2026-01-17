@@ -1,6 +1,7 @@
 <!--pages/job-detail/job-detail.wxml-->
 <view class="container">
   <view class="main-content">
+    <!-- 基础信息卡片 -->
     <view class="card">
       <view class="detail-header">
         <view class="company-info">
@@ -27,6 +28,86 @@
           <text class="detail-value">{{job.applyDate}}</text>
         </view>
       </view>
+    </view>
+
+    <!-- AI匹配度分析卡片 -->
+    <view class="ai-card" wx:if="{{job.aiMatchScore}}">
+      <view class="ai-header">
+        <text class="ai-icon">🎯</text>
+        <text class="ai-title">AI 岗位匹配度分析</text>
+      </view>
+
+      <!-- 四维度评分 -->
+      <view class="match-scores">
+        <view class="match-score-item">
+          <text class="match-score-label">技能</text>
+          <text class="match-score-value {{job.aiMatchScore.skills >= 80 ? 'high' : 'medium'}}">{{job.aiMatchScore.skills}}%</text>
+        </view>
+        <view class="match-score-item">
+          <text class="match-score-label">经验</text>
+          <text class="match-score-value {{job.aiMatchScore.experience >= 80 ? 'high' : 'medium'}}">{{job.aiMatchScore.experience}}%</text>
+        </view>
+        <view class="match-score-item">
+          <text class="match-score-label">学历</text>
+          <text class="match-score-value high">{{job.aiMatchScore.education}}%</text>
+        </view>
+        <view class="match-score-item">
+          <text class="match-score-label">薪资</text>
+          <text class="match-score-value {{job.aiMatchScore.salary >= 80 ? 'high' : job.aiMatchScore.salary >= 60 ? 'medium' : 'low'}}">{{job.aiMatchScore.salary}}%</text>
+        </view>
+      </view>
+
+      <!-- 总体匹配度 -->
+      <view class="overall-match">
+        <view class="overall-header">
+          <text class="overall-label">总体匹配度</text>
+          <text class="overall-value">{{job.aiMatchScore.overall}}%</text>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{job.aiMatchScore.overall}}%"></view>
+        </view>
+      </view>
+
+      <!-- 优势与建议 -->
+      <view class="match-analysis">
+        <view class="analysis-item" wx:for="{{job.aiMatchScore.advantages}}" wx:key="index">
+          <text class="analysis-icon success">✅</text>
+          <text class="analysis-text">优势：{{item}}</text>
+        </view>
+        <view class="analysis-item" wx:for="{{job.aiMatchScore.suggestions}}" wx:for-item="suggestion" wx:key="*this">
+          <text class="analysis-icon warning">⚠️</text>
+          <text class="analysis-text">建议：{{suggestion}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 进度时间线 -->
+    <view class="card">
+      <view class="section-title">进度时间线</view>
+      <view class="timeline" wx:if="{{job.timeline && job.timeline.length > 0}}">
+        <view class="timeline-item" wx:for="{{job.timeline}}" wx:key="date">
+          <view class="timeline-dot"></view>
+          <view class="timeline-content">
+            <text class="timeline-status">{{item.status}}</text>
+            <text class="timeline-date">{{item.date}} {{item.desc ? '- ' + item.desc : ''}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="empty-timeline" wx:else>
+        <text class="empty-text">暂无进度记录</text>
+      </view>
+    </view>
+
+    <!-- JD内容 -->
+    <view class="card" wx:if="{{job.jd}}">
+      <view class="section-title">岗位JD</view>
+      <text class="jd-content">{{job.jd}}</text>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="bottom-actions">
+      <button class="btn btn-secondary" bindtap="onEdit">编辑</button>
+      <button class="btn btn-primary" bindtap="onAddInterview">添加面试</button>
     </view>
   </view>
 </view>
