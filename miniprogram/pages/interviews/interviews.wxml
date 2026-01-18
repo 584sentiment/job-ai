@@ -1,6 +1,6 @@
 <!--pages/interviews/interviews.wxml-->
 <view class="container">
-  <view class="main-content">
+  <scroll-view class="main-content" scroll-y scroll-with-animation>
     <!-- Tab切换 -->
     <view class="tabs">
       <view
@@ -102,5 +102,5 @@
         <text class="empty-text">{{currentTab === 'upcoming' ? '暂无即将到来的面试' : '暂无已完成的面试'}}</text>
       </view>
     </view>
-  </view>
+  </scroll-view>
 </view>

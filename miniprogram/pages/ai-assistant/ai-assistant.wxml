@@ -1,5 +1,5 @@
 <view class="container">
-  <view class="main-content" style="padding-bottom: 120px;">
+  <scroll-view class="main-content" scroll-y scroll-with-animation style="padding-bottom: 120px;">
     <!-- 欢迎卡片 -->
     <view class="ai-card" wx:if="{{conversations.length <= 1}}">
       <view class="welcome-content">
@@ -39,7 +39,7 @@
         </block>
       </view>
     </view>
-  </view>
+  </scroll-view>
 
   <!-- 底部输入框 -->
   <view class="input-area">

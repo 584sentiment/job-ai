@@ -1,6 +1,6 @@
 <!--pages/experience/experience.wxml-->
 <view class="container">
-  <view class="main-content">
+  <scroll-view class="main-content" scroll-y scroll-with-animation>
     <!-- 搜索框 -->
     <view class="search-box">
       <image class="search-icon" src="/assets/icons/search.png" />
@@ -87,7 +87,7 @@
         <text class="empty-hint">点击右下角按钮添加第一篇面经</text>
       </view>
     </view>
-  </view>
+  </scroll-view>
 
   <!-- 浮动添加按钮 -->
   <view class="fab" bindtap="onAddExperience">

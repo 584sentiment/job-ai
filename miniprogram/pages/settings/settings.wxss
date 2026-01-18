@@ -11,6 +11,12 @@
   margin-bottom: 48rpx;
 }
 
+/* 滚动容器 */
+.settings-scroll {
+  height: calc(100vh - 240rpx);
+  box-sizing: border-box;
+}
+
 .title {
   font-size: 36rpx;
   font-weight: 600;

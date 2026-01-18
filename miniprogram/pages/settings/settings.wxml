@@ -6,7 +6,8 @@
   </view>
 
   <!-- 设置列表 -->
-  <view class="settings-group">
+  <scroll-view class="settings-scroll" scroll-y scroll-with-animation>
+    <view class="settings-group">
     <view class="group-title">隐私与安全</view>
 
     <view class="setting-item">
@@ -80,7 +81,7 @@
       </view>
       <text class="item-arrow">›</text>
     </view>
-  </view>
+  </scroll-view>
 
   <!-- 底部信息 -->
   <view class="footer">
