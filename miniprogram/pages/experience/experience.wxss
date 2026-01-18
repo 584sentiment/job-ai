@@ -1,5 +1,5 @@
 /* pages/experience/experience.wxss */
-@import "../../add-job/add-job.wxss";
+@import "../add-job/add-job.wxss";
 
 /* 面经卡片 */
 .experiences-list {

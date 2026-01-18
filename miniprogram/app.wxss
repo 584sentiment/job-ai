@@ -115,11 +115,17 @@ page {
   width: 56px;
   height: 56px;
   border-radius: 50%;
+  background: var(--ai-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
   z-index: 90;
+}
+
+.fab-icon {
+  width: 24px;
+  height: 24px;
 }
 
 /* 表单样式 */
