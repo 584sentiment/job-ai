@@ -30,6 +30,7 @@
           <picker class="form-picker" mode="date" name="date" value="{{date}}" bindchange="onDateChange" end="{{maxDate}}">
             <view class="picker-value">{{date || '请选择日期'}}</view>
           </picker>
+        </view>
       </view>
 
       <!-- 总结内容 -->
