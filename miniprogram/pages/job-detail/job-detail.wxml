@@ -111,6 +111,11 @@
     <view class="bottom-actions">
       <button class="btn btn-danger" bindtap="onDelete">删除</button>
       <button class="btn btn-secondary" bindtap="onEdit">编辑</button>
+      <button class="btn btn-secondary" bindtap="onToggleFavorite">
+        {{job.isFavorite ? '已收藏' : '收藏'}}
+      </button>
+      <button class="btn btn-secondary" bindtap="onViewExperiences">关联面经</button>
+      <button class="btn btn-secondary" bindtap="onAddSummary">添加总结</button>
       <button class="btn btn-primary" bindtap="onAddInterview">添加面试</button>
     </view>
   </scroll-view>

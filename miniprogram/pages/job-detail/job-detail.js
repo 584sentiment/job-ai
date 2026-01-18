@@ -110,5 +110,41 @@ Page({
     wx.navigateTo({
       url: '/pages/add-interview/add-interview?jobId=' + this.data.job.id
     });
+  },
+
+  /**
+   * 切换收藏状态
+   */
+  onToggleFavorite() {
+    const job = DataManager.toggleJobFavorite(this.data.job.id);
+    if (job) {
+      this.setData({
+        'job.isFavorite': job.isFavorite
+      });
+
+      wx.showToast({
+        title: job.isFavorite ? '已收藏' : '已取消收藏',
+        icon: 'success',
+        duration: 1000
+      });
+    }
+  },
+
+  /**
+   * 查看关联面经
+   */
+  onViewExperiences() {
+    wx.navigateTo({
+      url: '/pages/experience/experience?jobId=' + this.data.job.id
+    });
+  },
+
+  /**
+   * 添加面试总结
+   */
+  onAddSummary() {
+    wx.navigateTo({
+      url: '/pages/add-summary/add-summary?jobId=' + this.data.job.id
+    });
   }
 });

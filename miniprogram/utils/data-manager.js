@@ -75,6 +75,29 @@ const DataManager = {
   },
 
   /**
+   * 切换岗位收藏状态
+   */
+  toggleJobFavorite(id) {
+    const jobs = Storage.get(STORAGE_KEYS.JOBS) || [];
+    const job = jobs.find(j => j.id === id);
+    if (job) {
+      job.isFavorite = !job.isFavorite;
+      job.updateTime = new Date().toISOString();
+      Storage.set(STORAGE_KEYS.JOBS, jobs);
+      return job;
+    }
+    return null;
+  },
+
+  /**
+   * 获取收藏的岗位
+   */
+  getFavoriteJobs() {
+    const jobs = Storage.get(STORAGE_KEYS.JOBS) || [];
+    return jobs.filter(job => job.isFavorite);
+  },
+
+  /**
    * 获取所有面试
    */
   getInterviews() {

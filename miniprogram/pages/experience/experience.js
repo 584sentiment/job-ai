@@ -10,15 +10,31 @@ Page({
     allExperiences: [],
     searchKeyword: '',
     totalCount: 0,
-    favoriteCount: 0
+    favoriteCount: 0,
+    jobId: null,
+    fromJobDetail: false
   },
 
-  onLoad() {
-    this.loadExperiences();
+  onLoad(options) {
+    // 从岗位详情页进入，筛选该岗位的面经
+    if (options.jobId) {
+      this.setData({
+        jobId: parseInt(options.jobId),
+        fromJobDetail: true
+      });
+      this.loadExperiencesByJob(parseInt(options.jobId));
+    } else {
+      this.loadExperiences();
+    }
   },
 
   onShow() {
-    this.loadExperiences();
+    // 从岗位详情页进入时，按岗位筛选
+    if (this.data.fromJobDetail && this.data.jobId) {
+      this.loadExperiencesByJob(this.data.jobId);
+    } else {
+      this.loadExperiences();
+    }
   },
 
   /**
@@ -54,6 +70,27 @@ Page({
 
     // 根据当前Tab显示数据
     this.updateListByTab();
+  },
+
+  /**
+   * 根据岗位加载面经
+   */
+  loadExperiencesByJob(jobId) {
+    const allExperiences = DataManager.getExperiencesByJobId(jobId);
+
+    const allWithDisplay = allExperiences.map(exp => ({
+      ...exp,
+      statusText: this.getRoundText(exp.round),
+      dateText: Format.relativeTime(exp.date),
+      tagsArray: exp.tags || [],
+      tagsText: (exp.tags || []).join('、')
+    }));
+
+    this.setData({
+      allExperiences: allWithDisplay,
+      experiences: allWithDisplay,
+      totalCount: allExperiences.length
+    });
   },
 
   /**
