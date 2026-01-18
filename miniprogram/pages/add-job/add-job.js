@@ -7,6 +7,8 @@ Page({
     channel: '',
     applyDate: '',
     jd: '',
+    location: '',
+    salary: '',
     channels: ['招聘网站', '企业官网', '内推', '宣讲会', '其他']
   },
 
@@ -66,20 +68,18 @@ Page({
       const result = await AIHelper.parseJD(this.data.jd);
       wx.hideLoading();
 
+      // 自动填充表单字段
+      this.setData({
+        location: result.location || this.data.location,
+        salary: result.salaryRange || this.data.salary
+      });
+
       // 显示解析结果
       wx.showModal({
         title: '解析成功',
-        content: `岗位职责：${result.responsibilities}\n\n技能要求：${result.skills.join('、')}`,
+        content: `岗位职责：${result.responsibilities}\n\n技能要求：${result.skills.join('、')}\n\n已自动填充地点和薪资信息`,
         showCancel: false
       });
-
-      // TODO: 自动填充表单
-      if (result.location) {
-        // 填充地点
-      }
-      if (result.salaryRange) {
-        // 填充薪资
-      }
     } catch (error) {
       wx.hideLoading();
       wx.showToast({

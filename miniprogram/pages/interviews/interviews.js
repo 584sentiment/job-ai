@@ -93,33 +93,6 @@ Page({
         'nextInterview.aiPrepList': prepList
       });
 
-      // TODO: 保存到存储
-    }
-  },
-
-  /**
-   * 开始模拟面试
-   */
-  startMockInterview() {
-    wx.navigateTo({
-      url: '/pages/ai-assistant/ai-assistant?mode=mock'
-    });
-  },
-
-  /**
-   * 切换准备清单项
-   */
-  togglePrepItem(e) {
-    const itemId = e.currentTarget.dataset.id;
-    const prepList = this.data.nextInterview.aiPrepList;
-    const item = prepList.find(i => i.id === itemId);
-
-    if (item) {
-      item.completed = !item.completed;
-      this.setData({
-        'nextInterview.aiPrepList': prepList
-      });
-
       // 保存到存储
       DataManager.updateInterview(this.data.nextInterview.id, {
         aiPrepList: prepList

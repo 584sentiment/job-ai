@@ -932,7 +932,7 @@ function setFilter(filter) {
 // 搜索岗位
 function handleSearch(value) {
   console.log('搜索:', value);
-  // TODO: 实现搜索逻辑
+  // 搜索功能待实现
 }
 
 // AI解析JD

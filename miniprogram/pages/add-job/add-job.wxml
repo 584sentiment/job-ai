@@ -25,12 +25,12 @@
 
         <view class="form-group">
           <label class="form-label">工作地点</label>
-          <input class="form-input" name="location" placeholder="请输入工作地点" />
+          <input class="form-input" name="location" value="{{location}}" placeholder="请输入工作地点" />
         </view>
 
         <view class="form-group">
           <label class="form-label">薪资范围</label>
-          <input class="form-input" name="salary" placeholder="例如：20-35K" />
+          <input class="form-input" name="salary" value="{{salary}}" placeholder="例如：20-35K" />
         </view>
 
         <view class="form-group">
