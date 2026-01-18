@@ -60,7 +60,7 @@
     <!-- 岗位列表 -->
     <view class="jobs-list">
       <block wx:if="{{jobs.length > 0}}">
-        <view class="job-card card clickable" wx:for="{{jobs}}" wx:key="id" bindtap="onJobTap" data-id="{{item.id}}">
+        <view class="job-card card clickable" wx:for="{{jobs}}" wx:key="id" bindtap="onJobTap" bindlongpress="onJobLongPress" data-id="{{item.id}}">
           <view class="job-header">
             <view class="company-info">
               <view class="company-logo" style="background: {{item.logoColor}}">{{item.logoText}}</view>

@@ -4,22 +4,72 @@ const AIHelper = require('../../utils/ai-helper.js');
 
 Page({
   data: {
+    company: '',
+    position: '',
     channel: '',
     applyDate: '',
     jd: '',
     location: '',
     salary: '',
-    channels: ['招聘网站', '企业官网', '内推', '宣讲会', '其他']
+    contact: '',
+    remark: '',
+    channels: ['招聘网站', '企业官网', '内推', '宣讲会', '其他'],
+    isCopyMode: false, // 是否为复制模式
+    inputMode: 'full' // 录入模式：quick-快速，full-完整
   },
 
-  onLoad() {
+  onLoad(options) {
     // 设置默认日期为今天
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
-    this.setData({
+
+    const data = {
       applyDate: `${year}-${month}-${day}`
+    };
+
+    // 检查是否为复制模式
+    if (options.copy) {
+      try {
+        const jobData = JSON.parse(decodeURIComponent(options.copy));
+        data.isCopyMode = true;
+        data.company = jobData.company || '';
+        data.position = jobData.position || '';
+        data.channel = jobData.channel || '';
+        data.location = jobData.location || '';
+        data.salary = jobData.salary || '';
+        data.jd = jobData.jd || '';
+        data.contact = jobData.contact || '';
+        data.remark = jobData.remark || '';
+
+        // 提示用户已复制岗位
+        wx.showToast({
+          title: '已复制岗位信息',
+          icon: 'success',
+          duration: 2000
+        });
+      } catch (error) {
+        console.error('解析岗位数据失败:', error);
+      }
+    }
+
+    this.setData(data);
+  },
+
+  /**
+   * 切换录入模式
+   */
+  onModeChange(e) {
+    const mode = e.currentTarget.dataset.mode;
+    this.setData({
+      inputMode: mode
+    });
+
+    wx.showToast({
+      title: mode === 'quick' ? '已切换到快速模式' : '已切换到完整模式',
+      icon: 'none',
+      duration: 1500
     });
   },
 

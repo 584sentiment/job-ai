@@ -43,5 +43,23 @@ Page({
   navigateTo(e) {
     const url = e.currentTarget.dataset.url;
     wx.switchTab({ url });
+  },
+
+  /**
+   * 编辑个人资料
+   */
+  onEditProfile() {
+    wx.navigateTo({
+      url: '/pages/edit-profile/edit-profile'
+    });
+  },
+
+  /**
+   * 系统设置
+   */
+  onSettings() {
+    wx.navigateTo({
+      url: '/pages/settings/settings'
+    });
   }
 });

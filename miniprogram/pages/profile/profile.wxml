@@ -2,9 +2,12 @@
   <view class="main-content">
     <!-- 用户信息卡片 -->
     <view class="card user-card">
-      <image class="user-avatar" src="{{userProfile.avatar || '/assets/icons/default-avatar.png'}}" />
+      <view class="user-avatar-wrapper" bindtap="onEditProfile">
+        <image class="user-avatar" src="{{userProfile.avatarUrl || userProfile.avatar || '/assets/icons/default-avatar.png'}}" mode="aspectFill" />
+        <view class="edit-badge">编辑</view>
+      </view>
       <view class="user-info">
-        <text class="user-name">{{userProfile.nickname || '求职者'}}</text>
+        <text class="user-name">{{userProfile.nickName || userProfile.nickname || '求职者'}}</text>
         <text class="user-bio">{{userProfile.bio || '求职路上，AI与你同行'}}</text>
       </view>
     </view>
@@ -48,14 +51,22 @@
       <view class="menu-item" bindtap="navigateTo" data-url="/pages/index/index">
         <text class="menu-icon">💼</text>
         <text class="menu-text">我的岗位</text>
+        <text class="menu-arrow">›</text>
       </view>
       <view class="menu-item" bindtap="navigateTo" data-url="/pages/interviews/interviews">
         <text class="menu-icon">📅</text>
         <text class="menu-text">面试记录</text>
+        <text class="menu-arrow">›</text>
       </view>
-      <view class="menu-item" bindtap="navigateTo" data-url="/pages/experience/experience">
+      <view class="menu-item" bindtap="navigateTo" data-url="/pages/experience/experience?currentTab=favorite">
         <text class="menu-icon">📖</text>
         <text class="menu-text">收藏面经</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="onSettings">
+        <text class="menu-icon">⚙️</text>
+        <text class="menu-text">系统设置</text>
+        <text class="menu-arrow">›</text>
       </view>
     </view>
   </view>

@@ -314,7 +314,7 @@ const DataManager = {
    * 更新用户信息
    */
   updateUserProfile(updates) {
-    const profile = storage.get(STORAGE_KEYS.USER_PROFILE) || {};
+    const profile = Storage.get(STORAGE_KEYS.USER_PROFILE) || {};
     const updated = { ...profile, ...updates };
     Storage.set(STORAGE_KEYS.USER_PROFILE, updated);
     return updated;

@@ -14,7 +14,9 @@
     "pages/summary-list/summary-list",
     "pages/summary-detail/summary-detail",
     "pages/ai-assistant/ai-assistant",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/edit-profile/edit-profile",
+    "pages/settings/settings"
   ],
   "window": {
     "navigationBarBackgroundColor": "#6366F1",

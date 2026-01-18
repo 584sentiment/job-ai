@@ -1,0 +1,81 @@
+<!--pages/edit-profile/edit-profile.wxml-->
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <text class="title">编辑个人资料</text>
+  </view>
+
+  <!-- 表单区域 -->
+  <form bindsubmit="onSubmit">
+    <!-- 头像 -->
+    <view class="form-group">
+      <view class="form-label">头像</view>
+      <view class="avatar-wrapper" bindtap="onChooseAvatar">
+        <image
+          class="avatar-image"
+          src="{{userProfile.avatarUrl || '/assets/icons/default-avatar.png'}}"
+          mode="aspectFill"
+        />
+        <view class="avatar-mask">
+          <text class="avatar-tip">点击更换</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 昵称 -->
+    <view class="form-group">
+      <view class="form-label">
+        <text>昵称</text>
+        <text class="required">*</text>
+      </view>
+      <input
+        class="form-input"
+        name="nickname"
+        value="{{userProfile.nickName}}"
+        placeholder="请输入昵称"
+        maxlength="20"
+        bindinput="onNicknameInput"
+      />
+    </view>
+
+    <!-- 简介 -->
+    <view class="form-group">
+      <view class="form-label">个人简介</view>
+      <textarea
+        class="form-textarea"
+        name="bio"
+        value="{{userProfile.bio}}"
+        placeholder="介绍一下自己（选填）"
+        maxlength="200"
+        bindinput="onBioInput"
+      />
+      <view class="char-count">{{bioLength}}/200</view>
+    </view>
+
+    <!-- 手机号 -->
+    <view class="form-group">
+      <view class="form-label">手机号</view>
+      <input
+        class="form-input"
+        name="phone"
+        value="{{userProfile.phone}}"
+        placeholder="请输入手机号（选填）"
+        type="number"
+        maxlength="11"
+        bindinput="onPhoneInput"
+      />
+    </view>
+
+    <!-- 提示 -->
+    <view class="tips">
+      <text class="tips-icon">ℹ️</text>
+      <text>手机号用于账号找回和重要消息推送</text>
+    </view>
+
+    <!-- 按钮区域 -->
+    <view class="button-group">
+      <button class="btn-cancel" bindtap="onCancel">取消</button>
+      <button class="btn-save" formType="submit">保存</button>
+    </view>
+  </form>
+</view>

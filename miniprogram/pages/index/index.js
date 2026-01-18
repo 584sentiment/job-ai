@@ -192,5 +192,79 @@ Page({
     wx.navigateTo({
       url: '/pages/add-job/add-job'
     });
+  },
+
+  /**
+   * 长按岗位卡片
+   */
+  onJobLongPress(e) {
+    const jobId = e.currentTarget.dataset.id;
+    const job = DataManager.getJobById(jobId);
+
+    if (!job) return;
+
+    wx.showActionSheet({
+      itemList: ['复制岗位', '删除岗位'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          // 复制岗位
+          this.onCopyJob(job);
+        } else if (res.tapIndex === 1) {
+          // 删除岗位
+          this.onDeleteJob(jobId);
+        }
+      }
+    });
+  },
+
+  /**
+   * 复制岗位
+   */
+  onCopyJob(job) {
+    wx.showModal({
+      title: '复制岗位',
+      content: `确定要复制 "${job.company} - ${job.position}" 吗？`,
+      success: (res) => {
+        if (res.confirm) {
+          // 跳转到添加岗位页，并传递要复制的岗位数据
+          // 使用 encodeURIComponent 编码 JSON 字符串
+          const jobData = encodeURIComponent(JSON.stringify(job));
+          wx.navigateTo({
+            url: `/pages/add-job/add-job?copy=${jobData}`
+          });
+        }
+      }
+    });
+  },
+
+  /**
+   * 删除岗位
+   */
+  onDeleteJob(jobId) {
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这个岗位吗？删除后不可恢复。',
+      confirmText: '删除',
+      confirmColor: '#EF4444',
+      success: (res) => {
+        if (res.confirm) {
+          const success = DataManager.deleteJob(jobId);
+          if (success) {
+            wx.showToast({
+              title: '删除成功',
+              icon: 'success',
+              duration: 1500
+            });
+            // 重新加载岗位列表
+            this.loadJobs();
+          } else {
+            wx.showToast({
+              title: '删除失败',
+              icon: 'none'
+            });
+          }
+        }
+      }
+    });
   }
 });

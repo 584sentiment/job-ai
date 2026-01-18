@@ -1,6 +1,27 @@
 .main-content { padding: 16px; }
 .user-card { display: flex; align-items: center; margin-bottom: 16px; }
-.user-avatar { width: 64px; height: 64px; border-radius: 50%; margin-right: 16px; }
+.user-avatar-wrapper {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin-right: 16px;
+}
+.user-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.edit-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #6366F1;
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  border: 2px solid #fff;
+}
 .user-info { flex: 1; display: flex; flex-direction: column; }
 .user-name { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
 .user-bio { font-size: 14px; color: var(--text-secondary); }
@@ -15,3 +36,8 @@
 .menu-item:last-child { border-bottom: none; }
 .menu-icon { font-size: 20px; margin-right: 12px; }
 .menu-text { font-size: 15px; flex: 1; }
+.menu-arrow {
+  font-size: 24px;
+  color: var(--text-secondary);
+  font-weight: 300;
+}

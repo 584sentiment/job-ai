@@ -1,0 +1,93 @@
+/* pages/settings/settings.wxss */
+.container {
+  min-height: 100vh;
+  background-color: #F8FAFC;
+  padding: 32rpx;
+  box-sizing: border-box;
+}
+
+/* 头部 */
+.header {
+  margin-bottom: 48rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #1E293B;
+}
+
+/* 设置组 */
+.settings-group {
+  background-color: #FFFFFF;
+  border-radius: 16rpx;
+  overflow: hidden;
+  margin-bottom: 24rpx;
+}
+
+.group-title {
+  padding: 32rpx 32rpx 16rpx;
+  font-size: 26rpx;
+  color: #94A3B8;
+  font-weight: 500;
+}
+
+/* 设置项 */
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 32rpx;
+  border-bottom: 1rpx solid #F1F5F9;
+  min-height: 100rpx;
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.item-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.item-icon {
+  font-size: 36rpx;
+  margin-right: 20rpx;
+}
+
+.item-text {
+  font-size: 30rpx;
+  color: #1E293B;
+}
+
+.item-arrow {
+  font-size: 40rpx;
+  color: #CBD5E1;
+  font-weight: 300;
+}
+
+.item-desc {
+  font-size: 24rpx;
+  color: #94A3B8;
+}
+
+.item-desc.warning {
+  color: #EF4444;
+}
+
+/* 底部信息 */
+.footer {
+  margin-top: 64rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.footer-text {
+  font-size: 24rpx;
+  color: #94A3B8;
+  text-align: center;
+}

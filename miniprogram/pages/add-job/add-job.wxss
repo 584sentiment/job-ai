@@ -1,5 +1,78 @@
 /* pages/add-job/add-job.wxss */
 
+/* 复制模式提示 */
+.copy-tip {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border-radius: 12rpx;
+  margin: 16rpx;
+  margin-bottom: 0;
+}
+
+.tip-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.tip-text {
+  flex: 1;
+  font-size: 24rpx;
+  color: #92400E;
+  line-height: 1.5;
+}
+
+/* 录入模式切换 */
+.mode-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx;
+  background-color: #FFFFFF;
+  border-radius: 12rpx;
+  margin: 16rpx;
+}
+
+.switch-label {
+  font-size: 28rpx;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.switch-options {
+  display: flex;
+  gap: 16rpx;
+}
+
+.switch-option {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 12rpx 24rpx;
+  background-color: #F1F5F9;
+  border-radius: 20rpx;
+  transition: all 0.3s ease;
+}
+
+.switch-option.active {
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+}
+
+.option-icon {
+  font-size: 28rpx;
+}
+
+.option-text {
+  font-size: 26rpx;
+  color: #64748B;
+}
+
+.switch-option.active .option-text {
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
 .main-content {
   height: calc(100vh - 12px - env(safe-area-inset-bottom));
   padding: 16px;
