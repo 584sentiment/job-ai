@@ -8,78 +8,79 @@
   <!-- 设置列表 -->
   <scroll-view class="settings-scroll" scroll-y scroll-with-animation>
     <view class="settings-group">
-    <view class="group-title">隐私与安全</view>
+      <view class="group-title">隐私与安全</view>
 
-    <view class="setting-item">
-      <view class="item-left">
-        <text class="item-icon">🔒</text>
-        <text class="item-text">隐私政策</text>
+      <view class="setting-item">
+        <view class="item-left">
+          <text class="item-icon">🔒</text>
+          <text class="item-text">隐私政策</text>
+        </view>
+        <text class="item-arrow">›</text>
       </view>
-      <text class="item-arrow">›</text>
+
+      <view class="setting-item">
+        <view class="item-left">
+          <text class="item-icon">📄</text>
+          <text class="item-text">用户协议</text>
+        </view>
+        <text class="item-arrow">›</text>
+      </view>
+
+      <view class="setting-item">
+        <view class="item-left">
+          <text class="item-icon">🔔</text>
+          <text class="item-text">消息提醒</text>
+        </view>
+        <switch checked="{{notificationEnabled}}" bindchange="onNotificationChange" color="#6366F1" />
+      </view>
     </view>
 
-    <view class="setting-item">
-      <view class="item-left">
-        <text class="item-icon">📄</text>
-        <text class="item-text">用户协议</text>
+    <view class="settings-group">
+      <view class="group-title">数据管理</view>
+
+      <view class="setting-item" bindtap="onExportData">
+        <view class="item-left">
+          <text class="item-icon">📤</text>
+          <text class="item-text">导出数据</text>
+        </view>
+        <text class="item-desc">导出为 JSON 文件</text>
       </view>
-      <text class="item-arrow">›</text>
+
+      <view class="setting-item" bindtap="onClearData">
+        <view class="item-left">
+          <text class="item-icon">🗑️</text>
+          <text class="item-text">清空数据</text>
+        </view>
+        <text class="item-desc warning">删除所有本地数据</text>
+      </view>
     </view>
 
-    <view class="setting-item">
-      <view class="item-left">
-        <text class="item-icon">🔔</text>
-        <text class="item-text">消息提醒</text>
+    <view class="settings-group">
+      <view class="group-title">关于</view>
+
+      <view class="setting-item">
+        <view class="item-left">
+          <text class="item-icon">📱</text>
+          <text class="item-text">当前版本</text>
+        </view>
+        <text class="item-desc">v1.0.0</text>
       </view>
-      <switch checked="{{notificationEnabled}}" bindchange="onNotificationChange" color="#6366F1" />
-    </view>
-  </view>
 
-  <view class="settings-group">
-    <view class="group-title">数据管理</view>
-
-    <view class="setting-item" bindtap="onExportData">
-      <view class="item-left">
-        <text class="item-icon">📤</text>
-        <text class="item-text">导出数据</text>
+      <view class="setting-item" bindtap="onFeedback">
+        <view class="item-left">
+          <text class="item-icon">💬</text>
+          <text class="item-text">意见反馈</text>
+        </view>
+        <text class="item-arrow">›</text>
       </view>
-      <text class="item-desc">导出为 JSON 文件</text>
-    </view>
 
-    <view class="setting-item" bindtap="onClearData">
-      <view class="item-left">
-        <text class="item-icon">🗑️</text>
-        <text class="item-text">清空数据</text>
+      <view class="setting-item" bindtap="onAbout">
+        <view class="item-left">
+          <text class="item-icon">ℹ️</text>
+          <text class="item-text">关于我们</text>
+        </view>
+        <text class="item-arrow">›</text>
       </view>
-      <text class="item-desc warning">删除所有本地数据</text>
-    </view>
-  </view>
-
-  <view class="settings-group">
-    <view class="group-title">关于</view>
-
-    <view class="setting-item">
-      <view class="item-left">
-        <text class="item-icon">📱</text>
-        <text class="item-text">当前版本</text>
-      </view>
-      <text class="item-desc">v1.0.0</text>
-    </view>
-
-    <view class="setting-item" bindtap="onFeedback">
-      <view class="item-left">
-        <text class="item-icon">💬</text>
-        <text class="item-text">意见反馈</text>
-      </view>
-      <text class="item-arrow">›</text>
-    </view>
-
-    <view class="setting-item" bindtap="onAbout">
-      <view class="item-left">
-        <text class="item-icon">ℹ️</text>
-        <text class="item-text">关于我们</text>
-      </view>
-      <text class="item-arrow">›</text>
     </view>
   </scroll-view>
 
