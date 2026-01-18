@@ -1,0 +1,123 @@
+<!--pages/add-summary/add-summary.wxml-->
+<view class="container">
+  <scroll-view class="main-content" scroll-y>
+    <form bindsubmit="onSubmit">
+      <!-- 关联岗位 -->
+      <view class="form-section card">
+        <view class="section-title">关联岗位（必填）</view>
+        <picker class="form-picker" name="jobId" bindchange="onJobChange" range="{{jobOptions}}" range-key="label" value="{{jobIndex}}">
+          <view class="picker-value">{{jobText || '请选择岗位'}}</view>
+        </picker>
+        <view class="form-hint">
+          <text>💡</text>
+          <text>选择岗位后可查看该岗位的所有总结</text>
+        </view>
+      </view>
+
+      <!-- 基础信息 -->
+      <view class="form-section card">
+        <view class="section-title">基础信息</view>
+
+        <view class="form-group">
+          <label class="form-label required">面试轮次</label>
+          <picker class="form-picker" name="round" bindchange="onRoundChange" range="{{rounds}}" value="{{roundIndex}}">
+            <view class="picker-value">{{round || '请选择'}}</view>
+          </picker>
+        </view>
+
+        <view class="form-group">
+          <label class="form-label required">面试日期</label>
+          <picker class="form-picker" mode="date" name="date" value="{{date}}" bindchange="onDateChange" end="{{maxDate}}">
+            <view class="picker-value">{{date || '请选择日期'}}</view>
+          </picker>
+      </view>
+
+      <!-- 总结内容 -->
+      <view class="form-section card">
+        <view class="section-title">面试总结（分模块填写）</view>
+
+        <view class="template-section">
+          <view class="template-title">
+            <text class="template-num">1.</text>
+            <text class="template-label">面试中遇到的问题</text>
+          </view>
+          <textarea
+            class="form-textarea"
+            name="questions"
+            placeholder="如：算法题：实现一个LRU缓存；React Hooks使用场景；虚拟DOM原理"
+            value="{{questions}}"
+            bindinput="onQuestionsInput"
+          />
+        </view>
+
+        <view class="template-section">
+          <view class="template-title">
+            <text class="template-num">2.</text>
+            <text class="template-label">自身表现不足</text>
+          </view>
+          <textarea
+            class="form-textarea"
+            name="weaknesses"
+            placeholder="如：算法题时间不够；项目经验较浅；对某些技术理解不够深入"
+            value="{{weaknesses}}"
+            bindinput="onWeaknessesInput"
+          />
+        </view>
+
+        <view class="template-section">
+          <view class="template-title">
+            <text class="template-num">3.</text>
+            <text class="template-label">改进方向</text>
+          </view>
+          <textarea
+            class="form-textarea"
+            name="improvements"
+            placeholder="如：加强算法练习；补充项目经验；深入学习React源码"
+            value="{{improvements}}"
+            bindinput="onImprovementsInput"
+          />
+        </view>
+
+        <view class="template-section">
+          <view class="template-title">
+            <text class="template-num">4.</text>
+            <text class="template-label">面试官关注点</text>
+          </view>
+          <textarea
+            class="form-textarea"
+            name="highlights"
+            placeholder="如：项目介绍、技术栈、学习背景、业务理解"
+            value="{{highlights}}"
+            bindinput="onHighlightsInput"
+          />
+        </view>
+
+        <view class="template-section">
+          <view class="template-title">
+            <text class="template-num">5.</text>
+            <text class="template-label">其他备注</text>
+          </view>
+          <textarea
+            class="form-textarea"
+            name="notes"
+            placeholder="其他想记录的内容..."
+            value="{{notes}}"
+            bindinput="onNotesInput"
+          />
+        </view>
+
+        <!-- 标签 -->
+        <view class="form-group">
+          <label class="form-label">标签</label>
+          <input class="form-input" name="tags" placeholder="如：算法、缓存、React、系统设计，用空格分隔" value="{{tags}}" bindinput="onTagsInput" />
+        </view>
+      </view>
+
+      <!-- 提交按钮 -->
+      <view class="bottom-actions">
+        <button class="btn btn-secondary" formType="button" bindtap="onCancel">取消</button>
+        <button class="btn btn-primary" formType="submit">保存</button>
+      </view>
+    </form>
+  </scroll-view>
+</view>

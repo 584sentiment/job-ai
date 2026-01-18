@@ -291,6 +291,112 @@ const DataManager = {
    * 更新用户信息
    */
   updateUserProfile(updates) {
+    const profile = storage.get(STORAGE_KEYS.USER_PROFILE) || {};
+    const updated = { ...profile, ...updates };
+    Storage.set(STORAGE_KEYS.USER_PROFILE, updated);
+    return updated;
+  },
+
+  /**
+   * 获取所有总结
+   */
+  getSummaries() {
+    return Storage.get(STORAGE_KEYS.SUMMARIES) || [];
+  },
+
+  /**
+   * 根据ID获取总结
+   */
+  getSummaryById(id) {
+    const summaries = Storage.get(STORAGE_KEYS.SUMMARIES) || [];
+    return summaries.find(summary => summary.id === id);
+  },
+
+  /**
+   * 添加总结
+   */
+  addSummary(summary) {
+    const summaries = Storage.get(STORAGE_KEYS.SUMMARIES) || [];
+    const newSummary = {
+      id: Date.now(),
+      ...summary,
+      createTime: new Date().toISOString(),
+      updateTime: new Date().toISOString()
+    };
+    summaries.unshift(newSummary);
+    Storage.set(STORAGE_KEYS.SUMMARIES, summaries);
+    return newSummary;
+  },
+
+  /**
+   * 更新总结
+   */
+  updateSummary(id, updates) {
+    const summaries = Storage.get(STORAGE_KEYS.SUMMARIES) || [];
+    const index = summaries.findIndex(s => s.id === id);
+    if (index !== -1) {
+      summaries[index] = {
+        ...summaries[index],
+        ...updates,
+        updateTime: new Date().toISOString()
+      };
+      Storage.set(STORAGE_KEYS.SUMMARIES, summaries);
+      return true;
+    }
+    return false;
+  },
+
+  /**
+   * 删除总结
+   */
+  deleteSummary(id) {
+    const summaries = Storage.get(STORAGE_KEYS.SUMMARIES) || [];
+    const filtered = summaries.filter(s => s.id !== id);
+    Storage.set(STORAGE_KEYS.SUMMARIES, filtered);
+    return true;
+  },
+
+  /**
+   * 根据岗位ID获取总结
+   */
+  getSummariesByJobId(jobId) {
+    const summaries = Storage.get(STORAGE_KEYS.SUMMARIES) || [];
+    return summaries.filter(s => s.jobId === jobId);
+  },
+
+  /**
+   * 搜索总结
+   */
+  searchSummaries(keyword) {
+    const summaries = Storage.get(STORAGE_KEYS.SUMMARIES) || [];
+    return summaries.filter(s =>
+      (s.questions && s.questions.includes(keyword)) ||
+      (s.weaknesses && s.weaknesses.includes(keyword)) ||
+      (s.improvements && s.improvements.includes(keyword)) ||
+      (s.highlights && s.highlights.includes(keyword)) ||
+      (s.notes && s.notes.includes(keyword))
+    );
+  },
+
+  /**
+   * 根据面试ID获取总结
+   */
+  getSummariesByInterviewId(interviewId) {
+    const summaries = Storage.get(STORAGE_KEYS.SUMMARIES) || [];
+    return summaries.filter(s => s.interviewId === interviewId);
+  },
+
+  /**
+   * 获取用户信息
+   */
+  getUserProfile() {
+    return Storage.get(STORAGE_KEYS.USER_PROFILE);
+  },
+
+  /**
+   * 更新用户信息
+   */
+  updateUserProfile(updates) {
     const profile = Storage.get(STORAGE_KEYS.USER_PROFILE) || {};
     const updated = { ...profile, ...updates };
     Storage.set(STORAGE_KEYS.USER_PROFILE, updated);

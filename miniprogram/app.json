@@ -10,6 +10,9 @@
     "pages/experience/experience",
     "pages/add-experience/add-experience",
     "pages/experience-detail/experience-detail",
+    "pages/add-summary/add-summary",
+    "pages/summary-list/summary-list",
+    "pages/summary-detail/summary-detail",
     "pages/ai-assistant/ai-assistant",
     "pages/profile/profile"
   ],

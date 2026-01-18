@@ -1,0 +1,80 @@
+<!--pages/summary-list/summary-list.wxml-->
+<view class="container">
+  <scroll-view class="main-content" scroll-y>
+    <!-- 搜索框 -->
+    <view class="search-bar card">
+      <view class="search-input-wrapper">
+        <image class="search-icon" src="/assets/icons/search.png" mode="aspectFit" />
+        <input
+          class="search-input"
+          placeholder="搜索总结内容、标签"
+          value="{{searchKeyword}}"
+          bindinput="onSearchInput"
+        />
+        <view class="search-clear" wx:if="{{searchKeyword}}" bindtap="onClearSearch">
+          <image class="clear-icon" src="/assets/icons/x.png" mode="aspectFit" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{summaries.length === 0}}">
+      <image class="empty-icon" src="/assets/icons/file-text.png" mode="aspectFit" />
+      <text class="empty-text">{{searchKeyword ? '未找到相关总结' : '还没有面试总结'}}</text>
+      <text class="empty-hint" wx:if="{{!searchKeyword}}">记录每次面试，持续提升自己</text>
+    </view>
+
+    <!-- 总结列表 -->
+    <view class="summary-list" wx:if="{{summaries.length > 0}}">
+      <view
+        class="summary-card card"
+        wx:for="{{summaries}}"
+        wx:key="id"
+        bindtap="onSummaryTap"
+        data-id="{{item.id}}"
+      >
+        <!-- 岗位信息 -->
+        <view class="card-header">
+          <view class="job-info">
+            <text class="company">{{item.jobText}}</text>
+            <text class="position">{{item.position}}</text>
+          </view>
+          <view class="status-badge status-{{item.statusType}}">{{item.round}}</view>
+        </view>
+
+        <!-- 总结内容摘要 -->
+        <view class="summary-preview">
+          <view class="preview-item" wx:if="{{item.questions}}">
+            <text class="preview-label">问题：</text>
+            <text class="preview-text">{{item.questionsPreview}}</text>
+          </view>
+          <view class="preview-item" wx:if="{{item.weaknesses}}">
+            <text class="preview-label">不足：</text>
+            <text class="preview-text">{{item.weaknessesPreview}}</text>
+          </view>
+          <view class="preview-item" wx:if="{{item.improvements}}">
+            <text class="preview-label">改进：</text>
+            <text class="preview-text">{{item.improvementsPreview}}</text>
+          </view>
+        </view>
+
+        <!-- 底部信息 -->
+        <view class="card-footer">
+          <view class="footer-left">
+            <text class="date-text">{{item.dateText}}</text>
+          </view>
+          <view class="footer-right">
+            <view class="tags-wrapper" wx:if="{{item.tagsArray.length > 0}}">
+              <text class="tag" wx:for="{{item.tagsArray}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部添加按钮 -->
+    <view class="fab-add" bindtap="onAddSummary">
+      <image class="fab-icon" src="/assets/icons/plus.png" mode="aspectFit" />
+    </view>
+  </scroll-view>
+</view>

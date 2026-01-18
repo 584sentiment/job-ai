@@ -1,0 +1,67 @@
+/* pages/summary-list/summary-list.wxss */
+@import "../experience/experience.wxss";
+
+.summary-preview {
+  margin: 16rpx 0;
+}
+
+.preview-item {
+  display: flex;
+  margin-bottom: 8rpx;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.preview-label {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  margin-right: 8rpx;
+}
+
+.preview-text {
+  color: var(--text-primary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* 轮次标签样式 */
+.status-badge {
+  padding: 4rpx 12rpx;
+  border-radius: 4rpx;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-first {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.status-second {
+  background: #E0E7FF;
+  color: #4338CA;
+}
+
+.status-third {
+  background: #F3E8FF;
+  color: #7C3AED;
+}
+
+.status-final {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.status-hr {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.status-default {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}

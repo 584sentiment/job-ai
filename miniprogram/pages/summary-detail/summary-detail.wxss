@@ -1,0 +1,107 @@
+/* pages/summary-detail/summary-detail.wxss */
+@import "../job-detail/job-detail.wxss";
+
+.summary-section {
+  margin-bottom: 32rpx;
+  padding-bottom: 32rpx;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.summary-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.section-num {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--primary-blue);
+  margin-right: 8rpx;
+}
+
+.section-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.section-content {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.8;
+  white-space: pre-line;
+  padding-left: 40rpx;
+}
+
+.tags-section {
+  margin-top: 24rpx;
+  padding-top: 24rpx;
+  border-top: 1px solid var(--border-color);
+}
+
+.tags-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 12rpx;
+}
+
+.tags-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.tag {
+  display: inline-block;
+  padding: 6rpx 16rpx;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 12px;
+  border-radius: 16rpx;
+}
+
+/* 轮次标签样式 */
+.status-badge {
+  padding: 6rpx 16rpx;
+  border-radius: 6rpx;
+  font-size: 13px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.status-first {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.status-second {
+  background: #E0E7FF;
+  color: #4338CA;
+}
+
+.status-third {
+  background: #F3E8FF;
+  color: #7C3AED;
+}
+
+.status-final {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.status-hr {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.status-default {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}

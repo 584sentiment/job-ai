@@ -1,0 +1,80 @@
+<!--pages/summary-detail/summary-detail.wxml-->
+<view class="container">
+  <scroll-view class="main-content" scroll-y>
+    <!-- 岗位信息 -->
+    <view class="card job-card">
+      <view class="job-header">
+        <view class="job-title">
+          <text class="company">{{summary.jobText}}</text>
+          <text class="position">{{summary.position}}</text>
+        </view>
+        <view class="status-badge status-{{summary.statusType}}">{{summary.round}}</view>
+      </view>
+      <view class="job-meta">
+        <view class="meta-item">
+          <image class="meta-icon" src="/assets/icons/calendar.png" mode="aspectFit" />
+          <text class="meta-text">{{summary.date}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 总结内容 -->
+    <view class="card">
+      <view class="section-title">面试总结</view>
+
+      <view class="summary-section" wx:if="{{summary.questions}}">
+        <view class="section-header">
+          <text class="section-num">1.</text>
+          <text class="section-label">面试中遇到的问题</text>
+        </view>
+        <view class="section-content">{{summary.questions}}</view>
+      </view>
+
+      <view class="summary-section" wx:if="{{summary.weaknesses}}">
+        <view class="section-header">
+          <text class="section-num">2.</text>
+          <text class="section-label">自身表现不足</text>
+        </view>
+        <view class="section-content">{{summary.weaknesses}}</view>
+      </view>
+
+      <view class="summary-section" wx:if="{{summary.improvements}}">
+        <view class="section-header">
+          <text class="section-num">3.</text>
+          <text class="section-label">改进方向</text>
+        </view>
+        <view class="section-content">{{summary.improvements}}</view>
+      </view>
+
+      <view class="summary-section" wx:if="{{summary.highlights}}">
+        <view class="section-header">
+          <text class="section-num">4.</text>
+          <text class="section-label">面试官关注点</text>
+        </view>
+        <view class="section-content">{{summary.highlights}}</view>
+      </view>
+
+      <view class="summary-section" wx:if="{{summary.notes}}">
+        <view class="section-header">
+          <text class="section-num">5.</text>
+          <text class="section-label">其他备注</text>
+        </view>
+        <view class="section-content">{{summary.notes}}</view>
+      </view>
+
+      <!-- 标签 -->
+      <view class="tags-section" wx:if="{{summary.tagsArray.length > 0}}">
+        <view class="tags-label">标签</view>
+        <view class="tags-wrapper">
+          <text class="tag" wx:for="{{summary.tagsArray}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部操作按钮 -->
+    <view class="bottom-actions">
+      <button class="btn btn-secondary" bindtap="onEdit">编辑</button>
+      <button class="btn btn-danger" bindtap="onDelete">删除</button>
+    </view>
+  </scroll-view>
+</view>

@@ -1,0 +1,37 @@
+/* pages/add-summary/add-summary.wxss */
+@import "../add-job/add-job.wxss";
+
+.template-section {
+  margin-bottom: 32rpx;
+}
+
+.template-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.template-num {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--primary-blue);
+  margin-right: 8rpx;
+}
+
+.template-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 120rpx;
+  padding: 16rpx;
+  background: var(--bg-secondary);
+  border-radius: 8rpx;
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  box-sizing: border-box;
+}
