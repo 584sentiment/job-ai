@@ -1,9 +1,131 @@
-.main-content { padding: 16px; }
-.search-box { margin-bottom: 16px; }
-.search-input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; }
-.tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
-.tab-item { flex: 1; text-align: center; padding: 12px; font-size: 14px; color: var(--text-secondary); }
-.tab-item.active { color: var(--ai-primary); border-bottom: 2px solid var(--ai-primary); }
-.empty-state { text-align: center; padding: 60px 24px; }
-.empty-icon { display: block; font-size: 64px; margin-bottom: 16px; }
-.empty-text { display: block; font-size: 15px; color: var(--text-secondary); }
+/* pages/experience/experience.wxss */
+@import "../../add-job/add-job.wxss";
+
+/* 面经卡片 */
+.experiences-list {
+  padding-bottom: 80px;
+}
+
+.experience-card {
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.experience-card:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
+
+.exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.company-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.company-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.position-name {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.exp-meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.exp-date {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.exp-round {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #E0E7FF;
+  color: #3730A3;
+  font-size: 11px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+/* 关联岗位 */
+.related-job {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px;
+  background: #F3F4F6;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.related-label {
+  color: var(--text-secondary);
+  margin-right: 8px;
+}
+
+.related-text {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* 面经内容预览 */
+.exp-preview {
+  margin-bottom: 12px;
+}
+
+.exp-content {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.exp-ellipsis {
+  color: var(--text-secondary);
+}
+
+/* 标签 */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #F3F4F6;
+  color: #374151;
+  font-size: 12px;
+  border-radius: 12px;
+}
+
+.exp-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.exp-time {
+  color: var(--ai-primary);
+  font-weight: 500;
+}

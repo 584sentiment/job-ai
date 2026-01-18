@@ -1,0 +1,57 @@
+<!--pages/experience-detail/experience-detail.wxml-->
+<view class="container">
+  <scroll-view class="main-content" scroll-y>
+    <!-- 基础信息卡片 -->
+    <view class="card">
+      <view class="detail-header">
+        <view class="company-info">
+          <text class="company-name">{{experience.company}}</text>
+          <text class="position-name">{{experience.position}}</text>
+        </view>
+        <view class="status-badge">{{experience.statusText}}</view>
+      </view>
+
+      <view class="detail-grid">
+        <view class="detail-item">
+          <text class="detail-label">面试轮次</text>
+          <text class="detail-value">{{experience.statusText}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">面试日期</text>
+          <text class="detail-value">{{experience.date}}</text>
+        </view>
+      </view>
+
+      <!-- 关联岗位 -->
+      <view class="related-job" wx:if="{{experience.jobId}}">
+        <text class="related-label">关联岗位：</text>
+        <text class="related-text clickable" bindtap="onJobTap">{{experience.company}} - {{experience.position}}</text>
+      </view>
+    </view>
+
+    <!-- 面经内容卡片 -->
+    <view class="card">
+      <view class="section-title">面试内容</view>
+      <text class="exp-content">{{experience.content}}</text>
+    </view>
+
+    <!-- 标签卡片 -->
+    <view class="card" wx:if="{{experience.tagsArray && experience.tagsArray.length > 0}}">
+      <view class="section-title">标签</view>
+      <view class="tags">
+        <view class="tag" wx:for="{{experience.tagsArray}}" wx:key="*this">
+          {{tag}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部操作 -->
+    <view class="bottom-actions">
+      <button class="btn btn-secondary" bindtap="onToggleFavorite">
+        {{experience.isFavorite ? '取消收藏' : '收藏'}}
+      </button>
+      <button class="btn btn-secondary" bindtap="onEdit">编辑</button>
+      <button class="btn btn-danger" bindtap="onDelete">删除</button>
+    </view>
+  </scroll-view>
+</view>

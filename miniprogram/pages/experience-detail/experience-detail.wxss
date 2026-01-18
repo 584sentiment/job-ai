@@ -1,0 +1,13 @@
+/* pages/experience-detail/experience-detail.wxss */
+@import "../job-detail/job-detail.wxss";
+
+.related-text {
+  color: var(--ai-primary);
+  }
+
+.exp-content {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  white-space: pre-line;
+}

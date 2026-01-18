@@ -1,1 +1,6 @@
-{ "navigationBarTitleText": "面经管理", "usingComponents": {} }
+{
+  "navigationBarTitleText": "面经管理",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {}
+}

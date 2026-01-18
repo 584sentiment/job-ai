@@ -8,6 +8,8 @@
     "pages/add-interview/add-interview",
     "pages/interview-detail/interview-detail",
     "pages/experience/experience",
+    "pages/add-experience/add-experience",
+    "pages/experience-detail/experience-detail",
     "pages/ai-assistant/ai-assistant",
     "pages/profile/profile"
   ],

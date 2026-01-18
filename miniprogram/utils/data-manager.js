@@ -184,6 +184,103 @@ const DataManager = {
   },
 
   /**
+   * 根据ID获取面经
+   */
+  getExperienceById(id) {
+    const experiences = Storage.get(STORAGE_KEYS.EXPERIENCES) || [];
+    return experiences.find(exp => exp.id === id);
+  },
+
+  /**
+   * 添加面经
+   */
+  addExperience(experience) {
+    const experiences = Storage.get(STORAGE_KEYS.EXPERIENCES) || [];
+    const newExperience = {
+      id: Date.now(),
+      ...experience,
+      isAnonymous: experience.isAnonymous || false,
+      isFavorite: false,
+      createTime: new Date().toISOString(),
+      updateTime: new Date().toISOString()
+    };
+    experiences.unshift(newExperience);
+    Storage.set(STORAGE_KEYS.EXPERIENCES, experiences);
+    return newExperience;
+  },
+
+  /**
+   * 更新面经
+   */
+  updateExperience(id, updates) {
+    const experiences = Storage.get(STORAGE_KEYS.EXPERIENCES) || [];
+    const index = experiences.findIndex(exp => exp.id === id);
+    if (index !== -1) {
+      experiences[index] = {
+        ...experiences[index],
+        ...updates,
+        updateTime: new Date().toISOString()
+      };
+      Storage.set(STORAGE_KEYS.EXPERIENCES, experiences);
+      return true;
+    }
+    return false;
+  },
+
+  /**
+   * 删除面经
+   */
+  deleteExperience(id) {
+    const experiences = Storage.get(STORAGE_KEYS.EXPERIENCES) || [];
+    const filtered = experiences.filter(exp => exp.id !== id);
+    Storage.set(STORAGE_KEYS.EXPERIENCES, filtered);
+    return true;
+  },
+
+  /**
+   * 切换收藏状态
+   */
+  toggleFavorite(id) {
+    const experiences = Storage.get(STORAGE_KEYS.EXPERIENCES) || [];
+    const experience = experiences.find(exp => exp.id === id);
+    if (experience) {
+      experience.isFavorite = !experience.isFavorite;
+      experience.updateTime = new Date().toISOString();
+      Storage.set(STORAGE_KEYS.EXPERIENCES, experiences);
+      return experience;
+    }
+    return null;
+  },
+
+  /**
+   * 搜索面经
+   */
+  searchExperiences(keyword) {
+    const experiences = Storage.get(STORAGE_KEYS.EXPERIENCES) || [];
+    return experiences.filter(exp =>
+      exp.company.includes(keyword) ||
+      exp.position.includes(keyword) ||
+      (exp.content && exp.content.includes(keyword))
+    );
+  },
+
+  /**
+   * 获取收藏的面经
+   */
+  getFavoriteExperiences() {
+    const experiences = Storage.get(STORAGE_KEYS.EXPERIENCES) || [];
+    return experiences.filter(exp => exp.isFavorite);
+  },
+
+  /**
+   * 根据岗位ID获取面经
+   */
+  getExperiencesByJobId(jobId) {
+    const experiences = Storage.get(STORAGE_KEYS.EXPERIENCES) || [];
+    return experiences.filter(exp => exp.jobId === jobId);
+  },
+
+  /**
    * 获取用户信息
    */
   getUserProfile() {

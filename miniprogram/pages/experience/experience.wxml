@@ -1,18 +1,96 @@
+<!--pages/experience/experience.wxml-->
 <view class="container">
   <view class="main-content">
+    <!-- 搜索框 -->
     <view class="search-box">
       <image class="search-icon" src="/assets/icons/search.png" />
-      <input class="search-input" placeholder="搜索公司或岗位..." />
+      <input
+        class="search-input"
+        placeholder="搜索公司或岗位..."
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+      />
     </view>
 
+    <!-- Tab切换 -->
     <view class="tabs">
-      <view class="tab-item active">全部 ({{totalCount}})</view>
-      <view class="tab-item">我的收藏 ({{favoriteCount}})</view>
+      <view
+        class="tab-item {{currentTab === 'all' ? 'active' : ''}}"
+        bindtap="onTabChange"
+        data-tab="all"
+      >
+        <text class="tab-text">全部</text>
+        <text class="tab-count">({{totalCount}})</text>
+      </view>
+      <view
+        class="tab-item {{currentTab === 'favorite' ? 'active' : ''}}"
+        bindtap="onTabChange"
+        data-tab="favorite"
+      >
+        <text class="tab-text">我的收藏</text>
+        <text class="tab-count">({{favoriteCount}})</text>
+      </view>
     </view>
 
-    <view class="empty-state">
-      <text class="empty-icon">📖</text>
-      <text class="empty-text">暂无面经记录</text>
+    <!-- 面经列表 -->
+    <view class="experiences-list">
+      <block wx:if="{{experiences.length > 0}}">
+        <view
+          class="experience-card card clickable"
+          wx:for="{{experiences}}"
+          wx:key="id"
+          bindtap="onExperienceTap"
+          data-id="{{item.id}}"
+        >
+          <view class="exp-header">
+            <view class="company-info">
+              <text class="company-name">{{item.company}}</text>
+              <text class="position-name">{{item.position}}</text>
+            </view>
+            <view class="exp-meta">
+              <text class="exp-date">{{item.dateText}}</text>
+              <text class="exp-round">{{item.statusText}}</text>
+            </view>
+          </view>
+
+          <!-- 关联岗位 -->
+          <view class="related-job" wx:if="{{item.jobId}}">
+            <text class="related-label">关联：</text>
+            <text class="related-text">{{item.company}} - {{item.position}}</text>
+          </view>
+
+          <!-- 面经内容预览 -->
+          <view class="exp-preview">
+            <text class="exp-content">{{item.content}}</text>
+            <text class="exp-ellipsis" wx:if="{{item.content.length > 100}}">...</text>
+          </view>
+
+          <!-- 标签 -->
+          <view class="tags" wx:if="{{item.tagsArray.length > 0}}">
+            <view class="tag" wx:for="{{item.tagsArray}}" wx:for-item="tag" wx:key="*this">
+              {{tag}}
+            </view>
+          </view>
+
+          <!-- 底部操作 -->
+          <view class="exp-footer">
+            <text class="exp-date">{{item.date}}</text>
+            <text class="exp-time">{{item.dateText}}</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- 空状态 -->
+      <view class="empty-state" wx:else>
+        <text class="empty-icon">📖</text>
+        <text class="empty-text">暂无面经记录</text>
+        <text class="empty-hint">点击右下角按钮添加第一篇面经</text>
+      </view>
     </view>
+  </view>
+
+  <!-- 浮动添加按钮 -->
+  <view class="fab" bindtap="onAddExperience">
+    <image class="fab-icon" src="/assets/icons/add-white.png" />
   </view>
 </view>
