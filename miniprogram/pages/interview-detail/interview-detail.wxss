@@ -1,5 +1,5 @@
 /* pages/interview-detail/interview-detail.wxss */
-@import "../../job-detail/job-detail.wxss";
+@import "../job-detail/job-detail.wxss";
 
 .interview-info {
   display: flex;
