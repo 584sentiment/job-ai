@@ -1,10 +1,5 @@
 /* pages/job-detail/job-detail.wxss */
 
-.main-content {
-  padding: 16px;
-  padding-bottom: 80px;
-}
-
 /* 基础信息卡片 */
 .detail-header {
   display: flex;

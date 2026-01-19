@@ -5,7 +5,6 @@
     <text class="tip-icon">📋</text>
     <text class="tip-text">复制模式 - 已自动填充岗位信息，请修改必要字段后保存</text>
   </view>
-
   <!-- 录入模式切换 -->
   <view class="mode-switch">
     <view class="switch-label">录入模式：</view>
@@ -13,71 +12,97 @@
       <view
         class="switch-option {{inputMode === 'quick' ? 'active' : ''}}"
         bindtap="onModeChange"
-        data-mode="quick"
-      >
+        data-mode="quick">
         <text class="option-icon">⚡</text>
         <text class="option-text">快速</text>
       </view>
       <view
         class="switch-option {{inputMode === 'full' ? 'active' : ''}}"
         bindtap="onModeChange"
-        data-mode="full"
-      >
+        data-mode="full">
         <text class="option-icon">📝</text>
         <text class="option-text">完整</text>
       </view>
     </view>
   </view>
-
-  <scroll-view class="main-content" scroll-y>
+  <scroll-view class="main-content with-bottom-button" scroll-y>
     <form bindsubmit="onSubmit">
+       <!-- 提交按钮 -->
+      <view class="bottom-actions">
+        <button class="btn btn-secondary" formType="button" bindtap="onCancel">取消</button>
+        <button class="btn btn-primary" formType="submit">保存</button>
+      </view>
       <!-- 基础信息 -->
       <view class="form-section card">
         <view class="section-title">基础信息</view>
-
         <view class="form-group">
           <label class="form-label required">公司名称</label>
-          <input class="form-input" name="company" value="{{company}}" placeholder="请输入公司名称" required />
+          <input
+            class="form-input"
+            name="company"
+            value="{{company}}"
+            placeholder="请输入公司名称"
+            required />
         </view>
-
         <view class="form-group">
           <label class="form-label required">岗位名称</label>
-          <input class="form-input" name="position" value="{{position}}" placeholder="请输入岗位名称" required />
+          <input
+            class="form-input"
+            name="position"
+            value="{{position}}"
+            placeholder="请输入岗位名称"
+            required />
         </view>
-
         <view class="form-group">
           <label class="form-label required">投递渠道</label>
-          <picker class="form-picker" name="channel" bindchange="onChannelChange" range="{{channels}}" value="{{channel}}">
+          <picker
+            class="form-picker"
+            name="channel"
+            bindchange="onChannelChange"
+            range="{{channels}}"
+            value="{{channel}}">
             <view class="picker-value">{{channel || '请选择'}}</view>
           </picker>
         </view>
-
         <view class="form-group">
           <label class="form-label">工作地点</label>
-          <input class="form-input" name="location" value="{{location}}" placeholder="请输入工作地点" />
+          <input
+            class="form-input"
+            name="location"
+            value="{{location}}"
+            placeholder="请输入工作地点" />
         </view>
-
         <!-- 完整模式字段 -->
         <view wx:if="{{inputMode === 'full'}}">
           <view class="form-group">
             <label class="form-label">薪资范围</label>
-            <input class="form-input" name="salary" value="{{salary}}" placeholder="例如：20-35K" />
+            <input
+              class="form-input"
+              name="salary"
+              value="{{salary}}"
+              placeholder="例如：20-35K" />
           </view>
         </view>
-
         <view class="form-group">
           <label class="form-label required">投递日期</label>
-          <picker class="form-picker" mode="date" name="applyDate" value="{{applyDate}}" bindchange="onDateChange">
+          <picker
+            class="form-picker"
+            mode="date"
+            name="applyDate"
+            value="{{applyDate}}"
+            bindchange="onDateChange">
             <view class="picker-value">{{applyDate || '请选择日期'}}</view>
           </picker>
         </view>
       </view>
-
       <!-- JD输入 (仅完整模式) -->
       <view wx:if="{{inputMode === 'full'}}" class="form-section card">
         <view class="section-header">
           <view class="section-title">岗位JD</view>
-          <button class="ai-parse-btn" bindtap="onParseJD" size="mini">
+          <button
+            class="ai-parse-btn"
+            bindtap="onParseJD"
+            size="mini">
             <text>✨</text>
             <text>AI智能解析</text>
           </button>
@@ -88,42 +113,37 @@
             name="jd"
             placeholder="粘贴JD文本，AI将自动提取关键信息..."
             value="{{jd}}"
-            bindinput="onJDInput"
-          ></textarea>
+            bindinput="onJDInput">
+          </textarea>
           <view class="form-hint">
             <text>💡</text>
             <text>AI将自动提取：岗位职责、技能要求、薪资范围</text>
           </view>
         </view>
       </view>
-
+    
       <!-- 其他信息 (仅完整模式) -->
       <view wx:if="{{inputMode === 'full'}}" class="form-section card">
-      <view class="form-section card">
         <view class="section-title">其他信息</view>
-
         <view class="form-group">
           <label class="form-label">联系人</label>
-          <input class="form-input" name="contact" value="{{contact}}" placeholder="HR姓名和联系方式" />
+          <input
+            class="form-input"
+            name="contact"
+            value="{{contact}}"
+            placeholder="HR姓名和联系方式" />
         </view>
-
         <view class="form-group">
           <label class="form-label">备注</label>
           <textarea
             class="form-textarea"
             name="remark"
             placeholder="内推人、岗位亮点等"
-            value="{{remark}}"
-          ></textarea>
+            value="{{remark}}">
+          </textarea>
         </view>
       </view>
-      </view>
-
-      <!-- 提交按钮 -->
-      <view class="bottom-actions">
-        <button class="btn btn-secondary" formType="button" bindtap="onCancel">取消</button>
-        <button class="btn btn-primary" formType="submit">保存</button>
-      </view>
+      
     </form>
   </scroll-view>
 </view>

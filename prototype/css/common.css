@@ -68,12 +68,6 @@ body {
   color: #374151;
 }
 
-/* 主内容区 */
-.main-content {
-  padding: 16px;
-  padding-bottom: 80px;
-}
-
 /* AI渐变 */
 .ai-gradient {
   background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
