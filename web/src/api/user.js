@@ -1,4 +1,4 @@
-import { post, getWithAuth, putWithAuth } from '@/utils/request'
+import { post, postWithAuth, getWithAuth, putWithAuth } from '@/utils/request'
 
 /**
  * 用户注册

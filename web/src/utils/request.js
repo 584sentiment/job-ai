@@ -100,4 +100,18 @@ export function postWithAuth(url, data, options = {}) {
   return request(url, { ...options, method: 'POST', body: data, needAuth: true })
 }
 
+/**
+ * 需要认证的 PUT 请求
+ */
+export function putWithAuth(url, data, options = {}) {
+  return request(url, { ...options, method: 'PUT', body: data, needAuth: true })
+}
+
+/**
+ * 需要认证的 DELETE 请求
+ */
+export function delWithAuth(url, options = {}) {
+  return request(url, { ...options, method: 'DELETE', needAuth: true })
+}
+
 export default request
