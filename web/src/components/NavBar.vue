@@ -31,8 +31,34 @@
             </svg>
             <span class="absolute top-1 right-1 w-2 h-2 bg-cta rounded-full"></span>
           </button>
-          <router-link to="/profile" class="flex items-center space-x-2 hover:opacity-80 transition-opacity duration-200">
-            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=jobseeker" alt="用户头像" class="w-8 h-8 rounded-full">
+
+          <!-- 未登录：显示注册和登录按钮 -->
+          <template v-if="!authStore.isLoggedIn">
+            <router-link
+              to="/register"
+              class="px-4 py-2 text-primary hover:bg-primary/5 rounded-lg transition-colors duration-200 font-medium"
+            >
+              注册
+            </router-link>
+            <router-link
+              to="/"
+              class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors duration-200 font-medium"
+            >
+              登录
+            </router-link>
+          </template>
+
+          <!-- 已登录：显示用户头像 -->
+          <router-link
+            v-else
+            to="/profile"
+            class="flex items-center space-x-2 hover:opacity-80 transition-opacity duration-200"
+          >
+            <img
+              :src="authStore.user?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=jobseeker'"
+              alt="用户头像"
+              class="w-8 h-8 rounded-full"
+            >
           </router-link>
         </div>
       </div>
@@ -41,7 +67,12 @@
 </template>
 
 <script setup>
-// 可以添加通知相关的逻辑
+import { useAuthStore } from '@/store/auth'
+
+const authStore = useAuthStore()
+
+// 应用启动时加载认证状态
+authStore.loadState()
 </script>
 
 <style scoped>

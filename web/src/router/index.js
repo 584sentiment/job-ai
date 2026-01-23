@@ -50,6 +50,16 @@ const routes = [
     meta: {
       title: '个人中心'
     }
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import('@/views/Register.vue'),
+    meta: {
+      title: '用户注册',
+      hideBottomNav: true,
+      hideNavBar: true
+    }
   }
 ]
 
