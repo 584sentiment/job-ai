@@ -149,6 +149,11 @@
             </label>
           </div>
 
+          <!-- 提交错误提示 -->
+          <div v-if="submitError" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-sm text-red-600">{{ submitError }}</p>
+          </div>
+
           <!-- 注册按钮 -->
           <button
             type="submit"
@@ -198,6 +203,7 @@ const phoneError = ref('')
 const emailError = ref('')
 const passwordError = ref('')
 const confirmPasswordError = ref('')
+const submitError = ref('')
 
 // 密码强度
 const passwordStrength = ref(0)
@@ -306,6 +312,9 @@ const validateConfirmPassword = () => {
 
 // 表单提交
 const handleRegister = async () => {
+  // 清除之前的提交错误
+  submitError.value = ''
+
   // 最终验证
   const isPhoneValid = validatePhone()
   const isEmailValid = validateEmail()
@@ -318,13 +327,11 @@ const handleRegister = async () => {
   loading.value = true
 
   try {
-    // 模拟网络延迟
-    await new Promise(resolve => setTimeout(resolve, 1500))
-
-    // 调用 store 注册方法
-    authStore.register({
+    // 调用 store 注册方法（会调用真实 API）
+    await authStore.register({
       nickname: form.value.nickname,
       phone: form.value.phone,
+      password: form.value.password,
       email: form.value.email
     })
 
@@ -332,7 +339,13 @@ const handleRegister = async () => {
     router.push('/')
   } catch (error) {
     console.error('注册失败:', error)
-    alert('注册失败，请稍后重试')
+
+    // 显示友好的错误消息
+    if (error.message) {
+      submitError.value = error.message
+    } else {
+      submitError.value = '注册失败，请稍后重试'
+    }
   } finally {
     loading.value = false
   }
