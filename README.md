@@ -1,6 +1,6 @@
 # 求职追踪助手
 
-> 一款专为求职人员打造的微信小程序工具，聚焦"岗位记录-进度追踪-面经收集-面试总结"全流程求职管理，配备 AI 智能辅助功能。
+> 一款专为求职人员打造的求职管理工具，提供**微信小程序**和**Web端**双平台支持，聚焦"岗位记录-进度追踪-面经收集-面试总结"全流程求职管理，配备 AI 智能辅助功能。
 
 ## ✨ 功能特性
 
@@ -52,13 +52,26 @@
 
 ## 🛠 技术栈
 
+### 微信小程序端
+
 - **前端框架**：原生微信小程序（WXML + WXSS + JavaScript）
 - **数据存储**：微信小程序本地存储（wx.setStorage/wx.getStorage）
 - **UI 设计**：双色系统设计（蓝色常规功能 + 紫色 AI 功能）
 - **图标资源**：Lucide Icons（SVG → PNG）
 - **开发模式**：纯前端开发，AI 功能为模拟响应
 
+### Web 端
+
+- **前端框架**：Vue 3 + Vite
+- **状态管理**：Pinia
+- **路由管理**：Vue Router 4
+- **CSS 框架**：Tailwind CSS
+- **开发模式**：SPA 单页应用，响应式设计
+- **设计还原**：1:1 还原 HTML 原型设计
+
 ## 📁 项目结构
+
+### 微信小程序端
 
 ```
 miniprogram/
@@ -97,22 +110,77 @@ miniprogram/
 │
 └── assets/                   # 静态资源
     └── icons/                # 图标资源
+```
+
+### Web 端
+
+```
+web/
+├── index.html                 # HTML入口
+├── package.json              # 项目配置
+├── vite.config.js           # Vite配置
+├── tailwind.config.js       # Tailwind配置
+├── postcss.config.js        # PostCSS配置
+│
+└── src/
+    ├── main.js              # 应用入口
+    ├── App.vue              # 根组件
+    │
+    ├── router/              # 路由配置
+    │   └── index.js
+    │
+    ├── store/               # Pinia状态管理
+    │   ├── jobs.js          # 岗位数据
+    │   ├── interviews.js    # 面经数据
+    │   └── summaries.js     # 总结数据
+    │
+    ├── views/               # 页面组件
+    │   ├── JobList.vue      # 岗位列表
+    │   ├── AddJob.vue       # 添加岗位
+    │   ├── JobDetail.vue    # 岗位详情
+    │   ├── Interviews.vue   # 面经管理
+    │   ├── Summaries.vue    # 面试总结
+    │   └── Profile.vue      # 个人中心
+    │
+    ├── components/          # 共享组件
+    │   ├── NavBar.vue       # 顶部导航
+    │   └── BottomNav.vue    # 底部导航
+    │
+    └── assets/              # 静态资源
+        └── styles/
+            └── main.css     # 全局样式
 
 docs/                         # 项目文档
 ├── arch-design.md            # 架构设计文档
 ├── dev-progress.md           # 开发进度文档
 └── bug-fix.md                # 问题修复日志
+
+job-ui/                       # Web端HTML原型
+├── index.html               # 岗位列表原型
+├── add-job.html             # 添加岗位原型
+├── job-detail.html          # 岗位详情原型
+├── interviews.html          # 面经管理原型
+├── summaries.html           # 面试总结原型
+└── profile.html             # 个人中心原型
 ```
 
 ## 🚀 快速开始
 
 ### 环境要求
 
+**微信小程序端**
 - 微信开发者工具（最新版）
 - Node.js 14+ （用于图标下载）
 - npm 或 yarn
 
+**Web 端**
+- Node.js 16+
+- npm 或 yarn
+- 现代浏览器（Chrome、Firefox、Safari、Edge）
+
 ### 安装步骤
+
+#### 方式一：运行微信小程序
 
 1. **克隆项目**
 ```bash
@@ -137,19 +205,51 @@ node scripts/download-icons.js
    - 填写项目名称：求职追踪助手
    - 点击"导入"
 
+#### 方式二：运行 Web 端
+
+1. **克隆项目**
+```bash
+git clone https://github.com/584sentiment/job-ai.git
+cd job-ai/web
+```
+
+2. **安装依赖**
+```bash
+npm install
+```
+
+3. **启动开发服务器**
+```bash
+npm run dev
+```
+
+4. **访问应用**
+   - 打开浏览器访问 http://localhost:3000
+   - 即可在浏览器中使用应用
+
 ### 运行项目
 
+**微信小程序**
 在微信开发者工具中点击"编译"按钮即可在模拟器中预览。
+
+**Web 端**
+运行 `npm run dev` 后,访问 http://localhost:3000 即可。
 
 ### 真机调试
 
+**微信小程序**
 1. 在微信开发者工具中点击"预览"
 2. 使用微信扫描二维码
 3. 在手机微信中打开小程序
 
+**Web 端**
+1. 运行 `npm run build` 构建生产版本
+2. 运行 `npm run preview` 预览构建结果
+3. 或将 `dist` 目录部署到静态服务器
+
 ## 📊 开发进度
 
-### ✅ 已完成（阶段一 + 阶段二）
+### ✅ 微信小程序端已完成（阶段一 + 阶段二）
 
 **框架层**
 - [x] 项目框架搭建
@@ -190,16 +290,57 @@ node scripts/download-icons.js
 - [x] 数据统计
 - [x] 功能入口
 
-### ⏳ 开发中
+### ✅ Web 端已完成
+
+**核心功能**
+- [x] Vue 3 + Vite 项目搭建
+- [x] Vue Router 路由配置
+- [x] Pinia 状态管理
+- [x] Tailwind CSS 样式系统
+- [x] 响应式布局设计
+
+**岗位管理**
+- [x] 岗位列表展示（支持搜索筛选）
+- [x] 添加新岗位
+- [x] 岗位详情查看
+- [x] 岗位删除功能
+- [x] 投递状态管理
 
 **面经管理**
+- [x] 面经列表展示
+- [x] 搜索和筛选功能
+- [x] 收藏/取消收藏
+- [x] 面经详情查看
+
+**面试总结**
+- [x] 总结列表展示
+- [x] 统计数据展示
+- [x] 改进状态管理
+- [x] 搜索和筛选功能
+
+**个人中心**
+- [x] 用户信息展示
+- [x] 数据统计
+- [x] 快捷入口
+- [x] 功能菜单
+
+**设计还原**
+- [x] 1:1 还原 HTML 原型设计
+- [x] 玻璃卡片效果
+- [x] 平滑过渡动画
+- [x] 移动端底部导航
+- [x] 桌面端顶部导航
+
+### ⏳ 开发中
+
+**面经管理（小程序端）**
 - [ ] 面经列表页
 - [ ] 添加面经功能
 - [ ] 面经详情页
 - [ ] 搜索与筛选
 - [ ] 收藏功能
 
-**面试总结**
+**面试总结（小程序端）**
 - [ ] 总结列表页
 - [ ] 添加总结功能
 - [ ] 总结详情页
@@ -217,6 +358,7 @@ node scripts/download-icons.js
 - [ ] 性能优化（虚拟列表、图片懒加载）
 - [ ] 后端服务搭建
 - [ ] 真实 AI API 接入
+- [ ] Web 端数据持久化（localStorage/后端API）
 
 ## 🎨 页面展示
 
@@ -350,6 +492,22 @@ const response = await AIHelper.chat(message);
 - 更新相关文档
 
 ## 📝 更新日志
+
+### [2025-01-24] Web 端完成
+
+**新增功能**
+- ✅ 创建 Vue 3 + Vite + Tailwind CSS 项目
+- ✅ 实现 6 个核心页面（岗位列表、添加岗位、详情、面经、总结、个人中心）
+- ✅ Pinia 状态管理（岗位、面经、总结数据）
+- ✅ 响应式设计（桌面端 + 移动端）
+- ✅ 1:1 还原 HTML 原型设计
+
+**技术实现**
+- ✅ Vue Router 路由配置
+- ✅ 组件化设计（NavBar、BottomNav）
+- ✅ 实时搜索和筛选功能
+- ✅ 收藏功能交互
+- ✅ 统计数据展示
 
 ### [2025-01-18] 核心功能完成
 
