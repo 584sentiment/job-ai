@@ -11,6 +11,7 @@
 - 2025-01-18: **代码核对完成**（验证todo.md中已完成功能，更新完成度为90%）
 - 2025-01-24: **完成Web端开发**（Vue 3 + Vite + Tailwind CSS，1:1还原原型设计）
 - 2025-01-24: **完成Web端用户注册功能**（表单验证、密码强度、状态管理）
+- 2025-01-24: **对接后端用户注册API**（API请求工具、用户接口、错误处理）
 
 ## 当前进度
 
@@ -117,9 +118,19 @@
       - 密码显示/隐藏切换
       - 密码强度指示器（弱/中/强）
       - 注册成功后自动登录并跳转首页
+      - API 错误友好提示
     - NavBar 认证状态感知
       - 未登录：显示"注册"和"登录"按钮
       - 已登录：显示用户头像
+    - 后端 API 对接
+      - 注册接口: POST /users/register
+      - 登录接口: POST /users/login
+      - 用户信息: GET /users/profile
+      - 更新信息: PUT /users/profile
+      - 修改密码: POST /users/change-password
+      - 登出接口: POST /users/logout
+      - token 认证机制
+      - 环境变量配置 (.env.development)
     - localStorage 数据持久化
   - **UI还原** (100%)
     - 1:1 还原 HTML 原型设计
