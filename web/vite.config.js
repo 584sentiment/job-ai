@@ -9,6 +9,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src')
     }
   },
+  // 支持 TypeScript 文件
+  extensions: ['.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   server: {
     port: 3000,
     open: true,

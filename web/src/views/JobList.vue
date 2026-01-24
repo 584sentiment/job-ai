@@ -67,13 +67,13 @@
           <div class="flex items-center space-x-3">
             <div
               class="w-12 h-12 rounded-lg bg-gradient-to-br flex items-center justify-center text-white font-bold text-lg"
-              :class="`from-${job.color}-500 to-${job.color}-600`"
+              :class="`from-${job.color || 'blue'}-500 to-${job.color || 'blue'}-600`"
             >
-              {{ job.company.charAt(0) }}
+              {{ job.companyName?.charAt(0) }}
             </div>
             <div>
-              <h3 class="font-semibold text-lg text-text">{{ job.company }}</h3>
-              <p class="text-sm text-gray-500">{{ job.position }}</p>
+              <h3 class="font-semibold text-lg text-text">{{ job.companyName }}</h3>
+              <p class="text-sm text-gray-500">{{ job.positionName }}</p>
             </div>
           </div>
           <span
@@ -90,28 +90,28 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
             </svg>
-            <span>{{ job.location }}</span>
+            <span>{{ job.workLocation }}</span>
           </div>
           <div class="flex items-center text-sm text-gray-600">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <span>{{ job.salary }}</span>
+            <span>{{ job.salaryRange }}</span>
           </div>
           <div class="flex items-center text-sm text-gray-600">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
             </svg>
-            <span>{{ job.channel }}</span>
+            <span>{{ job.deliveryChannel }}</span>
           </div>
         </div>
 
         <div class="pt-4 border-t border-border">
-          <p class="text-sm text-gray-600 line-clamp-2">{{ job.remark }}</p>
+          <p class="text-sm text-gray-600 line-clamp-2">{{ job.remarks }}</p>
         </div>
 
         <div class="mt-3 flex items-center justify-between text-xs text-gray-500">
-          <span>投递日期: {{ job.applyDate }}</span>
+          <span>投递日期: {{ job.deliveryDate?.split('T')[0] }}</span>
           <span class="text-primary font-medium">查看详情 →</span>
         </div>
       </div>
@@ -133,11 +133,12 @@
   </main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useJobsStore } from '@/store/jobs'
 import { getStatusLabel, getStatusClass } from '@/constants/position'
+import type { PositionStatus } from '@/types'
 
 const router = useRouter()
 const jobsStore = useJobsStore()
@@ -165,8 +166,8 @@ const filteredJobs = computed(() => {
   if (searchKeyword.value) {
     const keyword = searchKeyword.value.toLowerCase()
     jobs = jobs.filter(job =>
-      job.company.toLowerCase().includes(keyword) ||
-      job.position.toLowerCase().includes(keyword)
+      job.companyName?.toLowerCase().includes(keyword) ||
+      job.positionName?.toLowerCase().includes(keyword)
     )
   }
 
