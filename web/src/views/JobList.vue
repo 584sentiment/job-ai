@@ -7,11 +7,21 @@
           v-model="searchKeyword"
           type="text"
           placeholder="搜索公司或岗位名称..."
-          class="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+          class="w-full pl-10 pr-10 py-3 rounded-xl border border-border bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
         >
         <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
         </svg>
+        <!-- 清除搜索按钮 -->
+        <button
+          v-if="searchKeyword"
+          @click="searchKeyword = ''"
+          class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
       </div>
       <div class="flex gap-3">
         <button
@@ -48,14 +58,42 @@
               ? 'bg-primary text-white'
               : 'bg-white text-text border border-border hover:border-primary hover:text-primary'
           ]"
+          :disabled="jobsStore.loading"
         >
           {{ filter.label }}
+          <span v-if="filter.value !== 'all'" class="ml-1 opacity-75">
+            ({{ getStatusCount(filter.value) }})
+          </span>
         </button>
       </div>
     </div>
 
+    <!-- 加载状态 -->
+    <div v-if="jobsStore.loading" class="flex items-center justify-center py-12">
+      <div class="flex flex-col items-center">
+        <svg class="animate-spin h-8 w-8 text-primary mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-gray-600">加载中...</p>
+      </div>
+    </div>
+
+    <!-- 筛选结果统计 -->
+    <div v-if="!jobsStore.loading && jobsStore.currentFilter !== 'all'" class="mb-4 flex items-center justify-between">
+      <p class="text-sm text-gray-600">
+        找到 <span class="font-semibold text-primary">{{ filteredJobs.length }}</span> 个岗位
+      </p>
+      <button
+        @click="jobsStore.resetFilter()"
+        class="text-sm text-gray-500 hover:text-primary transition-colors duration-200"
+      >
+        清除筛选
+      </button>
+    </div>
+
     <!-- 岗位卡片列表 -->
-    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div v-if="!jobsStore.loading" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <!-- 岗位卡片 -->
       <div
         v-for="job in filteredJobs"
@@ -116,8 +154,31 @@
         </div>
       </div>
 
-      <!-- 新增岗位卡片 -->
+      <!-- 空状态提示 -->
+      <div
+        v-if="filteredJobs.length === 0"
+        class="border-2 border-dashed border-border rounded-xl p-12 flex flex-col items-center justify-center"
+      >
+        <div class="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+          <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">暂无岗位</h3>
+        <p class="text-gray-500 text-center mb-4">
+          {{ jobsStore.currentFilter !== 'all' ? '该状态下暂无岗位' : '还没有添加任何岗位' }}
+        </p>
+        <router-link
+          to="/add-job"
+          class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors duration-200"
+        >
+          添加第一个岗位
+        </router-link>
+      </div>
+
+      <!-- 新增岗位卡片（只在有岗位时显示） -->
       <router-link
+        v-if="filteredJobs.length > 0"
         to="/add-job"
         class="border-2 border-dashed border-border rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-all duration-200"
       >
@@ -134,11 +195,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useJobsStore } from '@/store/jobs'
 import { getStatusLabel, getStatusClass } from '@/constants/position'
-import type { PositionStatus } from '@/types'
+import { PositionStatus } from '@/types'
 
 const router = useRouter()
 const jobsStore = useJobsStore()
@@ -151,30 +212,43 @@ onMounted(() => {
   jobsStore.fetchJobs()
 })
 
-const statusFilters = [
-  { label: '全部', value: 'all' },
-  { label: '待投递', value: 'pending' },
-  { label: '已投递', value: 'submitted' },
-  { label: '面试中', value: 'interview1' },
-  { label: '已录用', value: 'offered' },
-  { label: '已拒绝', value: 'rejected' }
-]
-
-const filteredJobs = computed(() => {
-  let jobs = jobsStore.filteredJobs
-
-  if (searchKeyword.value) {
-    const keyword = searchKeyword.value.toLowerCase()
-    jobs = jobs.filter(job =>
-      job.companyName?.toLowerCase().includes(keyword) ||
-      job.positionName?.toLowerCase().includes(keyword)
-    )
+// 监听搜索框变化，进行后端搜索（防抖处理）
+let searchTimer: NodeJS.Timeout | null = null
+watch(searchKeyword, (newKeyword) => {
+  if (searchTimer) {
+    clearTimeout(searchTimer)
   }
 
-  return jobs
+  searchTimer = setTimeout(() => {
+    jobsStore.searchJobs(newKeyword)
+  }, 500) // 500ms 防抖
 })
 
-const goToDetail = (id) => {
+// 状态筛选选项（使用枚举值）
+const statusFilters = [
+  { label: '全部', value: 'all' },
+  { label: '待投递', value: PositionStatus.TO_BE_DELIVERED },
+  { label: '已投递', value: PositionStatus.DELIVERED },
+  { label: '流程中', value: PositionStatus.IN_PROCESS },
+  { label: '已Offer', value: PositionStatus.OFFER },
+  { label: '已拒绝', value: PositionStatus.REJECTED }
+]
+
+// 获取指定状态的岗位数量
+const getStatusCount = (statusValue: number | string) => {
+  if (statusValue === 'all') {
+    return jobsStore.jobs.length
+  }
+  const status = typeof statusValue === 'number' ? statusValue : parseInt(statusValue)
+  return jobsStore.jobs.filter(job => job.status === status).length
+}
+
+// 直接使用后端返回的数据，不进行前端筛选
+const filteredJobs = computed(() => {
+  return jobsStore.filteredJobs
+})
+
+const goToDetail = (id: number) => {
   router.push(`/job/${id}`)
 }
 </script>

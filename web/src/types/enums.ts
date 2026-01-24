@@ -8,19 +8,19 @@
  */
 export enum PositionStatus {
   /** 待投递 */
-  TO_BE_DELIVERED = 0,
+  TO_BE_DELIVERED = '0',
   /** 已投递 */
-  DELIVERED = 1,
+  DELIVERED = '1',
   /** 流程中（包括笔试、面试、等待Offer等流程） */
-  IN_PROCESS = 2,
+  IN_PROCESS = '2',
   /** 已Offer */
-  OFFER = 3,
+  OFFER = '3',
   /** 已入职 */
-  JOINED = 4,
-  /** 未通过 */
-  NOT_PASS = -1,
+  JOINED = '4',
   /** 已拒绝 */
-  REJECTED = 5
+  REJECTED ='5',
+  /** 未通过 */
+  NOT_PASS = '-1',
 }
 
 /**
