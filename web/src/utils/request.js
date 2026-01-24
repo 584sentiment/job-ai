@@ -4,6 +4,11 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'
 
 /**
+ * 业务状态码常量
+ */
+const SUCCESS_CODE = 200
+
+/**
  * 统一请求处理函数
  * @param {string} url - 请求地址
  * @param {object} options - 请求配置
@@ -46,7 +51,7 @@ async function request(url, options = {}) {
     const result = await response.json()
 
     // 检查业务状态码
-    if (result.code !== 0) {
+    if (result.code !== SUCCESS_CODE) {
       throw new Error(result.message || '请求失败')
     }
 

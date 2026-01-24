@@ -1,2 +1,5 @@
 node_modules
 docs/API文档
+.DS_Store
+.env.development
+.env.product

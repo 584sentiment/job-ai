@@ -257,11 +257,13 @@ const checkPasswordStrength = () => {
   if (/[@$!%*?&]/.test(password)) strength++
 
   passwordStrength.value = strength
-
+  // const passwordReg = /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/;
+  const passwordReg = /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
+  
   // 验证是否满足所有要求
   if (password.length < 6) {
     passwordError.value = '密码长度至少6位'
-  } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/.test(password)) {
+  } else if (!passwordReg.test(password)) {
     passwordError.value = '密码必须包含大小写字母、数字和特殊字符'
   } else {
     passwordError.value = ''
@@ -336,7 +338,7 @@ const handleRegister = async () => {
     })
 
     // 注册成功，跳转到首页
-    router.push('/')
+    router.push('/login')
   } catch (error) {
     console.error('注册失败:', error)
 

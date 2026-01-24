@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="min-h-screen pb-20">
+  <div :class="['min-h-screen', { 'pb-20': showBottomNav }]">
     <NavBar v-if="showNavBar" />
     <router-view />
     <BottomNav v-if="showBottomNav" />

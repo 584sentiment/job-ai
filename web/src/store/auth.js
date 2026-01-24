@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import * as userApi from '@/api/user'
+import { hashPassword } from '@/utils/crypto'
 
 export const useAuthStore = defineStore('auth', () => {
   // 状态
@@ -28,7 +29,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
-   * 注册并自动登录
+   * 注册
    * @param {object} userData - 注册数据
    * @param {string} userData.phone - 手机号
    * @param {string} userData.password - 密码
@@ -38,25 +39,18 @@ export const useAuthStore = defineStore('auth', () => {
    */
   async function register(userData) {
     try {
+      // 对密码进行加密
+      const hashedPassword = await hashPassword(userData.password)
+
       // 调用后端注册 API
       const response = await userApi.register({
         phone: userData.phone,
-        password: userData.password,
+        password: hashedPassword,
         nickname: userData.nickname,
         email: userData.email || undefined
       })
 
-      // 保存用户信息
-      user.value = response.data
-      isLoggedIn.value = true
-
-      // 生成 token（如果后端返回 token，则使用后端的）
-      token.value = response.data.token || `token-${response.data.id}`
-
-      // 持久化到 localStorage
-      localStorage.setItem('user', JSON.stringify(user.value))
-      localStorage.setItem('token', token.value)
-
+      // 注册成功，不保存状态，需要用户手动登录
       return response
     } catch (error) {
       console.error('注册失败:', error)
@@ -73,10 +67,13 @@ export const useAuthStore = defineStore('auth', () => {
    */
   async function login(credentials) {
     try {
+      // 对密码进行加密
+      const hashedPassword = await hashPassword(credentials.password)
+
       // 调用后端登录 API
       const response = await userApi.login({
         phone: credentials.phone,
-        password: credentials.password
+        password: hashedPassword
       })
 
       // 保存用户信息
