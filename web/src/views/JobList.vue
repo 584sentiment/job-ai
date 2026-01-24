@@ -102,14 +102,14 @@
         @click="goToDetail(job.id)"
         class="glass-card rounded-xl p-6 hover:shadow-lg transition-shadow duration-200 cursor-pointer"
       >
-        <div class="flex items-start justify-between mb-4">
-          <div class="flex items-center space-x-3">
-            <div
-              class="w-12 h-12 rounded-lg bg-gradient-to-br flex items-center justify-center text-white font-bold text-lg"
-              :class="`from-${job.color || 'blue'}-500 to-${job.color || 'blue'}-600`"
-            >
-              {{ job.companyName?.charAt(0) }}
-            </div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center space-x-3">
+              <div
+                class="w-12 h-12 rounded-lg bg-gradient-to-br flex items-center justify-center text-white font-bold text-lg"
+                :class="`from-${getColorByStatus(job.status)}-500 to-${getColorByStatus(job.status)}-600`"
+              >
+                {{ job.companyName?.charAt(0) }}
+              </div>
             <div>
               <h3 class="font-semibold text-lg text-text">{{ job.companyName }}</h3>
               <p class="text-sm text-gray-500">{{ job.positionName }}</p>
@@ -234,6 +234,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useJobsStore } from '@/store/jobs'
 import { getStatusLabel, getStatusClass } from '@/constants/position'
+import { getColorByStatus } from '@/utils/mappers'
 import { PositionStatus } from '@/types'
 import Pagination from '@hennge/vue3-pagination'
 import '@hennge/vue3-pagination/dist/vue3-pagination.css'
