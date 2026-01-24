@@ -168,7 +168,7 @@
         <div class="mt-6 text-center">
           <p class="text-gray-600">
             已有账号？
-            <router-link to="/" class="text-primary hover:text-secondary font-medium transition-colors duration-200">立即登录</router-link>
+            <router-link to="/login" class="text-primary hover:text-secondary font-medium transition-colors duration-200">立即登录</router-link>
           </p>
         </div>
       </div>

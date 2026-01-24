@@ -41,7 +41,7 @@
               注册
             </router-link>
             <router-link
-              to="/"
+              to="/login"
               class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors duration-200 font-medium"
             >
               登录

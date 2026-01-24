@@ -60,6 +60,16 @@ const routes = [
       hideBottomNav: true,
       hideNavBar: true
     }
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/Login.vue'),
+    meta: {
+      title: '用户登录',
+      hideBottomNav: true,
+      hideNavBar: true
+    }
   }
 ]
 
