@@ -186,6 +186,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useJobsStore } from '@/store/jobs'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
 import JobForm from '@/components/JobForm.vue'
+import { getStatusLabel } from '@/constants/position'
 
 const route = useRoute()
 const router = useRouter()
@@ -219,22 +220,6 @@ const timeline = computed(() => {
   }))
 })
 
-const getStatusLabel = (status) => {
-  const statusMap = {
-    pending: '待投递',
-    submitted: '已投递',
-    screening: '初筛中',
-    test: '笔试',
-    interview1: '一面',
-    interview2: '二面',
-    interview3: '三面',
-    final: '终面',
-    offered: '已录用',
-    rejected: '已拒绝'
-  }
-  return statusMap[status] || status
-}
-
 const deleteJob = () => {
   if (confirm('确定要删除这个岗位吗?')) {
     jobsStore.deleteJob(route.params.id)
@@ -255,7 +240,7 @@ const closeEditDialog = () => {
 // 处理编辑提交
 const handleEditSubmit = async (formData) => {
   try {
-    await jobsStore.updateJob(route.params.id, formData)
+    await jobsStore.updateJob(formData)
     closeEditDialog()
   } catch (error) {
     console.error('更新岗位失败:', error)

@@ -7,10 +7,13 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "type-check": "vue-tsc --noEmit"
+    "type-check": "vue-tsc --noEmit",
+    "seed-data": "node scripts/seed-test-data.js"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
+    "@hennge/vue3-pagination": "^1.0.17",
+    "node-fetch": "^3.3.2",
     "pinia": "^2.1.0",
     "vue": "^3.4.0",
     "vue-router": "^4.2.0"

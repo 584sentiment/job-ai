@@ -6,7 +6,7 @@
         <input
           v-model="searchKeyword"
           type="text"
-          placeholder="搜索公司或岗位名称..."
+          placeholder="请输入关键字进行搜索"
           class="w-full pl-10 pr-10 py-3 rounded-xl border border-border bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
         >
         <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,11 +80,12 @@
     </div>
 
     <!-- 筛选结果统计 -->
-    <div v-if="!jobsStore.loading && jobsStore.currentFilter !== 'all'" class="mb-4 flex items-center justify-between">
+    <div v-if="!jobsStore.loading && jobsStore.pagination.total > 0" class="mb-4 flex items-center justify-between">
       <p class="text-sm text-gray-600">
-        找到 <span class="font-semibold text-primary">{{ filteredJobs.length }}</span> 个岗位
+        找到 <span class="font-semibold text-primary">{{ jobsStore.pagination.total }}</span> 个岗位
       </p>
       <button
+        v-if="jobsStore.currentFilter !== 'all'"
         @click="jobsStore.resetFilter()"
         class="text-sm text-gray-500 hover:text-primary transition-colors duration-200"
       >
@@ -92,8 +93,8 @@
       </button>
     </div>
 
-    <!-- 岗位卡片列表 -->
-    <div v-if="!jobsStore.loading" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <!-- 岗位卡片网格 -->
+    <div v-if="!jobsStore.loading && filteredJobs.length > 0" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <!-- 岗位卡片 -->
       <div
         v-for="job in filteredJobs"
@@ -154,31 +155,8 @@
         </div>
       </div>
 
-      <!-- 空状态提示 -->
-      <div
-        v-if="filteredJobs.length === 0"
-        class="border-2 border-dashed border-border rounded-xl p-12 flex flex-col items-center justify-center"
-      >
-        <div class="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-          <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-        </div>
-        <h3 class="text-lg font-semibold text-gray-700 mb-2">暂无岗位</h3>
-        <p class="text-gray-500 text-center mb-4">
-          {{ jobsStore.currentFilter !== 'all' ? '该状态下暂无岗位' : '还没有添加任何岗位' }}
-        </p>
-        <router-link
-          to="/add-job"
-          class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors duration-200"
-        >
-          添加第一个岗位
-        </router-link>
-      </div>
-
-      <!-- 新增岗位卡片（只在有岗位时显示） -->
+      <!-- 新增岗位卡片 -->
       <router-link
-        v-if="filteredJobs.length > 0"
         to="/add-job"
         class="border-2 border-dashed border-border rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-all duration-200"
       >
@@ -191,6 +169,63 @@
         <p class="text-sm text-gray-400 mt-1">记录新的求职机会</p>
       </router-link>
     </div>
+
+    <!-- 空状态提示 -->
+    <div
+      v-if="!jobsStore.loading && filteredJobs.length === 0"
+      class="border-2 border-dashed border-border rounded-xl p-12 flex flex-col items-center justify-center"
+    >
+      <div class="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-700 mb-2">暂无岗位</h3>
+      <p class="text-gray-500 text-center mb-4">
+        {{ jobsStore.currentFilter !== 'all' ? '该状态下暂无岗位' : '还没有添加任何岗位' }}
+      </p>
+      <router-link
+        to="/add-job"
+        class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors duration-200"
+      >
+        添加第一个岗位
+      </router-link>
+    </div>
+
+    <!-- 分页组件 -->
+    <div
+      v-if="!jobsStore.loading && jobsStore.pagination.total > 0"
+      class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-lg p-4 shadow-sm"
+    >
+      <!-- 每页大小选择器 -->
+      <div class="flex items-center space-x-3">
+        <span class="text-sm text-gray-600">每页显示</span>
+        <select
+          :value="jobsStore.pagination.size"
+          @change="handlePageSizeChange($event)"
+          class="px-3 py-1.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+          :disabled="jobsStore.loading"
+        >
+          <option value="10">10 条</option>
+          <option value="20">20 条</option>
+          <option value="50">50 条</option>
+          <option value="100">100 条</option>
+        </select>
+      </div>
+
+      <!-- 分页信息和分页组件 -->
+      <div class="flex items-center space-x-4">
+        <span class="text-sm text-gray-600">
+          共 <span class="font-semibold">{{ jobsStore.pagination.total }}</span> 条
+        </span>
+
+        <Pagination
+          :pages="jobsStore.pagination.pages"
+          v-model="jobsStore.pagination.current"
+          @update:modelValue="handlePageChange"
+        />
+      </div>
+    </div>
   </main>
 </template>
 
@@ -200,6 +235,8 @@ import { useRouter } from 'vue-router'
 import { useJobsStore } from '@/store/jobs'
 import { getStatusLabel, getStatusClass } from '@/constants/position'
 import { PositionStatus } from '@/types'
+import Pagination from '@hennge/vue3-pagination'
+import '@hennge/vue3-pagination/dist/vue3-pagination.css'
 
 const router = useRouter()
 const jobsStore = useJobsStore()
@@ -239,7 +276,8 @@ const getStatusCount = (statusValue: number | string) => {
   if (statusValue === 'all') {
     return jobsStore.jobs.length
   }
-  const status = typeof statusValue === 'number' ? statusValue : parseInt(statusValue)
+  // PositionStatus 枚举值是字符串类型，保持原样比较
+  const status = statusValue
   return jobsStore.jobs.filter(job => job.status === status).length
 }
 
@@ -247,6 +285,19 @@ const getStatusCount = (statusValue: number | string) => {
 const filteredJobs = computed(() => {
   return jobsStore.filteredJobs
 })
+
+// 处理分页变化
+const handlePageChange = async (page: number) => {
+  console.log('分页变化:', page)
+  await jobsStore.goToPage(page)
+}
+
+// 处理每页大小变化
+const handlePageSizeChange = (event: Event) => {
+  const target = event.target as HTMLSelectElement
+  const size = parseInt(target.value)
+  jobsStore.changePageSize(size)
+}
 
 const goToDetail = (id: number) => {
   router.push(`/job/${id}`)

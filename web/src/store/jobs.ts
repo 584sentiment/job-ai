@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import * as positionApi from '@/api/position';
-import type { Position, PositionStatus, PositionQueryParams } from '@/types';
+import { Position, PositionCreateRequest, PositionQueryParams, PositionStatus } from '@/types';
 
 /**
  * 岗位 Store 状态类型
@@ -11,6 +11,12 @@ interface JobsState {
   loading: boolean;
   currentFilter: number | string | 'all';
   searchKeyword: string;
+  pagination: {
+    current: number;
+    size: number;
+    total: number;
+    pages: number;
+  };
 }
 
 export const useJobsStore = defineStore('jobs', () => {
@@ -19,6 +25,14 @@ export const useJobsStore = defineStore('jobs', () => {
   const loading = ref<boolean>(false);
   const currentFilter = ref<number | string | 'all'>('all');
   const searchKeyword = ref<string>('');
+
+  // 分页状态
+  const pagination = ref({
+    current: 1,
+    size: 10,
+    total: 0,
+    pages: 0,
+  });
 
   /**
    * 获取岗位列表
@@ -30,16 +44,40 @@ export const useJobsStore = defineStore('jobs', () => {
     loading.value = true;
     try {
       const response = await positionApi.getPositions({
-        current: 1,
-        size: 100,
+        current: pagination.value.current,
+        size: pagination.value.size,
         ...params,
       });
 
-      // 后端返回格式: { code: 200, data: { records: [], total: 0 } }
-      if (response.data && response.data.records) {
-        jobs.value = response.data.records;
-      } else if (Array.isArray(response.data)) {
-        jobs.value = response.data;
+      // 后端返回格式: { code: 200, data: { records: [], total: 0, current: 1, size: 10 } }
+      if (response.data) {
+        if (response.data.records) {
+          jobs.value = response.data.records;
+        } else if (Array.isArray(response.data)) {
+          jobs.value = response.data;
+        } else {
+          jobs.value = [];
+        }
+
+        // 更新分页信息
+        if (response.data.total !== undefined) {
+          pagination.value.total = response.data.total;
+        }
+        if (response.data.current !== undefined) {
+          pagination.value.current = response.data.current;
+        }
+        if (response.data.size !== undefined) {
+          pagination.value.size = response.data.size;
+        }
+        // 如果后端没有返回 pages，手动计算
+        if (response.data.pages !== undefined) {
+          pagination.value.pages = response.data.pages;
+        } else {
+          // 手动计算总页数
+          pagination.value.pages = Math.ceil(
+            pagination.value.total / pagination.value.size,
+          );
+        }
       } else {
         jobs.value = [];
       }
@@ -103,9 +141,8 @@ export const useJobsStore = defineStore('jobs', () => {
 
     // 调用后端API进行搜索
     const params: Partial<PositionQueryParams> = {
-      // 同时搜索公司和岗位名称（后端需要支持这两个字段的模糊搜索）
-      companyName: keyword,
-      positionName: keyword,
+      // 使用 keyword 字段进行搜索
+      keyword: keyword,
     };
 
     // 如果同时有状态筛选，也传递状态参数
@@ -134,6 +171,27 @@ export const useJobsStore = defineStore('jobs', () => {
   async function resetFilter(): Promise<void> {
     currentFilter.value = 'all';
     searchKeyword.value = '';
+    pagination.value.current = 1; // 重置到第一页
+    await fetchJobs();
+  }
+
+  /**
+   * 跳转到指定页码
+   * @param page - 页码
+   */
+  async function goToPage(page: number): Promise<void> {
+    if (page < 1 || page > pagination.value.pages) return;
+    pagination.value.current = page;
+    await fetchJobs();
+  }
+
+  /**
+   * 改变每页大小
+   * @param size - 每页大小
+   */
+  async function changePageSize(size: number): Promise<void> {
+    pagination.value.size = size;
+    pagination.value.current = 1; // 改变大小时重置到第一页
     await fetchJobs();
   }
 
@@ -185,17 +243,16 @@ export const useJobsStore = defineStore('jobs', () => {
     try {
       // 直接使用后端字段名创建数据
       const backendData = {
-        companyName: job.companyName || job.company || '',
-        positionName: job.positionName || job.position || '',
-        deliveryChannel: job.deliveryChannel || job.channel || '',
-        deliveryDate:
-          job.deliveryDate || job.applyDate || new Date().toISOString(),
-        workLocation: job.workLocation || job.location || '',
-        salaryRange: job.salaryRange || job.salary || '',
-        jobDescription: job.jobDescription || job.jd || '',
-        contactName: job.contactName || job.contact || '',
+        companyName: job.companyName || '',
+        positionName: job.positionName || '',
+        deliveryChannel: job.deliveryChannel || '',
+        deliveryDate: job.deliveryDate || new Date().toISOString(),
+        workLocation: job.workLocation || '',
+        salaryRange: job.salaryRange || '',
+        jobDescription: job.jobDescription || '',
+        contactName: job.contactName || '',
         contactPhone: job.contactPhone || '',
-        remarks: job.remarks || job.remark || '',
+        remarks: job.remarks || '',
         status: job.status ?? PositionStatus.TO_BE_DELIVERED,
         isCollected: job.isCollected ?? 0,
       };
@@ -216,108 +273,12 @@ export const useJobsStore = defineStore('jobs', () => {
    * @param id - 岗位ID
    * @param updates - 更新数据
    */
-  async function updateJob(
-    id: number | string,
-    updates: Partial<Position>,
-  ): Promise<void> {
+  async function updateJob(updates: PositionCreateRequest): Promise<void> {
     try {
-      // 支持新旧字段名
-      const backendData: Record<string, any> = {};
-
-      // 处理可能的旧字段名
-      if (updates.company !== undefined && updates.companyName === undefined) {
-        backendData.companyName = updates.company;
-      }
-      if (updates.companyName !== undefined) {
-        backendData.companyName = updates.companyName;
-      }
-
-      if (
-        updates.position !== undefined &&
-        updates.positionName === undefined
-      ) {
-        backendData.positionName = updates.position;
-      }
-      if (updates.positionName !== undefined) {
-        backendData.positionName = updates.positionName;
-      }
-
-      if (
-        updates.channel !== undefined &&
-        updates.deliveryChannel === undefined
-      ) {
-        backendData.deliveryChannel = updates.channel;
-      }
-      if (updates.deliveryChannel !== undefined) {
-        backendData.deliveryChannel = updates.deliveryChannel;
-      }
-
-      if (
-        updates.applyDate !== undefined &&
-        updates.deliveryDate === undefined
-      ) {
-        backendData.deliveryDate = updates.applyDate;
-      }
-      if (updates.deliveryDate !== undefined) {
-        backendData.deliveryDate = updates.deliveryDate;
-      }
-
-      if (
-        updates.location !== undefined &&
-        updates.workLocation === undefined
-      ) {
-        backendData.workLocation = updates.location;
-      }
-      if (updates.workLocation !== undefined) {
-        backendData.workLocation = updates.workLocation;
-      }
-
-      if (updates.salary !== undefined && updates.salaryRange === undefined) {
-        backendData.salaryRange = updates.salary;
-      }
-      if (updates.salaryRange !== undefined) {
-        backendData.salaryRange = updates.salaryRange;
-      }
-
-      if (updates.jd !== undefined && updates.jobDescription === undefined) {
-        backendData.jobDescription = updates.jd;
-      }
-      if (updates.jobDescription !== undefined) {
-        backendData.jobDescription = updates.jobDescription;
-      }
-
-      if (updates.contact !== undefined && updates.contactName === undefined) {
-        backendData.contactName = updates.contact;
-      }
-      if (updates.contactName !== undefined) {
-        backendData.contactName = updates.contactName;
-      }
-
-      if (updates.remark !== undefined && updates.remarks === undefined) {
-        backendData.remarks = updates.remark;
-      }
-      if (updates.remarks !== undefined) {
-        backendData.remarks = updates.remarks;
-      }
-
-      if (updates.status !== undefined) {
-        backendData.status = updates.status;
-      }
-
-      if (updates.isCollected !== undefined) {
-        backendData.isCollected = updates.isCollected;
-      }
-
-      // 添加 ID
-      backendData.id = parseInt(id as string);
-
-      const response = await positionApi.updatePosition(
-        parseInt(id as string),
-        backendData,
-      );
+      const response = await positionApi.updatePosition(updates);
       // 更新本地数据
       const index = jobs.value.findIndex(
-        job => job.id === parseInt(id as string),
+        job => job.id === updates.id,
       );
       if (index !== -1 && response.data) {
         jobs.value[index] = response.data;
@@ -354,6 +315,7 @@ export const useJobsStore = defineStore('jobs', () => {
     loading,
     currentFilter,
     searchKeyword,
+    pagination,
 
     // 计算属性
     filteredJobs,
@@ -369,5 +331,7 @@ export const useJobsStore = defineStore('jobs', () => {
     filterByStatus,
     searchJobs,
     resetFilter,
+    goToPage,
+    changePageSize,
   };
 });

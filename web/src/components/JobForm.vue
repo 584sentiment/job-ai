@@ -176,8 +176,8 @@
           <div
             class="px-4 py-3 rounded-lg border-2 border-border text-center peer-checked:border-primary peer-checked:bg-primary peer-checked:text-white transition-all duration-200 hover:border-gray-300 text-sm"
             :class="{
-              'peer-checked:border-green-500 peer-checked:bg-green-500': status.value === 2,
-              'peer-checked:border-red-500 peer-checked:bg-red-500': status.value === 7 || status.value === 8
+              'peer-checked:border-green-500 peer-checked:bg-green-500': status.value === PositionStatus.OFFER || status.value === PositionStatus.JOINED,
+              'peer-checked:border-red-500 peer-checked:bg-red-500': status.value === PositionStatus.REJECTED || status.value === PositionStatus.NOT_PASS
             }"
           >
             {{ status.label }}
@@ -206,7 +206,7 @@
   </form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
 import { PositionStatus } from '@/types'
 
@@ -229,6 +229,7 @@ const emit = defineEmits(['submit'])
 
 // 表单数据 - 使用后端字段名
 const form = ref({
+  id: undefined as number | undefined,
   companyName: '',
   positionName: '',
   deliveryChannel: '',
@@ -257,6 +258,7 @@ const statusOptions = [
 watch(() => props.initialData, (newData) => {
   if (newData) {
     form.value = {
+      id: newData.id,
       companyName: newData.companyName || '',
       positionName: newData.positionName || '',
       deliveryChannel: newData.deliveryChannel || '',

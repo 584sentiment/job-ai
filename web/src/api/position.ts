@@ -1,20 +1,32 @@
-import { get, post, postWithAuth, getWithAuth, putWithAuth, delWithAuth } from '@/utils/request'
+import {
+  get,
+  post,
+  postWithAuth,
+  getWithAuth,
+  putWithAuth,
+  delWithAuth,
+} from '@/utils/request';
 import type {
   Position,
   PositionQueryParams,
   PositionCreateRequest,
   PositionListResponse,
   PositionDetailResponse,
-  PositionMutationResponse
-} from '@/types'
+  PositionMutationResponse,
+  ApiResponse,
+} from '@/types';
 
 /**
  * 获取岗位列表
  * @param params - 查询参数
  * @returns 岗位列表响应
  */
-export function getPositions(params: PositionQueryParams): Promise<PositionListResponse> {
-  return postWithAuth('/positions/page', { ...params }) as Promise<PositionListResponse>
+export function getPositions(
+  params: PositionQueryParams,
+): Promise<PositionListResponse> {
+  return postWithAuth('/positions/page', {
+    ...params,
+  }) as Promise<PositionListResponse>;
 }
 
 /**
@@ -23,7 +35,7 @@ export function getPositions(params: PositionQueryParams): Promise<PositionListR
  * @returns 岗位详情响应
  */
 export function getPositionById(id: number): Promise<PositionDetailResponse> {
-  return getWithAuth(`/positions/${id}`) as Promise<PositionDetailResponse>
+  return getWithAuth(`/positions/${id}`) as Promise<PositionDetailResponse>;
 }
 
 /**
@@ -31,8 +43,10 @@ export function getPositionById(id: number): Promise<PositionDetailResponse> {
  * @param data - 岗位数据
  * @returns 创建结果响应
  */
-export function createPosition(data: PositionCreateRequest): Promise<PositionMutationResponse> {
-  return postWithAuth('/positions', data) as Promise<PositionMutationResponse>
+export function createPosition(
+  data: PositionCreateRequest,
+): Promise<PositionMutationResponse> {
+  return postWithAuth('/positions', data) as Promise<PositionMutationResponse>;
 }
 
 /**
@@ -41,8 +55,10 @@ export function createPosition(data: PositionCreateRequest): Promise<PositionMut
  * @param data - 更新数据
  * @returns 更新结果响应
  */
-export function updatePosition(id: number, data: PositionCreateRequest): Promise<PositionMutationResponse> {
-  return putWithAuth(`/positions/${id}`, data) as Promise<PositionMutationResponse>
+export function updatePosition(
+  data: PositionCreateRequest,
+): Promise<PositionMutationResponse> {
+  return putWithAuth(`/positions`, data) as Promise<PositionMutationResponse>;
 }
 
 /**
@@ -51,7 +67,7 @@ export function updatePosition(id: number, data: PositionCreateRequest): Promise
  * @returns 删除结果响应
  */
 export function deletePosition(id: number): Promise<ApiResponse> {
-  return delWithAuth(`/positions/${id}`) as Promise<ApiResponse>
+  return delWithAuth(`/positions/${id}`) as Promise<ApiResponse>;
 }
 
 /**
@@ -60,5 +76,5 @@ export function deletePosition(id: number): Promise<ApiResponse> {
  * @returns 操作结果响应
  */
 export function toggleCollect(id: number): Promise<ApiResponse> {
-  return postWithAuth(`/positions/${id}/collect`) as Promise<ApiResponse>
+  return postWithAuth(`/positions/${id}/collect`) as Promise<ApiResponse>;
 }

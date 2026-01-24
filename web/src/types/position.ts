@@ -78,6 +78,8 @@ export interface InterviewRecord {
 export interface PositionQueryParams {
   /** 岗位ID */
   id?: number
+  /** 搜索关键字（可搜索公司名称、岗位名称等） */
+  keyword?: string
   /** 公司名称 */
   companyName?: string
   /** 岗位名称 */
