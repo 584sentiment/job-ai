@@ -49,7 +49,10 @@
             </div>
           </div>
         </div>
-        <button class="px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition-colors duration-200 flex items-center space-x-2">
+        <button
+          @click="openEditDialog"
+          class="px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition-colors duration-200 flex items-center space-x-2"
+        >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
           </svg>
@@ -137,16 +140,59 @@
   <div v-else class="pt-20 px-4 text-center text-gray-500">
     <p>加载中...</p>
   </div>
+
+  <!-- 编辑对话框 -->
+  <Dialog as="div" class="relative z-50" :open="isEditDialogOpen" @close="closeEditDialog">
+    <!-- 背景遮罩 -->
+    <div class="fixed inset-0 bg-black/30 transition-opacity" aria-hidden="true"></div>
+
+    <!-- 对话框容器 -->
+    <div class="fixed inset-0 overflow-y-auto">
+      <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+        <DialogPanel class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+          <!-- 对话框头部 -->
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 flex items-center justify-between border-b border-gray-200">
+            <DialogTitle class="text-lg font-semibold text-gray-900">编辑岗位</DialogTitle>
+            <button
+              @click="closeEditDialog"
+              type="button"
+              class="rounded-md bg-transparent text-gray-400 hover:text-gray-500 focus:outline-none"
+            >
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- 对话框内容 -->
+          <div class="px-4 py-5 sm:p-6 max-h-[70vh] overflow-y-auto">
+            <JobForm
+              v-if="isEditDialogOpen"
+              mode="edit"
+              :initial-data="job"
+              :on-cancel="closeEditDialog"
+              @submit="handleEditSubmit"
+            />
+          </div>
+        </DialogPanel>
+      </div>
+    </div>
+  </Dialog>
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useJobsStore } from '@/store/jobs'
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
+import JobForm from '@/components/JobForm.vue'
 
 const route = useRoute()
 const router = useRouter()
 const jobsStore = useJobsStore()
+
+// 编辑对话框状态
+const isEditDialogOpen = ref(false)
 
 const job = computed(() => {
   return jobsStore.getJobById(route.params.id)
@@ -193,6 +239,27 @@ const deleteJob = () => {
   if (confirm('确定要删除这个岗位吗?')) {
     jobsStore.deleteJob(route.params.id)
     router.push('/')
+  }
+}
+
+// 打开编辑对话框
+const openEditDialog = () => {
+  isEditDialogOpen.value = true
+}
+
+// 关闭编辑对话框
+const closeEditDialog = () => {
+  isEditDialogOpen.value = false
+}
+
+// 处理编辑提交
+const handleEditSubmit = async (formData) => {
+  try {
+    await jobsStore.updateJob(route.params.id, formData)
+    closeEditDialog()
+  } catch (error) {
+    console.error('更新岗位失败:', error)
+    alert('更新岗位失败，请重试')
   }
 }
 

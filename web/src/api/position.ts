@@ -14,7 +14,7 @@ import type {
  * @returns 岗位列表响应
  */
 export function getPositions(params: PositionQueryParams): Promise<PositionListResponse> {
-  return postWithAuth('/positions/page', { params }) as Promise<PositionListResponse>
+  return postWithAuth('/positions/page', { ...params }) as Promise<PositionListResponse>
 }
 
 /**
