@@ -32,21 +32,20 @@
       <div class="flex items-start justify-between mb-6">
         <div class="flex items-center space-x-4">
           <div
-            class="w-16 h-16 rounded-xl bg-gradient-to-br flex items-center justify-center text-white font-bold text-2xl"
-            :class="`from-${job.color}-500 to-${job.color}-600`"
+            class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-2xl"
           >
-            {{ job.company.charAt(0) }}
+            {{ job.companyName?.charAt(0) || '?' }}
           </div>
           <div>
-            <h2 class="text-2xl font-bold">{{ job.company }}</h2>
-            <p class="text-gray-600 text-lg">{{ job.position }}</p>
+            <h2 class="text-2xl font-bold">{{ job.companyName }}</h2>
+            <p class="text-gray-600 text-lg">{{ job.positionName }}</p>
             <div class="flex items-center space-x-2 mt-1">
               <span
                 class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium"
               >
                 {{ getStatusLabel(job.status) }}
               </span>
-              <span class="text-sm text-gray-500">{{ job.applyDate }} 投递</span>
+              <span class="text-sm text-gray-500">{{ job.deliveryDate }} 投递</span>
             </div>
           </div>
         </div>
@@ -64,19 +63,19 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
           </svg>
-          <span>{{ job.location }}</span>
+          <span>{{ job.workLocation }}</span>
         </div>
         <div class="flex items-center space-x-2 text-gray-600">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          <span>{{ job.salary }}</span>
+          <span>{{ job.salaryRange }}</span>
         </div>
         <div class="flex items-center space-x-2 text-gray-600">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
           </svg>
-          <span>{{ job.channel }}</span>
+          <span>{{ job.deliveryChannel }}</span>
         </div>
         <div class="flex items-center space-x-2 text-gray-600">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,7 +102,7 @@
         <div class="timeline-line"></div>
 
         <div
-          v-for="(item, index) in job.timeline"
+          v-for="(item, index) in timeline"
           :key="index"
           class="timeline-item relative"
         >
@@ -151,6 +150,27 @@ const jobsStore = useJobsStore()
 
 const job = computed(() => {
   return jobsStore.getJobById(route.params.id)
+})
+
+// 计算属性：将面试记录转换为时间线格式
+const timeline = computed(() => {
+  if (!job.value?.interviewRecordList || job.value.interviewRecordList.length === 0) {
+    // 如果没有面试记录，显示投递进度
+    return [
+      {
+        status: '已投递',
+        date: job.value?.deliveryDate || '',
+        desc: '简历已投递，等待回复'
+      }
+    ]
+  }
+
+  // 将面试记录转换为时间线格式
+  return job.value.interviewRecordList.map(record => ({
+    status: record.interviewRound,
+    date: record.interviewTime,
+    desc: `面试地点：${record.interviewLocation}\n面试形式：${record.interviewForm}`
+  }))
 })
 
 const getStatusLabel = (status) => {
