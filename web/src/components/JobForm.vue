@@ -207,22 +207,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { PositionStatus } from '@/types'
 
-const props = defineProps({
-  mode: {
-    type: String,
-    default: 'add' // 'add' or 'edit'
-  },
-  initialData: {
-    type: Object,
-    default: null
-  },
-  onCancel: {
-    type: Function,
-    default: null
-  }
+interface Props {
+  mode?: 'add' | 'edit'
+  initialData?: any
+  onCancel?: (() => void) | null
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  mode: 'add',
+  initialData: null,
+  onCancel: null
 })
 
 const emit = defineEmits(['submit'])

@@ -3,22 +3,6 @@ import { ref, computed } from 'vue';
 import * as positionApi from '@/api/position';
 import { Position, PositionCreateRequest, PositionQueryParams, PositionStatus } from '@/types';
 
-/**
- * 岗位 Store 状态类型
- */
-interface JobsState {
-  jobs: Position[];
-  loading: boolean;
-  currentFilter: number | string | 'all';
-  searchKeyword: string;
-  pagination: {
-    current: number;
-    size: number;
-    total: number;
-    pages: number;
-  };
-}
-
 export const useJobsStore = defineStore('jobs', () => {
   // 状态
   const jobs = ref<Position[]>([]);
@@ -94,7 +78,7 @@ export const useJobsStore = defineStore('jobs', () => {
    * @param status - 状态值
    */
   async function filterByStatus(
-    status: number | PositionStatus | 'all',
+    status: number | string | PositionStatus | 'all',
   ): Promise<void> {
     // 更新当前筛选器
     currentFilter.value = status;
@@ -104,7 +88,7 @@ export const useJobsStore = defineStore('jobs', () => {
 
     // 如果不是"全部"，添加状态参数
     if (status !== 'all' && status !== null) {
-      params.status = status as PositionStatus;
+      params.status = status as unknown as PositionStatus;
     }
 
     // 如果有搜索关键词，添加搜索参数
@@ -132,7 +116,7 @@ export const useJobsStore = defineStore('jobs', () => {
           typeof currentFilter.value === 'number'
             ? currentFilter.value
             : parseInt(currentFilter.value as string);
-        await fetchJobs({ status: statusValue as PositionStatus });
+        await fetchJobs({ status: statusValue as unknown as PositionStatus });
       } else {
         await fetchJobs();
       }
@@ -151,7 +135,7 @@ export const useJobsStore = defineStore('jobs', () => {
         typeof currentFilter.value === 'number'
           ? currentFilter.value
           : parseInt(currentFilter.value as string);
-      params.status = statusValue as PositionStatus;
+      params.status = statusValue as unknown as PositionStatus;
     }
 
     await fetchJobs(params);
@@ -295,7 +279,7 @@ export const useJobsStore = defineStore('jobs', () => {
    */
   async function deleteJob(id: number | string): Promise<void> {
     try {
-      const response = await positionApi.deletePosition(parseInt(id as string));
+      await positionApi.deletePosition(parseInt(id as string));
       // 从列表中移除
       const index = jobs.value.findIndex(
         job => job.id === parseInt(id as string),

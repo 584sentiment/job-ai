@@ -5,7 +5,8 @@ import type {
   UpdateUserRequest,
   LoginApiResponse,
   RegisterApiResponse,
-  UserInfoApiResponse
+  UserInfoApiResponse,
+  ApiResponse
 } from '@/types'
 
 /**
@@ -57,5 +58,5 @@ export function changePassword(data: { oldPassword: string; newPassword: string 
  * @returns 登出结果
  */
 export function logout(): Promise<ApiResponse> {
-  return postWithAuth('/users/logout') as Promise<ApiResponse>
+  return postWithAuth('/users/logout', {}) as Promise<ApiResponse>
 }

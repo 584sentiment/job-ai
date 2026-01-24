@@ -6,15 +6,6 @@ import type { Position, PositionCreateRequest } from '@/types'
 import { PositionStatus, PositionStatusLabels, PositionStatusClasses } from '@/types'
 
 /**
- * 格式化日期为 YYYY-MM-DD
- */
-function formatDate(dateString: string): string {
-  if (!dateString) return ''
-  const date = new Date(dateString)
-  return date.toISOString().split('T')[0]
-}
-
-/**
  * 获取状态标签文本
  */
 export function getStatusLabel(status: PositionStatus): string {

@@ -3,6 +3,10 @@
  * 与后端数据结构保持一致
  */
 import { PositionStatus } from './enums'
+import type { ApiResponse } from './user'
+
+// 重新导出 ApiResponse 以便其他模块使用
+export type { ApiResponse }
 
 /**
  * 岗位信息（对应后端 Position 实体）
@@ -148,18 +152,6 @@ export interface PageResponse<T> {
   size: number
   /** 总页数 */
   pages: number
-}
-
-/**
- * API 响应
- */
-export interface ApiResponse<T = any> {
-  /** 业务状态码 */
-  code: number
-  /** 响应消息 */
-  message: string
-  /** 响应数据 */
-  data: T
 }
 
 /**

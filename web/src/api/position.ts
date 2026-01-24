@@ -1,13 +1,10 @@
 import {
-  get,
-  post,
   postWithAuth,
   getWithAuth,
   putWithAuth,
   delWithAuth,
 } from '@/utils/request';
 import type {
-  Position,
   PositionQueryParams,
   PositionCreateRequest,
   PositionListResponse,
@@ -76,5 +73,5 @@ export function deletePosition(id: number): Promise<ApiResponse> {
  * @returns 操作结果响应
  */
 export function toggleCollect(id: number): Promise<ApiResponse> {
-  return postWithAuth(`/positions/${id}/collect`) as Promise<ApiResponse>;
+  return postWithAuth(`/positions/${id}/collect`, {}) as Promise<ApiResponse>;
 }
