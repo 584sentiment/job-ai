@@ -1,103 +1,43 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import * as positionApi from '@/api/position'
+import { mapPositionFromBackend, mapPositionToBackend } from '@/utils/position-mapper'
 
 export const useJobsStore = defineStore('jobs', () => {
   // 状态
-  const jobs = ref([
-    {
-      id: 1,
-      company: '字节跳动',
-      position: '前端开发工程师',
-      channel: '内推',
-      location: '北京',
-      salary: '25-40K',
-      status: 'interview2',
-      applyDate: '2025-12-15',
-      remark: '一面结束,面试官反馈技术能力不错,等待二面通知',
-      color: 'blue',
-      timeline: [
-        { status: '投递简历', date: '2025-12-15', desc: '通过内推投递简历' },
-        { status: '初筛通过', date: '2025-12-17', desc: 'HR电话沟通,邀请参加笔试' },
-        { status: '笔试完成', date: '2025-12-20', desc: '线上笔试,成绩良好' },
-        { status: '一面', date: '2025-12-25', desc: '技术面试,考察Vue/React及算法' }
-      ],
-      createTime: '2025-12-15T08:00:00.000Z',
-      updateTime: '2025-12-15T08:00:00.000Z'
-    },
-    {
-      id: 2,
-      company: '腾讯',
-      position: '全栈开发工程师',
-      channel: '招聘APP',
-      location: '深圳',
-      salary: '30-50K',
-      status: 'screening',
-      applyDate: '2025-12-18',
-      remark: '简历已提交,等待HR审核',
-      color: 'green',
-      timeline: [
-        { status: '投递简历', date: '2025-12-18', desc: '通过招聘APP投递简历' }
-      ],
-      createTime: '2025-12-18T08:00:00.000Z',
-      updateTime: '2025-12-18T08:00:00.000Z'
-    },
-    {
-      id: 3,
-      company: '阿里巴巴',
-      position: '前端开发工程师',
-      channel: '内推',
-      location: '杭州',
-      salary: '28-45K',
-      status: 'offered',
-      applyDate: '2025-12-01',
-      remark: '收到offer,正在考虑中',
-      color: 'orange',
-      timeline: [
-        { status: '投递简历', date: '2025-12-01', desc: '通过内推投递简历' },
-        { status: '终面', date: '2025-12-10', desc: '终面通过' }
-      ],
-      createTime: '2025-12-01T08:00:00.000Z',
-      updateTime: '2025-12-01T08:00:00.000Z'
-    },
-    {
-      id: 4,
-      company: '美团',
-      position: '后端开发工程师',
-      channel: '宣讲会',
-      location: '北京',
-      salary: '25-40K',
-      status: 'rejected',
-      applyDate: '2025-12-05',
-      remark: '二面未通过,经验不够匹配',
-      color: 'purple',
-      timeline: [
-        { status: '投递简历', date: '2025-12-05', desc: '宣讲会后投递简历' },
-        { status: '一面', date: '2025-12-08', desc: '技术面试' },
-        { status: '二面未通过', date: '2025-12-12', desc: '经验不够匹配' }
-      ],
-      createTime: '2025-12-05T08:00:00.000Z',
-      updateTime: '2025-12-05T08:00:00.000Z'
-    },
-    {
-      id: 5,
-      company: '京东',
-      position: '前端开发工程师',
-      channel: '招聘APP',
-      location: '北京',
-      salary: '20-35K',
-      status: 'test',
-      applyDate: '2025-12-20',
-      remark: '笔试时间: 2025-12-28 14:00',
-      color: 'red',
-      timeline: [
-        { status: '投递简历', date: '2025-12-20', desc: '通过招聘APP投递' }
-      ],
-      createTime: '2025-12-20T08:00:00.000Z',
-      updateTime: '2025-12-20T08:00:00.000Z'
-    }
-  ])
-
+  const jobs = ref([])
+  const loading = ref(false)
   const currentFilter = ref('all')
+
+  /**
+   * 获取岗位列表
+   * @param {object} params - 查询参数
+   */
+  async function fetchJobs(params = {}) {
+    loading.value = true
+    try {
+      const response = await positionApi.getPositions({
+        current: 1,
+        size: 100,
+        ...params
+      })
+      // 后端返回格式: { code: 200, data: { records: [], total: 0 } }
+      let backendJobs = []
+      if (response.data && response.data.records) {
+        backendJobs = response.data.records
+      } else if (Array.isArray(response.data)) {
+        backendJobs = response.data
+      }
+
+      // 将后端数据转换为前端格式
+      jobs.value = backendJobs.map(mapPositionFromBackend)
+    } catch (error) {
+      console.error('获取岗位列表失败:', error)
+      jobs.value = []
+    } finally {
+      loading.value = false
+    }
+  }
 
   // 计算属性
   const filteredJobs = computed(() => {
@@ -119,32 +59,52 @@ export const useJobsStore = defineStore('jobs', () => {
     return jobs.value.find(job => job.id === parseInt(id))
   }
 
-  const addJob = (job) => {
-    const newJob = {
-      ...job,
-      id: Date.now(),
-      createTime: new Date().toISOString(),
-      updateTime: new Date().toISOString(),
-      timeline: job.timeline || [{ status: '投递简历', date: job.applyDate, desc: '投递简历' }]
-    }
-    jobs.value.unshift(newJob)
-  }
-
-  const updateJob = (id, updates) => {
-    const index = jobs.value.findIndex(job => job.id === parseInt(id))
-    if (index !== -1) {
-      jobs.value[index] = {
-        ...jobs.value[index],
-        ...updates,
-        updateTime: new Date().toISOString()
+  async function addJob(job) {
+    try {
+      // 将前端数据转换为后端格式
+      const backendData = mapPositionToBackend(job)
+      const response = await positionApi.createPosition(backendData)
+      // 添加新岗位到列表
+      if (response.data) {
+        const newJob = mapPositionFromBackend(response.data)
+        jobs.value.unshift(newJob)
       }
+      return response
+    } catch (error) {
+      console.error('添加岗位失败:', error)
+      throw error
     }
   }
 
-  const deleteJob = (id) => {
-    const index = jobs.value.findIndex(job => job.id === parseInt(id))
-    if (index !== -1) {
-      jobs.value.splice(index, 1)
+  async function updateJob(id, updates) {
+    try {
+      // 将前端数据转换为后端格式
+      const backendData = mapPositionToBackend({ ...updates, id })
+      const response = await positionApi.updatePosition(id, backendData)
+      // 更新本地数据
+      const index = jobs.value.findIndex(job => job.id === parseInt(id))
+      if (index !== -1 && response.data) {
+        jobs.value[index] = mapPositionFromBackend(response.data)
+      }
+      return response
+    } catch (error) {
+      console.error('更新岗位失败:', error)
+      throw error
+    }
+  }
+
+  async function deleteJob(id) {
+    try {
+      const response = await positionApi.deletePosition(id)
+      // 从列表中移除
+      const index = jobs.value.findIndex(job => job.id === parseInt(id))
+      if (index !== -1) {
+        jobs.value.splice(index, 1)
+      }
+      return response
+    } catch (error) {
+      console.error('删除岗位失败:', error)
+      throw error
     }
   }
 
@@ -154,9 +114,11 @@ export const useJobsStore = defineStore('jobs', () => {
 
   return {
     jobs,
+    loading,
     currentFilter,
     filteredJobs,
     jobStats,
+    fetchJobs,
     getJobById,
     addJob,
     updateJob,

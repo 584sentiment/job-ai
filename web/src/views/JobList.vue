@@ -134,15 +134,21 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useJobsStore } from '@/store/jobs'
+import { getStatusLabel, getStatusClass } from '@/constants/position'
 
 const router = useRouter()
 const jobsStore = useJobsStore()
 
 const searchKeyword = ref('')
 const showFilter = ref(false)
+
+// 页面加载时获取岗位列表
+onMounted(() => {
+  jobsStore.fetchJobs()
+})
 
 const statusFilters = [
   { label: '全部', value: 'all' },
@@ -166,38 +172,6 @@ const filteredJobs = computed(() => {
 
   return jobs
 })
-
-const getStatusLabel = (status) => {
-  const statusMap = {
-    pending: '待投递',
-    submitted: '已投递',
-    screening: '初筛中',
-    test: '笔试',
-    interview1: '一面',
-    interview2: '二面',
-    interview3: '三面',
-    final: '终面',
-    offered: '已录用',
-    rejected: '已拒绝'
-  }
-  return statusMap[status] || status
-}
-
-const getStatusClass = (status) => {
-  const classMap = {
-    pending: 'bg-yellow-100 text-yellow-700',
-    submitted: 'bg-blue-100 text-blue-700',
-    screening: 'bg-purple-100 text-purple-700',
-    test: 'bg-gray-100 text-gray-700',
-    interview1: 'bg-blue-100 text-blue-700',
-    interview2: 'bg-blue-100 text-blue-700',
-    interview3: 'bg-blue-100 text-blue-700',
-    final: 'bg-indigo-100 text-indigo-700',
-    offered: 'bg-green-100 text-green-700',
-    rejected: 'bg-red-100 text-red-700'
-  }
-  return classMap[status] || 'bg-gray-100 text-gray-700'
-}
 
 const goToDetail = (id) => {
   router.push(`/job/${id}`)

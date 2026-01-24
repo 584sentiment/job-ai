@@ -1,12 +1,48 @@
 /**
  * API 请求基础配置
  */
+import { ResponseCode, HttpStatusCode } from '@/constants/response'
+import router from '@/router'
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'
 
 /**
- * 业务状态码常量
+ * 将对象转换为 URL 查询参数字符串
+ * @param {object} params - 查询参数对象
+ * @returns {string} 查询参数字符串
  */
-const SUCCESS_CODE = 200
+function buildQueryString(params) {
+  if (!params || Object.keys(params).length === 0) {
+    return ''
+  }
+
+  const queryPairs = Object.entries(params)
+    .filter(([_, value]) => value !== undefined && value !== null && value !== '')
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+
+  return queryPairs.length > 0 ? `?${queryPairs.join('&')}` : ''
+}
+
+/**
+ * 处理 HTTP 错误状态码
+ * @param {number} status - HTTP 状态码
+ */
+function handleHttpError(status) {
+  switch (status) {
+    case HttpStatusCode.INTERNAL_ERROR:
+      router.push('/500')
+      break
+    case HttpStatusCode.NOT_FOUND:
+      router.push('/404')
+      break
+    case HttpStatusCode.UNAUTHORIZED:
+      // 未授权，跳转到登录页
+      router.push('/login')
+      break
+    default:
+      break
+  }
+}
 
 /**
  * 统一请求处理函数
@@ -19,8 +55,15 @@ async function request(url, options = {}) {
     method = 'GET',
     headers = {},
     body = null,
+    params = null,
     needAuth = false
   } = options
+
+  // 构建完整 URL（处理查询参数）
+  let fullUrl = `${BASE_URL}${url}`
+  if (params && method === 'GET') {
+    fullUrl += buildQueryString(params)
+  }
 
   // 构建请求配置
   const config = {
@@ -45,13 +88,19 @@ async function request(url, options = {}) {
   }
 
   try {
-    const response = await fetch(`${BASE_URL}${url}`, config)
+    const response = await fetch(fullUrl, config)
+
+    // 检查 HTTP 状态码
+    if (!response.ok) {
+      handleHttpError(response.status)
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
 
     // 解析响应数据
     const result = await response.json()
 
     // 检查业务状态码
-    if (result.code !== SUCCESS_CODE) {
+    if (result.code !== ResponseCode.SUCCESS) {
       throw new Error(result.message || '请求失败')
     }
 

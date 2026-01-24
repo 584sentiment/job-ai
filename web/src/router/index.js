@@ -15,7 +15,7 @@ const routes = [
     component: () => import('@/views/AddJob.vue'),
     meta: {
       title: '新增岗位',
-      hideBottomNav: true
+      hideBottomNav: false
     }
   },
   {
@@ -70,6 +70,33 @@ const routes = [
       hideBottomNav: true,
       hideNavBar: true
     }
+  },
+  // 500 错误页面
+  {
+    path: '/500',
+    name: 'ServerError',
+    component: () => import('@/views/errors/500.vue'),
+    meta: {
+      title: '服务器错误',
+      hideNavBar: true,
+      hideBottomNav: true
+    }
+  },
+  // 404 错误页面
+  {
+    path: '/404',
+    name: 'NotFound',
+    component: () => import('@/views/errors/404.vue'),
+    meta: {
+      title: '页面未找到',
+      hideNavBar: true,
+      hideBottomNav: true
+    }
+  },
+  // 通配符路由，匹配所有未定义的路径
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/404'
   }
 ]
 

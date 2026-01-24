@@ -11,6 +11,13 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    open: true
+    open: true,
+    proxy: {
+      '/api': {
+        target: 'http://ybb9647b.natappfree.cc',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/job-track-assistant')
+      }
+    }
   }
 })
