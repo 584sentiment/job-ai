@@ -192,23 +192,75 @@
     <!-- 分页组件 -->
     <div
       v-if="!jobsStore.loading && jobsStore.pagination.total > 0"
-      class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-lg p-4 shadow-sm"
+      class="mt-8 bg-white rounded-lg p-4 shadow-sm"
     >
-      <!-- 总数统计 -->
-      <span class="text-sm text-gray-600">
-        共 <span class="font-semibold">{{ jobsStore.pagination.total }}</span> 条
-      </span>
+      <!-- 桌面端：横向布局 -->
+      <div class="hidden sm:flex items-center justify-between gap-4">
+        <!-- 总数统计 -->
+        <span class="text-sm text-gray-600 whitespace-nowrap">
+          共 <span class="font-semibold">{{ jobsStore.pagination.total }}</span> 条
+        </span>
 
-      <!-- Naive UI 分页组件（内置每页大小选择器） -->
-      <n-pagination
-        v-model:page="jobsStore.pagination.current"
-        v-model:page-size="jobsStore.pagination.size"
-        :page-count="jobsStore.pagination.pages"
-        :page-sizes="PAGE_SIZES"
-        show-size-picker
-        @update:page="handlePageChange"
-        @update:page-size="handlePageSizeChange"
-      />
+        <!-- Naive UI 分页组件（显示每页大小选择器） -->
+        <n-pagination
+          v-model:page="jobsStore.pagination.current"
+          v-model:page-size="jobsStore.pagination.size"
+          :page-count="jobsStore.pagination.pages"
+          :page-sizes="PAGE_SIZES"
+          show-size-picker
+          @update:page="handlePageChange"
+          @update:page-size="handlePageSizeChange"
+        />
+      </div>
+
+      <!-- 移动端：纵向布局 -->
+      <div class="sm:hidden flex flex-col gap-4">
+        <!-- 总数统计 -->
+        <div class="flex items-center justify-between text-sm text-gray-600">
+          <span>共 <span class="font-semibold">{{ jobsStore.pagination.total }}</span> 条</span>
+          <span>第 {{ jobsStore.pagination.current }} / {{ jobsStore.pagination.pages }} 页</span>
+        </div>
+
+        <!-- 简化的分页按钮（不显示每页大小选择器） -->
+        <div class="flex items-center justify-center gap-2">
+          <!-- 上一页按钮 -->
+          <button
+            @click="handlePageChange(jobsStore.pagination.current - 1)"
+            :disabled="jobsStore.pagination.current <= 1"
+            class="px-4 py-2 rounded-lg border border-border bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200 flex items-center gap-1"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <span>上一页</span>
+          </button>
+
+          <!-- 页码输入 -->
+          <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg">
+            <input
+              type="number"
+              :value="jobsStore.pagination.current"
+              @change="handlePageInput"
+              :max="jobsStore.pagination.pages"
+              min="1"
+              class="w-12 text-center bg-transparent border-0 focus:outline-none focus:ring-0"
+            />
+            <span class="text-gray-400">/ {{ jobsStore.pagination.pages }}</span>
+          </div>
+
+          <!-- 下一页按钮 -->
+          <button
+            @click="handlePageChange(jobsStore.pagination.current + 1)"
+            :disabled="jobsStore.pagination.current >= jobsStore.pagination.pages"
+            class="px-4 py-2 rounded-lg border border-border bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200 flex items-center gap-1"
+          >
+            <span>下一页</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   </main>
 </template>
@@ -265,6 +317,22 @@ const filteredJobs = computed(() => {
 const handlePageChange = async (page: number) => {
   console.log('分页变化:', page)
   await jobsStore.goToPage(page)
+}
+
+// 处理页码输入
+const handlePageInput = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const page = parseInt(target.value)
+
+  if (isNaN(page)) return
+
+  // 限制页码范围
+  const validPage = Math.max(1, Math.min(page, jobsStore.pagination.pages))
+  if (validPage !== page) {
+    target.value = validPage.toString()
+  }
+
+  handlePageChange(validPage)
 }
 
 // 处理每页大小变化（Naive UI 会直接传递新的 size 值）

@@ -160,7 +160,7 @@
         <h2 class="text-lg font-semibold">投递状态</h2>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+      <div class="grid grid-cols-2 gap-3">
         <label
           v-for="status in statusOptions"
           :key="status.value"
@@ -173,11 +173,7 @@
             class="sr-only peer"
           >
           <div
-            class="px-4 py-3 rounded-lg border-2 border-border text-center peer-checked:border-primary peer-checked:bg-primary peer-checked:text-white transition-all duration-200 hover:border-gray-300 text-sm"
-            :class="{
-              'peer-checked:border-green-500 peer-checked:bg-green-500': status.value === PositionStatus.OFFER || status.value === PositionStatus.JOINED,
-              'peer-checked:border-red-500 peer-checked:bg-red-500': status.value === PositionStatus.REJECTED || status.value === PositionStatus.NOT_PASS
-            }"
+            class="px-4 py-3 rounded-lg border-2 border-border text-center peer-checked:border-primary peer-checked:bg-primary peer-checked:text-white transition-all duration-200 hover:border-gray-300 text-sm font-medium"
           >
             {{ status.label }}
           </div>
@@ -240,15 +236,10 @@ const form = ref({
   status: PositionStatus.TO_BE_DELIVERED
 })
 
-// 状态选项 - 使用后端枚举值
+// 状态选项 - 只保留未投递和已投递两个选项
 const statusOptions = [
-  { label: '待投递', value: PositionStatus.TO_BE_DELIVERED },       // 0
-  { label: '已投递', value: PositionStatus.DELIVERED },             // 1
-  { label: '流程中', value: PositionStatus.IN_PROCESS },            // 2
-  { label: '已Offer', value: PositionStatus.OFFER },                // 3
-  { label: '已入职', value: PositionStatus.JOINED },                // 4
-  { label: '未通过', value: PositionStatus.NOT_PASS },              // 7
-  { label: '已拒绝', value: PositionStatus.REJECTED }               // 8
+  { label: '未投递', value: PositionStatus.TO_BE_DELIVERED },       // 0
+  { label: '已投递', value: PositionStatus.DELIVERED }              // 1
 ]
 
 // 投递渠道选项

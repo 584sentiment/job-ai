@@ -1,122 +1,139 @@
 <template>
-  <n-modal
-    v-model:show="localOpen"
-    :mask-closable="true"
-    preset="card"
-    :title="mode === 'add' ? '添加面试记录' : '编辑面试记录'"
-    size="huge"
-    :style="{ width: '600px' }"
-    :segmented="{ content: 'soft', footer: 'soft' }"
-    :auto-focus="false"
-  >
-    <form @submit.prevent="handleSubmit" class="space-y-6">
-      <!-- 面试轮次 -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">
-          面试轮次 <span class="text-red-500">*</span>
-        </label>
-        <n-select
-          v-model:value="form.interviewRound"
-          :options="roundOptions"
-          placeholder="请选择面试轮次"
-          :consistent-menu-width="false"
-          size="large"
-          class="w-full"
-        />
-      </div>
+  <Dialog as="div" class="relative z-50" :open="open" @close="handleClose">
+    <!-- 背景遮罩 -->
+    <div class="fixed inset-0 bg-black/30 transition-opacity" aria-hidden="true"></div>
 
-      <!-- 面试时间 -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">
-          面试时间 <span class="text-red-500">*</span>
-        </label>
-        <n-date-picker
-          v-model:value="form.interviewTime"
-          type="datetime"
-          placeholder="请选择面试时间"
-          class="w-full"
-          size="large"
-          clearable
-        />
-      </div>
+    <!-- 对话框容器 -->
+    <div class="fixed inset-0 overflow-y-auto">
+      <div class="flex min-h-full items-center justify-center px-4 py-0 sm:p-0">
+        <DialogPanel class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg w-full">
+          <!-- 对话框头部 -->
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 flex items-center justify-between border-b border-gray-200">
+            <DialogTitle class="text-lg font-semibold text-gray-900">
+              {{ mode === 'add' ? '添加面试记录' : '编辑面试记录' }}
+            </DialogTitle>
+            <button
+              @click="handleClose"
+              type="button"
+              class="rounded-md bg-transparent text-gray-400 hover:text-gray-500 focus:outline-none"
+            >
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
 
-      <!-- 面试地点 -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">
-          面试地点 <span class="text-red-500">*</span>
-        </label>
-        <n-input
-          v-model:value="form.interviewLocation"
-          type="text"
-          placeholder="例如:北京海淀区中关村软件园"
-          size="large"
-        />
-      </div>
+          <!-- 对话框内容 -->
+          <div class="px-4 py-5 sm:p-6 max-h-[70vh] overflow-y-auto">
+            <form @submit.prevent="handleSubmit" class="space-y-5">
+              <!-- 面试轮次 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  面试轮次 <span class="text-red-500">*</span>
+                </label>
+                <NSelect
+                  v-model:value="form.interviewRound"
+                  :options="roundOptions"
+                  placeholder="请选择面试轮次"
+                  size="large"
+                  class="w-full"
+                />
+              </div>
 
-      <!-- 面试形式 -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">
-          面试形式 <span class="text-red-500">*</span>
-        </label>
-        <n-select
-          v-model:value="form.interviewForm"
-          :options="formOptions"
-          placeholder="请选择面试形式"
-          :consistent-menu-width="false"
-          size="large"
-          class="w-full"
-        />
-      </div>
+              <!-- 面试时间 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  面试时间 <span class="text-red-500">*</span>
+                </label>
+                <NDatePicker
+                  v-model:value="form.interviewTime"
+                  type="datetime"
+                  placeholder="请选择面试时间"
+                  class="w-full"
+                  size="large"
+                  clearable
+                />
+              </div>
 
-      <!-- 面试官信息 -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">面试官信息</label>
-        <n-input
-          v-model:value="form.interviewerInfo"
-          type="text"
-          placeholder="例如:张经理（技术总监）"
-          size="large"
-        />
-      </div>
+              <!-- 面试地点 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  面试地点 <span class="text-red-500">*</span>
+                </label>
+                <NInput
+                  v-model:value="form.interviewLocation"
+                  type="text"
+                  placeholder="例如:北京海淀区中关村软件园"
+                  size="large"
+                />
+              </div>
 
-      <!-- 备注 -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">备注</label>
-        <n-input
-          v-model:value="form.remarks"
-          type="textarea"
-          placeholder="面试注意事项、准备材料等"
-          :autosize="{ minRows: 3, maxRows: 5 }"
-        />
-      </div>
-    </form>
+              <!-- 面试形式 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  面试形式 <span class="text-red-500">*</span>
+                </label>
+                <NSelect
+                  v-model:value="form.interviewForm"
+                  :options="formOptions"
+                  placeholder="请选择面试形式"
+                  size="large"
+                  class="w-full"
+                />
+              </div>
 
-    <template #footer>
-      <div class="flex gap-3">
-        <n-button
-          size="large"
-          @click="handleCancel"
-          class="flex-1"
-        >
-          取消
-        </n-button>
-        <n-button
-          type="primary"
-          size="large"
-          @click="handleSubmit"
-          :disabled="!isFormValid"
-          class="flex-1"
-        >
-          {{ mode === 'add' ? '添加' : '保存' }}
-        </n-button>
+              <!-- 面试官信息 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">面试官信息</label>
+                <NInput
+                  v-model:value="form.interviewerInfo"
+                  type="text"
+                  placeholder="例如:张经理（技术总监）"
+                  size="large"
+                />
+              </div>
+
+              <!-- 备注 -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">备注</label>
+                <NInput
+                  v-model:value="form.remarks"
+                  type="textarea"
+                  placeholder="面试注意事项、准备材料等"
+                  :autosize="{ minRows: 3, maxRows: 5 }"
+                />
+              </div>
+            </form>
+          </div>
+
+          <!-- 对话框底部按钮 -->
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2 border-t border-gray-200">
+            <button
+              @click="handleSubmit"
+              type="button"
+              :disabled="!isFormValid"
+              class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ mode === 'add' ? '添加' : '保存' }}
+            </button>
+            <button
+              @click="handleClose"
+              type="button"
+              class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:w-auto sm:text-sm transition-colors duration-200"
+            >
+              取消
+            </button>
+          </div>
+        </DialogPanel>
       </div>
-    </template>
-  </n-modal>
+    </div>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import { NModal, NSelect, NDatePicker, NInput, NButton } from 'naive-ui'
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
+import { NSelect, NDatePicker, NInput } from 'naive-ui'
 import { InterviewRound, InterviewForm, type Interview, type InterviewCreateRequest } from '@/types'
 
 interface Props {
@@ -133,18 +150,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits(['update:open', 'submit'])
-
-// 本地的 open 状态
-const localOpen = ref(props.open)
-
-// 同步 open 状态
-watch(() => props.open, (newVal) => {
-  localOpen.value = newVal
-})
-
-watch(localOpen, (newVal) => {
-  emit('update:open', newVal)
-})
 
 // 表单数据
 const form = ref({
@@ -205,7 +210,7 @@ watch(() => props.initialData, (newData) => {
 }, { immediate: true })
 
 // 对话框关闭时重置表单
-watch(localOpen, (newVal) => {
+watch(() => props.open, (newVal) => {
   if (!newVal) {
     // 延迟重置,避免动画过程中表单突然清空
     setTimeout(() => {
@@ -221,8 +226,8 @@ watch(localOpen, (newVal) => {
   }
 })
 
-const handleCancel = () => {
-  localOpen.value = false
+const handleClose = () => {
+  emit('update:open', false)
 }
 
 const handleSubmit = () => {
@@ -247,6 +252,6 @@ const handleSubmit = () => {
   }
 
   emit('submit', submitData)
-  localOpen.value = false
+  emit('update:open', false)
 }
 </script>
