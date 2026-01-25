@@ -72,7 +72,7 @@
         </button>
       </div>
 
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
         <div class="flex items-center space-x-2 text-gray-600">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
@@ -97,6 +97,31 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
           </svg>
           <span>简历v2.0</span>
+        </div>
+      </div>
+
+      <!-- 联系人信息 -->
+      <div v-if="job.contactName || job.contactPhone" class="pt-4 border-t border-border">
+        <div class="flex items-center space-x-2 mb-3">
+          <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+          </svg>
+          <h3 class="text-sm font-semibold text-gray-700">联系人信息</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div v-if="job.contactName" class="flex items-center space-x-2 text-sm text-gray-600">
+            <span class="text-gray-500">姓名：</span>
+            <span class="font-medium text-gray-900">{{ job.contactName }}</span>
+          </div>
+          <div v-if="job.contactPhone" class="flex items-center space-x-2 text-sm text-gray-600">
+            <span class="text-gray-500">电话：</span>
+            <a
+              :href="`tel:${job.contactPhone}`"
+              class="font-medium text-primary hover:text-secondary transition-colors duration-200"
+            >
+              {{ job.contactPhone }}
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -127,6 +152,144 @@
               <p class="text-sm text-gray-600 mt-1">{{ item.desc }}</p>
             </div>
             <span class="text-sm text-gray-500">{{ item.date }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 关联信息区 -->
+    <div class="space-y-4">
+      <!-- 关联面经 -->
+      <div class="glass-card rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-2">
+            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+            <h3 class="text-lg font-semibold">关联面经</h3>
+          </div>
+          <button class="text-primary hover:text-secondary font-medium text-sm flex items-center space-x-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span>查看全部</span>
+          </button>
+        </div>
+
+        <!-- 空状态 -->
+        <div v-if="!job.relatedExperiences || job.relatedExperiences?.length === 0" class="text-center py-8">
+          <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <p class="text-gray-500 mb-2">暂无关联面经</p>
+          <p class="text-sm text-gray-400">可以添加该岗位相关的面试经验记录</p>
+        </div>
+
+        <!-- 面经列表 -->
+        <div v-else class="space-y-3">
+          <div
+            v-for="exp in job.relatedExperiences.slice(0, 3)"
+            :key="exp.id"
+            class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-purple-300 transition-colors duration-200 cursor-pointer"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center space-x-2">
+                <span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">
+                  {{ exp.position }}
+                </span>
+                <span class="text-sm text-gray-600">{{ formatDate(exp.date) }}</span>
+              </div>
+              <button class="text-gray-400 hover:text-gray-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
+            <p class="text-sm font-medium text-gray-900 mb-1">{{ exp.title }}</p>
+            <p class="text-sm text-gray-700 line-clamp-2">{{ exp.summary }}</p>
+            <div v-if="exp.tags && exp.tags.length" class="flex flex-wrap gap-1 mt-2">
+              <span v-for="tag in exp.tags" :key="tag" class="px-2 py-0.5 bg-gray-200 text-gray-600 text-xs rounded-full">
+                {{ tag }}
+              </span>
+            </div>
+          </div>
+
+          <!-- 查看更多提示 -->
+          <div v-if="job.relatedExperiences.length > 3" class="text-center pt-2">
+            <button class="text-sm text-primary hover:text-secondary font-medium">
+              查看全部 {{ job.relatedExperiences.length }} 条面经 →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 面试总结 -->
+      <div class="glass-card rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-2">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h3 class="text-lg font-semibold">面试总结</h3>
+          </div>
+          <button class="text-primary hover:text-secondary font-medium text-sm flex items-center space-x-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span>添加总结</span>
+          </button>
+        </div>
+
+        <!-- 空状态 -->
+        <div v-if="!job.summaries || job.summaries?.length === 0" class="text-center py-8">
+          <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012 2m0 0h2a2 2 0 012 2"></path>
+          </svg>
+          <p class="text-gray-500 mb-2">暂无面试总结</p>
+          <p class="text-sm text-gray-400">记录每轮面试的得失，助力后续改进</p>
+        </div>
+
+        <!-- 总结列表 -->
+        <div v-else class="space-y-4">
+          <div
+            v-for="summary in job.summaries.slice(0, 2)"
+            :key="summary.id"
+            class="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-200"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center space-x-2">
+                <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium">
+                  {{ summary.round }}
+                </span>
+                <span class="text-sm text-gray-600">{{ formatDate(summary.date) }}</span>
+              </div>
+            </div>
+            <p class="text-sm text-gray-700 line-clamp-3 mb-2">{{ summary.content }}</p>
+            <div v-if="summary.highlights && summary.highlights.length" class="mb-2">
+              <p class="text-xs font-medium text-gray-700 mb-1">亮点：</p>
+              <ul class="text-xs text-gray-600 space-y-1">
+                <li v-for="item in summary.highlights.slice(0, 2)" :key="item" class="flex items-start">
+                  <span class="text-green-500 mr-1">✓</span>
+                  <span>{{ item }}</span>
+                </li>
+              </ul>
+            </div>
+            <div v-if="summary.improvements && summary.improvements.length">
+              <p class="text-xs font-medium text-gray-700 mb-1">改进点：</p>
+              <ul class="text-xs text-gray-600 space-y-1">
+                <li v-for="item in summary.improvements.slice(0, 2)" :key="item" class="flex items-start">
+                  <span class="text-orange-500 mr-1">•</span>
+                  <span>{{ item }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 查看更多提示 -->
+          <div v-if="job.summaries.length > 2" class="text-center pt-2">
+            <button class="text-sm text-primary hover:text-secondary font-medium">
+              查看全部 {{ job.summaries.length }} 条总结 →
+            </button>
           </div>
         </div>
       </div>

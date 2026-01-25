@@ -44,6 +44,10 @@ export interface Position {
   createTime: string
   /** 更新时间 */
   updateTime: string
+  /** 关联面经列表 */
+  relatedExperiences?: RelatedExperience[]
+  /** 面试总结列表 */
+  summaries?: InterviewSummary[]
 }
 
 /**
@@ -168,3 +172,45 @@ export type PositionDetailResponse = ApiResponse<Position>
  * 岗位创建/更新响应
  */
 export type PositionMutationResponse = ApiResponse<Position>
+
+/**
+ * 关联面经
+ */
+export interface RelatedExperience {
+  /** 面经ID */
+  id: string
+  /** 面试公司 */
+  company: string
+  /** 面试岗位 */
+  position: string
+  /** 面经标题 */
+  title: string
+  /** 面经内容摘要 */
+  summary: string
+  /** 面试日期 */
+  date: string
+  /** 标签 */
+  tags: string[]
+}
+
+/**
+ * 面试总结
+ */
+export interface InterviewSummary {
+  /** 总结ID */
+  id: string
+  /** 岗位ID */
+  positionId: string
+  /** 面试轮次 */
+  round: string
+  /** 面试日期 */
+  date: string
+  /** 总结内容 */
+  content: string
+  /** 亮点 */
+  highlights: string[]
+  /** 不足 */
+  improvements: string[]
+  /** 创建时间 */
+  createTime: string
+}
