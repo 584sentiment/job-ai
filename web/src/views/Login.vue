@@ -108,10 +108,11 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
 // 表单数据
@@ -167,8 +168,9 @@ const handleLogin = async () => {
       password: form.value.password
     })
 
-    // 登录成功，跳转到首页
-    router.push('/')
+    // 登录成功，跳转到原始目标页面或首页
+    const redirect = route.query.redirect || '/'
+    router.push(redirect)
   } catch (error) {
     console.error('登录失败:', error)
 

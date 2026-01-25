@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/store/auth'
 
 const routes = [
   {
@@ -6,7 +7,8 @@ const routes = [
     name: 'JobList',
     component: () => import('@/views/JobList.vue'),
     meta: {
-      title: '岗位列表'
+      title: '岗位列表',
+      requiresAuth: true
     }
   },
   {
@@ -15,7 +17,8 @@ const routes = [
     component: () => import('@/views/AddJob.vue'),
     meta: {
       title: '新增岗位',
-      hideBottomNav: false
+      hideBottomNav: false,
+      requiresAuth: true
     }
   },
   {
@@ -24,7 +27,8 @@ const routes = [
     component: () => import('@/views/JobDetail.vue'),
     meta: {
       title: '岗位详情',
-      hideBottomNav: true
+      hideBottomNav: true,
+      requiresAuth: true
     }
   },
   {
@@ -32,7 +36,8 @@ const routes = [
     name: 'Interviews',
     component: () => import('@/views/Interviews.vue'),
     meta: {
-      title: '面经管理'
+      title: '面经管理',
+      requiresAuth: true
     }
   },
   {
@@ -40,7 +45,8 @@ const routes = [
     name: 'Summaries',
     component: () => import('@/views/Summaries.vue'),
     meta: {
-      title: '面试总结'
+      title: '面试总结',
+      requiresAuth: true
     }
   },
   {
@@ -48,7 +54,8 @@ const routes = [
     name: 'Profile',
     component: () => import('@/views/Profile.vue'),
     meta: {
-      title: '个人中心'
+      title: '个人中心',
+      requiresAuth: true
     }
   },
   {
@@ -58,7 +65,8 @@ const routes = [
     meta: {
       title: '用户注册',
       hideBottomNav: true,
-      hideNavBar: true
+      hideNavBar: true,
+      requiresAuth: false
     }
   },
   {
@@ -68,7 +76,8 @@ const routes = [
     meta: {
       title: '用户登录',
       hideBottomNav: true,
-      hideNavBar: true
+      hideNavBar: true,
+      requiresAuth: false
     }
   },
   // 500 错误页面
@@ -106,9 +115,28 @@ const router = createRouter({
   routes
 })
 
-// 路由守卫 - 设置页面标题
+// 路由守卫 - 检查登录状态和设置页面标题
 router.beforeEach((to, from, next) => {
+  // 设置页面标题
   document.title = to.meta.title ? `${to.meta.title} - 求职追踪助手` : '求职追踪助手'
+
+  // 检查是否需要认证
+  if (to.meta.requiresAuth !== false) {
+    // 需要认证，检查登录状态
+    const authStore = useAuthStore()
+
+    // 如果未登录，重定向到登录页
+    if (!authStore.isLoggedIn) {
+      // 保存原始目标路径，登录后可以跳转回来
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+      return
+    }
+  }
+
+  // 已登录或不需要认证，允许访问
   next()
 })
 
