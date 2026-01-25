@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>面经管理 - 求职追踪助手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563EB;
+            --secondary: #3B82F6;
+            --cta: #F97316;
+            --background: #F8FAFC;
+            --text: #1E293B;
+            --border: #E2E8F0;
+        }
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+        }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB',
+                        secondary: '#3B82F6',
+                        cta: '#F97316',
+                        background: '#F8FAFC',
+                        text: '#1E293B',
+                        border: '#E2E8F0',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen pb-20">
+    <!-- 顶部导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-card shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="text-xl font-semibold font-['Poppins']">求职追踪助手</span>
+                </div>
+
+                <!-- 导航链接 -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="index.html" class="text-text hover:text-primary transition-colors duration-200">岗位列表</a>
+                    <a href="experiences.html" class="text-primary font-medium">面经管理</a>
+                    <a href="summaries.html" class="text-text hover:text-primary transition-colors duration-200">面试总结</a>
+                </div>
+
+                <!-- 右侧操作 -->
+                <div class="flex items-center space-x-4">
+                    <button class="relative p-2 text-text hover:text-primary transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-cta rounded-full"></span>
+                    </button>
+                    <a href="profile.html" class="flex items-center space-x-2 hover:opacity-80 transition-opacity duration-200">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=jobseeker" alt="用户头像" class="w-8 h-8 rounded-full">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="pt-20 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <!-- 页面标题和操作栏 -->
+        <div class="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold">面经管理</h1>
+                <p class="text-gray-600 mt-1">记录和整理面试经验</p>
+            </div>
+            <div class="flex gap-3">
+                <div class="relative">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="搜索面经..."
+                        class="pl-10 pr-4 py-2.5 rounded-xl border border-border bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 w-64"
+                        oninput="handleSearch(this.value)"
+                    >
+                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <a href="add-experience.html" class="px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-secondary shadow-md hover:shadow-lg transition-all duration-200 flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span>添加面经</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Tab筛选 -->
+        <div class="mb-6 overflow-x-auto">
+            <div class="flex space-x-2 pb-2">
+                <button
+                    onclick="setFilter('all')"
+                    id="tab-all"
+                    class="tab-button px-4 py-2 rounded-full bg-primary text-white font-medium whitespace-nowrap transition-all duration-200"
+                >
+                    全部 (<span id="count-all">4</span>)
+                </button>
+                <button
+                    onclick="setFilter('favorite')"
+                    id="tab-favorite"
+                    class="tab-button px-4 py-2 rounded-full bg-white text-text border border-border hover:border-primary hover:text-primary whitespace-nowrap transition-all duration-200"
+                >
+                    我的收藏 (<span id="count-favorite">2</span>)
+                </button>
+            </div>
+        </div>
+
+        <!-- 面经列表 -->
+        <div id="experienceList" class="grid gap-4 md:grid-cols-2">
+            <!-- 面经卡片会通过 JavaScript 动态渲染 -->
+        </div>
+
+        <!-- 空状态 -->
+        <div id="emptyState" class="hidden text-center py-16">
+            <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p class="text-gray-500 text-lg">暂无面经记录</p>
+            <p class="text-gray-400 mt-2">点击上方"添加面经"按钮记录第一篇面经</p>
+        </div>
+    </main>
+
+    <script>
+        // 模拟面经数据
+        const experiences = [
+            {
+                id: 1,
+                company: '字节跳动',
+                position: '前端开发工程师',
+                round: '一面',
+                date: '2025-01-20',
+                content: '主要考察了Vue3的响应式原理、性能优化、组件通信等内容。面试官很专业，问题比较有深度。\n\n具体问题包括：\n1. Vue3的响应式原理与Vue2的区别\n2. 如何优化Vue应用的性能\n3. provide/inject的实现原理\n4. 手写一个简单的响应式系统',
+                tags: ['Vue3', '性能优化', '源码'],
+                isFavorite: true,
+                views: 128,
+                comments: 8
+            },
+            {
+                id: 2,
+                company: '腾讯',
+                position: '全栈开发工程师',
+                round: '二面',
+                date: '2025-01-18',
+                content: '二面主要考察系统设计和架构能力。需要设计一个在线协作文档系统，考察了实时通信方案、数据一致性处理、多人冲突解决等。面试官注重思考过程和方案对比。',
+                tags: ['系统设计', '架构', '实时通信'],
+                isFavorite: false,
+                views: 89,
+                comments: 5
+            },
+            {
+                id: 3,
+                company: '阿里巴巴',
+                position: '前端开发工程师',
+                round: '终面',
+                date: '2025-01-15',
+                content: '终面是交叉面，由其他团队的Leader面试。主要考察项目经验和团队协作能力，问了很多之前项目的架构设计和技术选型理由，以及遇到的难点和解决方案。',
+                tags: ['项目经验', '团队协作', '架构设计'],
+                isFavorite: true,
+                views: 256,
+                comments: 15
+            },
+            {
+                id: 4,
+                company: '美团',
+                position: '后端开发工程师',
+                round: '笔试',
+                date: '2025-01-10',
+                content: '笔试主要考察算法和编程能力，包括动态规划、图论、字符串处理等。题目难度适中，需要熟悉常见数据结构和算法。建议提前刷LeetCode。',
+                tags: ['算法', '动态规划', '数据结构'],
+                isFavorite: false,
+                views: 64,
+                comments: 3
+            }
+        ];
+
+        // 当前状态
+        let currentFilter = 'all';
+        let searchKeyword = '';
+
+        // 渲染面经列表
+        function renderExperiences() {
+            const list = document.getElementById('experienceList');
+            const emptyState = document.getElementById('emptyState');
+
+            // 筛选数据
+            let filtered = experiences;
+
+            if (currentFilter === 'favorite') {
+                filtered = experiences.filter(e => e.isFavorite);
+            }
+
+            if (searchKeyword) {
+                const keyword = searchKeyword.toLowerCase();
+                filtered = filtered.filter(e =>
+                    e.company.toLowerCase().includes(keyword) ||
+                    e.position.toLowerCase().includes(keyword) ||
+                    e.content.toLowerCase().includes(keyword)
+                );
+            }
+
+            // 更新计数
+            document.getElementById('count-all').textContent = experiences.length;
+            document.getElementById('count-favorite').textContent = experiences.filter(e => e.isFavorite).length;
+
+            // 显示/隐藏空状态
+            if (filtered.length === 0) {
+                list.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            list.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            // 渲染卡片
+            list.innerHTML = filtered.map(exp => `
+                <div class="glass-card rounded-xl p-6 hover:shadow-lg transition-shadow duration-200 cursor-pointer" onclick="window.location.href='experience-detail.html?id=${exp.id}'">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
+                                ${exp.company.charAt(0)}
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg">${exp.company}</h3>
+                                <p class="text-sm text-gray-500">${exp.position}</p>
+                            </div>
+                        </div>
+                        <button
+                            onclick="event.stopPropagation(); toggleFavorite(${exp.id})"
+                            class="${exp.isFavorite ? 'text-yellow-500' : 'text-gray-300'} hover:text-yellow-500 transition-colors duration-200"
+                        >
+                            <svg class="w-6 h-6" fill="${exp.isFavorite ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">${exp.round}</span>
+                            <span class="text-xs text-gray-500">${exp.date}</span>
+                        </div>
+                        <p class="text-gray-700 text-sm line-clamp-3">${exp.content}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                            <div class="flex items-center space-x-2">
+                                ${exp.tags.map(tag => `<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">${tag}</span>`).join('')}
+                            </div>
+                            <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                <span class="flex items-center space-x-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                    <span>${exp.views}</span>
+                                </span>
+                                <span class="flex items-center space-x-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                                    </svg>
+                                    <span>${exp.comments}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 设置筛选
+        function setFilter(filter) {
+            currentFilter = filter;
+
+            // 更新Tab样式
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('bg-white', 'text-text', 'border', 'border-border');
+            });
+
+            const activeTab = document.getElementById(`tab-${filter}`);
+            activeTab.classList.remove('bg-white', 'text-text', 'border', 'border-border');
+            activeTab.classList.add('bg-primary', 'text-white');
+
+            renderExperiences();
+        }
+
+        // 搜索
+        function handleSearch(value) {
+            searchKeyword = value;
+            renderExperiences();
+        }
+
+        // 切换收藏
+        function toggleFavorite(id) {
+            const exp = experiences.find(e => e.id === id);
+            if (exp) {
+                exp.isFavorite = !exp.isFavorite;
+                renderExperiences();
+            }
+        }
+
+        // 初始渲染
+        renderExperiences();
+    </script>
+</body>
+</html>
