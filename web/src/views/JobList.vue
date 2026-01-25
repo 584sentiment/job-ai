@@ -197,34 +197,21 @@
       v-if="!jobsStore.loading && jobsStore.pagination.total > 0"
       class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-lg p-4 shadow-sm"
     >
-      <!-- 每页大小选择器 -->
-      <div class="flex items-center space-x-3">
-        <span class="text-sm text-gray-600">每页显示</span>
-        <select
-          :value="jobsStore.pagination.size"
-          @change="handlePageSizeChange($event)"
-          class="px-3 py-1.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          :disabled="jobsStore.loading"
-        >
-          <option value="10">10 条</option>
-          <option value="20">20 条</option>
-          <option value="50">50 条</option>
-          <option value="100">100 条</option>
-        </select>
-      </div>
+      <!-- 总数统计 -->
+      <span class="text-sm text-gray-600">
+        共 <span class="font-semibold">{{ jobsStore.pagination.total }}</span> 条
+      </span>
 
-      <!-- 分页信息和分页组件 -->
-      <div class="flex items-center space-x-4">
-        <span class="text-sm text-gray-600">
-          共 <span class="font-semibold">{{ jobsStore.pagination.total }}</span> 条
-        </span>
-
-        <Pagination
-          :pages="jobsStore.pagination.pages"
-          v-model="jobsStore.pagination.current"
-          @update:modelValue="handlePageChange"
-        />
-      </div>
+      <!-- Naive UI 分页组件（内置每页大小选择器） -->
+      <n-pagination
+        v-model:page="jobsStore.pagination.current"
+        v-model:page-size="jobsStore.pagination.size"
+        :page-count="jobsStore.pagination.pages"
+        :page-sizes="[10, 20, 50, 100]"
+        show-size-picker
+        @update:page="handlePageChange"
+        @update:page-size="handlePageSizeChange"
+      />
     </div>
   </main>
 </template>
@@ -236,8 +223,7 @@ import { useJobsStore } from '@/store/jobs'
 import { getStatusLabel, getStatusClass } from '@/constants/position'
 import { getGradientClass } from '@/utils/mappers'
 import { PositionStatus } from '@/types'
-import Pagination from '@hennge/vue3-pagination'
-import '@hennge/vue3-pagination/dist/vue3-pagination.css'
+import { NPagination } from 'naive-ui'
 
 const router = useRouter()
 const jobsStore = useJobsStore()
@@ -293,10 +279,8 @@ const handlePageChange = async (page: number) => {
   await jobsStore.goToPage(page)
 }
 
-// 处理每页大小变化
-const handlePageSizeChange = (event: Event) => {
-  const target = event.target as HTMLSelectElement
-  const size = parseInt(target.value)
+// 处理每页大小变化（Naive UI 会直接传递新的 size 值）
+const handlePageSizeChange = (size: number) => {
   jobsStore.changePageSize(size)
 }
 

@@ -193,6 +193,59 @@
       </div>
     </div>
   </Dialog>
+
+  <!-- 删除确认对话框 -->
+  <Dialog as="div" class="relative z-50" :open="isDeleteDialogOpen" @close="closeDeleteDialog">
+    <!-- 背景遮罩 -->
+    <div class="fixed inset-0 bg-black/30 transition-opacity" aria-hidden="true"></div>
+
+    <!-- 对话框容器 -->
+    <div class="fixed inset-0 overflow-y-auto">
+      <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+        <DialogPanel class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
+          <!-- 对话框内容 -->
+          <div class="px-4 py-5 sm:p-6">
+            <!-- 警告图标 -->
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+              <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+            </div>
+
+            <!-- 对话框标题和描述 -->
+            <div class="text-center">
+              <DialogTitle as="h3" class="text-lg font-semibold text-gray-900 mb-2">
+                确认删除岗位
+              </DialogTitle>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">
+                  您确定要删除这个岗位吗？此操作无法撤销，所有相关数据将被永久删除。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 对话框底部按钮 -->
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2 border-t border-gray-200">
+            <button
+              @click="handleDeleteConfirm"
+              type="button"
+              class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200"
+            >
+              确认删除
+            </button>
+            <button
+              @click="closeDeleteDialog"
+              type="button"
+              class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:w-auto sm:text-sm transition-colors duration-200"
+            >
+              取消
+            </button>
+          </div>
+        </DialogPanel>
+      </div>
+    </div>
+  </Dialog>
 </template>
 
 <script setup>
@@ -210,6 +263,7 @@ const jobsStore = useJobsStore()
 
 // 编辑对话框状态
 const isEditDialogOpen = ref(false)
+const isDeleteDialogOpen = ref(false)  // 删除确认对话框状态
 const jobDetail = ref(null)  // 从 API 获取的岗位详情
 const loading = ref(false)   // 加载状态
 
@@ -240,9 +294,19 @@ const timeline = computed(() => {
 })
 
 const deleteJob = () => {
-  if (confirm('确定要删除这个岗位吗?')) {
-    jobsStore.deleteJob(route.params.id)
+  // 打开删除确认对话框
+  isDeleteDialogOpen.value = true
+}
+
+// 确认删除
+const handleDeleteConfirm = async () => {
+  try {
+    await jobsStore.deleteJob(route.params.id)
+    // 删除成功后跳转到首页
     router.push('/')
+  } catch (error) {
+    console.error('删除岗位失败:', error)
+    alert('删除岗位失败，请重试')
   }
 }
 
@@ -254,6 +318,11 @@ const openEditDialog = () => {
 // 关闭编辑对话框
 const closeEditDialog = () => {
   isEditDialogOpen.value = false
+}
+
+// 关闭删除对话框
+const closeDeleteDialog = () => {
+  isDeleteDialogOpen.value = false
 }
 
 // 处理编辑提交
