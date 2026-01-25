@@ -15,7 +15,7 @@
           <router-link to="/" class="nav-link" :class="{ 'text-primary font-medium': $route.name === 'JobList' }">
             岗位列表
           </router-link>
-          <router-link to="/interviews" class="nav-link" :class="{ 'text-primary font-medium': $route.name === 'Interviews' }">
+          <router-link to="/experiences" class="nav-link" :class="{ 'text-primary font-medium': $route.name === 'Experiences' }">
             面经管理
           </router-link>
           <router-link to="/summaries" class="nav-link" :class="{ 'text-primary font-medium': $route.name === 'Summaries' }">

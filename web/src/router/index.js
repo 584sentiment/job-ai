@@ -36,7 +36,36 @@ const routes = [
     name: 'Interviews',
     component: () => import('@/views/Interviews.vue'),
     meta: {
+      title: '面试记录',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/experiences',
+    name: 'Experiences',
+    component: () => import('@/views/Experiences.vue'),
+    meta: {
       title: '面经管理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/add-experience',
+    name: 'AddExperience',
+    component: () => import('@/views/AddExperience.vue'),
+    meta: {
+      title: '添加面经',
+      hideBottomNav: true,
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/experience-detail',
+    name: 'ExperienceDetail',
+    component: () => import('@/views/ExperienceDetail.vue'),
+    meta: {
+      title: '面经详情',
+      hideBottomNav: true,
       requiresAuth: true
     }
   },
