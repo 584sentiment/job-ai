@@ -215,8 +215,8 @@ export const useJobsStore = defineStore('jobs', () => {
    * 根据 ID 获取岗位
    * @param id - 岗位ID
    */
-  function getJobById(id: number | string): Position | undefined {
-    return jobs.value.find(job => job.id === parseInt(id as string));
+  function getJobById(id: string): Position | undefined {
+    return jobs.value.find(job => job.id === id);
   }
 
   /**
@@ -262,7 +262,7 @@ export const useJobsStore = defineStore('jobs', () => {
       const response = await positionApi.updatePosition(updates);
       // 更新本地数据
       const index = jobs.value.findIndex(
-        job => job.id === updates.id,
+        job => job.id === String(updates.id),
       );
       if (index !== -1 && response.data) {
         jobs.value[index] = response.data;
@@ -277,12 +277,12 @@ export const useJobsStore = defineStore('jobs', () => {
    * 删除岗位
    * @param id - 岗位ID
    */
-  async function deleteJob(id: number | string): Promise<void> {
+  async function deleteJob(id: string): Promise<void> {
     try {
-      await positionApi.deletePosition(parseInt(id as string));
+      await positionApi.deletePosition(id);
       // 从列表中移除
       const index = jobs.value.findIndex(
-        job => job.id === parseInt(id as string),
+        job => job.id === String(id),
       );
       if (index !== -1) {
         jobs.value.splice(index, 1);

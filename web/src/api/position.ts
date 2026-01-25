@@ -31,7 +31,7 @@ export function getPositions(
  * @param id - 岗位ID
  * @returns 岗位详情响应
  */
-export function getPositionById(id: number): Promise<PositionDetailResponse> {
+export function getPositionById(id: string): Promise<PositionDetailResponse> {
   return getWithAuth(`/positions/${id}`) as Promise<PositionDetailResponse>;
 }
 
@@ -63,7 +63,7 @@ export function updatePosition(
  * @param id - 岗位ID
  * @returns 删除结果响应
  */
-export function deletePosition(id: number): Promise<ApiResponse> {
+export function deletePosition(id: string): Promise<ApiResponse> {
   return delWithAuth(`/positions/${id}`) as Promise<ApiResponse>;
 }
 
@@ -72,6 +72,6 @@ export function deletePosition(id: number): Promise<ApiResponse> {
  * @param id - 岗位ID
  * @returns 操作结果响应
  */
-export function toggleCollect(id: number): Promise<ApiResponse> {
+export function toggleCollect(id: string): Promise<ApiResponse> {
   return postWithAuth(`/positions/${id}/collect`, {}) as Promise<ApiResponse>;
 }

@@ -106,7 +106,7 @@
             <div class="flex items-center space-x-3">
               <div
                 class="w-12 h-12 rounded-lg bg-gradient-to-br flex items-center justify-center text-white font-bold text-lg"
-                :class="`from-${getColorByStatus(job.status)}-500 to-${getColorByStatus(job.status)}-600`"
+                :class="getGradientClass(job.status)"
               >
                 {{ job.companyName?.charAt(0) }}
               </div>
@@ -234,7 +234,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useJobsStore } from '@/store/jobs'
 import { getStatusLabel, getStatusClass } from '@/constants/position'
-import { getColorByStatus } from '@/utils/mappers'
+import { getGradientClass } from '@/utils/mappers'
 import { PositionStatus } from '@/types'
 import Pagination from '@hennge/vue3-pagination'
 import '@hennge/vue3-pagination/dist/vue3-pagination.css'
@@ -300,7 +300,7 @@ const handlePageSizeChange = (event: Event) => {
   jobsStore.changePageSize(size)
 }
 
-const goToDetail = (id: number) => {
+const goToDetail = (id: string | number) => {
   router.push(`/job/${id}`)
 }
 </script>

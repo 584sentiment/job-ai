@@ -36,6 +36,28 @@ export function getColorByStatus(status: PositionStatus): string {
 }
 
 /**
+ * 获取渐变背景类名（返回完整的静态类名，确保 Tailwind 能够识别）
+ *
+ * 注意：不能使用动态拼接的类名（如 `from-${color}-500`），
+ * 因为 Tailwind 的 JIT 编译器只能识别静态的类名。
+ * 必须返回完整的类名字符串。
+ *
+ * @param status - 岗位状态（可以是 PositionStatus 或 string）
+ */
+export function getGradientClass(status: PositionStatus | string): string {
+  const gradientMap: Record<string, string> = {
+    [PositionStatus.TO_BE_DELIVERED]: 'from-yellow-500 to-yellow-600',
+    [PositionStatus.DELIVERED]: 'from-blue-500 to-blue-600',
+    [PositionStatus.IN_PROCESS]: 'from-purple-500 to-purple-600',
+    [PositionStatus.OFFER]: 'from-green-500 to-green-600',
+    [PositionStatus.JOINED]: 'from-teal-500 to-teal-600',
+    [PositionStatus.NOT_PASS]: 'from-red-500 to-red-600',
+    [PositionStatus.REJECTED]: 'from-red-500 to-red-600'
+  }
+  return gradientMap[status] || 'from-blue-500 to-blue-600'
+}
+
+/**
  * 将后端岗位数据转换为前端显示格式
  * 注意：由于使用了 TypeScript 类型，字段名已与后端一致
  * 只需要处理一些展示相关的转换

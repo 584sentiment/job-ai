@@ -13,7 +13,7 @@ export type { ApiResponse }
  */
 export interface Position {
   /** 岗位ID */
-  id: number
+  id: string
   /** 公司名称 */
   companyName: string
   /** 岗位名称 */
@@ -53,7 +53,7 @@ export interface InterviewRecord {
   /** 面试记录ID */
   id: number
   /** 岗位ID */
-  positionId: number
+  positionId: string
   /** 用户ID */
   userId: number
   /** 面试轮次 */
@@ -81,7 +81,7 @@ export interface InterviewRecord {
  */
 export interface PositionQueryParams {
   /** 岗位ID */
-  id?: number
+  id?: string
   /** 搜索关键字（可搜索公司名称、岗位名称等） */
   keyword?: string
   /** 公司名称 */
@@ -111,7 +111,7 @@ export interface PositionQueryParams {
  */
 export interface PositionCreateRequest {
   /** 岗位ID（更新时需要） */
-  id?: number
+  id?: string
   /** 公司名称 */
   companyName: string
   /** 岗位名称 */

@@ -1,5 +1,17 @@
 <template>
-  <main v-if="job" class="pt-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-6">
+  <main v-if="loading" class="pt-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+    <div class="flex items-center justify-center py-12">
+      <div class="flex flex-col items-center">
+        <svg class="animate-spin h-8 w-8 text-primary mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-gray-600">加载中...</p>
+      </div>
+    </div>
+  </main>
+
+  <main v-else-if="job" class="pt-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-6">
     <!-- 顶部导航栏 -->
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-4">
@@ -138,7 +150,10 @@
   </main>
 
   <div v-else class="pt-20 px-4 text-center text-gray-500">
-    <p>加载中...</p>
+    <p>岗位不存在或已被删除</p>
+    <router-link to="/" class="mt-4 inline-block px-6 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors duration-200">
+      返回首页
+    </router-link>
   </div>
 
   <!-- 编辑对话框 -->
@@ -187,6 +202,7 @@ import { useJobsStore } from '@/store/jobs'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
 import JobForm from '@/components/JobForm.vue'
 import { getStatusLabel } from '@/constants/position'
+import * as positionApi from '@/api/position'
 
 const route = useRoute()
 const router = useRouter()
@@ -194,9 +210,12 @@ const jobsStore = useJobsStore()
 
 // 编辑对话框状态
 const isEditDialogOpen = ref(false)
+const jobDetail = ref(null)  // 从 API 获取的岗位详情
+const loading = ref(false)   // 加载状态
 
+// 优先使用 API 获取的详情，如果没有则使用 store 中的数据
 const job = computed(() => {
-  return jobsStore.getJobById(route.params.id)
+  return jobDetail.value || jobsStore.getJobById(route.params.id)
 })
 
 // 计算属性：将面试记录转换为时间线格式
@@ -241,6 +260,22 @@ const closeEditDialog = () => {
 const handleEditSubmit = async (formData) => {
   try {
     await jobsStore.updateJob(formData)
+
+    // 重新获取岗位详情，确保显示最新数据
+    const jobId = route.params.id
+    loading.value = true
+    try {
+      const response = await positionApi.getPositionById(jobId)
+      if (response.data) {
+        jobDetail.value = response.data
+      }
+    } catch (error) {
+      console.error('刷新岗位详情失败:', error)
+      // 即使刷新失败，也不影响编辑成功的提示
+    } finally {
+      loading.value = false
+    }
+
     closeEditDialog()
   } catch (error) {
     console.error('更新岗位失败:', error)
@@ -248,9 +283,37 @@ const handleEditSubmit = async (formData) => {
   }
 }
 
-onMounted(() => {
-  if (!job.value) {
+onMounted(async () => {
+  // 从路由参数中获取岗位 ID
+  const jobId = route.params.id
+
+  // 如果 ID 无效，跳转到首页
+  if (!jobId) {
     router.push('/')
+    return
+  }
+
+  // 先尝试从 store 中获取
+  const existingJob = jobsStore.getJobById(jobId)
+  if (existingJob) {
+    jobDetail.value = existingJob
+  } else {
+    // 如果 store 中没有，从 API 获取
+    loading.value = true
+    try {
+      const response = await positionApi.getPositionById(jobId)
+      if (response.data) {
+        jobDetail.value = response.data
+      } else {
+        console.error('岗位不存在:', jobId)
+        router.push('/')
+      }
+    } catch (error) {
+      console.error('获取岗位详情失败:', error)
+      router.push('/')
+    } finally {
+      loading.value = false
+    }
   }
 })
 </script>
