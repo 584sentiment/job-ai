@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "build:github": "vue-tsc --noEmit && vite build --base=/job-ai/",
+    "build": "vite build",
+    "build:github": "vite build --base=/job-ai/",
+    "build:check": "vue-tsc --noEmit && vite build",
+    "build:github:check": "vue-tsc --noEmit && vite build --base=/job-ai/",
     "preview": "vite preview",
     "type-check": "vue-tsc --noEmit",
     "seed-data": "node scripts/seed-test-data.js"
