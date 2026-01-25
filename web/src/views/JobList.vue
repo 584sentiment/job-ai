@@ -61,9 +61,6 @@
           :disabled="jobsStore.loading"
         >
           {{ filter.label }}
-          <span v-if="filter.value !== 'all'" class="ml-1 opacity-75">
-            ({{ getStatusCount(filter.value) }})
-          </span>
         </button>
       </div>
     </div>
@@ -257,16 +254,6 @@ const statusFilters = [
   { label: '已Offer', value: PositionStatus.OFFER },
   { label: '已拒绝', value: PositionStatus.REJECTED }
 ]
-
-// 获取指定状态的岗位数量
-const getStatusCount = (statusValue: number | string) => {
-  if (statusValue === 'all') {
-    return jobsStore.jobs.length
-  }
-  // PositionStatus 枚举值是字符串类型，保持原样比较
-  const status = statusValue
-  return jobsStore.jobs.filter(job => job.status === status).length
-}
 
 // 直接使用后端返回的数据，不进行前端筛选
 const filteredJobs = computed(() => {
