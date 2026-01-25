@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
+    "build:github": "vue-tsc --noEmit && vite build --base=/job-ai/",
     "preview": "vite preview",
     "type-check": "vue-tsc --noEmit",
     "seed-data": "node scripts/seed-test-data.js"

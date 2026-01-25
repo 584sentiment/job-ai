@@ -4,11 +4,21 @@
 
 ## 技术栈
 
+### 核心框架
 - **Vue 3** - 渐进式JavaScript框架
 - **Vite** - 新一代前端构建工具
 - **Vue Router** - Vue.js官方路由
 - **Pinia** - Vue的状态管理库
+- **TypeScript** - 类型安全的JavaScript超集
+
+### UI 框架与组件库
 - **Tailwind CSS** - 实用优先的CSS框架
+- **Headless UI** - 无样式的可访问组件库
+- **@hennge/vue3-pagination** - 分页组件
+
+### 开发工具
+- **PostCSS** - CSS转换工具
+- **Autoprefixer** - 自动添加CSS前缀
 
 ## 项目结构
 
@@ -109,6 +119,32 @@ npm run build
 npm run preview
 ```
 
+## 🚀 部署
+
+### GitHub Pages 部署（推荐）
+
+项目已配置 GitHub Actions，可以自动部署到 GitHub Pages：
+
+```bash
+# 1. 推送代码到 GitHub
+git push origin main
+
+# 2. GitHub Actions 自动构建并部署
+# 访问：https://username.github.io/job-ai/
+```
+
+详细配置请查看：[GitHub Pages 部署指南](./GITHUB-PAGES.md)
+
+### Vercel 部署
+
+也可以部署到 Vercel：
+
+1. 导入项目到 Vercel
+2. 配置环境变量 `VITE_API_BASE_URL`
+3. 点击部署
+
+详细配置请查看：[Vercel 部署指南](./DEPLOYMENT.md)
+
 ## 页面路由
 
 | 路径 | 页面 | 说明 |
@@ -140,6 +176,54 @@ npm run preview
 - [ ] 多语言支持
 
 ## 开发说明
+
+### 组件开发规则
+
+在开发新功能或页面时，**必须按照以下优先级**查找可复用的组件：
+
+1. **Headless UI** - 无样式可访问组件（项目已安装 `@headlessui/vue`）
+2. **Tailwind Components** - [Tailwind UI 官方组件](https://tailwindui.com/components)
+3. **shadcn-vue** - 基于 Radix UI 的 Vue 组件库
+4. **naive-ui** - Vue 3 组件库
+5. **自己实现** - 仅在以上都没有合适的组件时
+
+#### 组件库资源链接
+
+- **Headless UI**: https://headlessui.com/vue
+- **Tailwind Components**: https://tailwindcomponents.com/
+- **shadcn-vue**: https://www.shadcn-vue.com/
+- **naive-ui**: https://www.naiveui.com/
+
+#### 已安装的组件库
+
+```json
+{
+  "@headlessui/vue": "^1.7.23",  // ✅ 已安装
+  "tailwindcss": "^3.4.0"          // ✅ 已安装
+}
+```
+
+#### 组件使用示例
+
+```vue
+<template>
+  <!-- 使用 Headless UI 的 Dialog 组件 -->
+  <Dialog as="div" class="relative z-10" @close="closeModal">
+    <div class="fixed inset-0 bg-black/30" />
+    <div class="fixed inset-0 overflow-y-auto">
+      <div class="flex min-h-full items-center justify-center p-4">
+        <DialogPanel>
+          <!-- 内容 -->
+        </DialogPanel>
+      </div>
+    </div>
+  </Dialog>
+</template>
+
+<script setup>
+import { Dialog, DialogPanel } from '@headlessui/vue'
+</script>
+```
 
 ### 添加新页面
 

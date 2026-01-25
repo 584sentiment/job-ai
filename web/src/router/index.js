@@ -101,7 +101,8 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  // 使用 Vite 的 BASE_URL 环境变量，支持 GitHub Pages 部署
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
 
