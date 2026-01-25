@@ -128,17 +128,8 @@
 
     <!-- 投递进度 Timeline -->
     <div class="glass-card rounded-xl p-6">
-      <div class="flex items-center justify-between mb-6">
+      <div class="mb-6">
         <h3 class="text-lg font-semibold">投递进度</h3>
-        <button
-          @click="openAddInterviewDialog"
-          class="text-primary hover:text-secondary font-medium text-sm flex items-center space-x-1"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-          </svg>
-          <span>添加记录</span>
-        </button>
       </div>
 
       <div class="relative pl-6 space-y-6">
@@ -172,6 +163,28 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="flex gap-3 mt-6 pt-6 border-t border-border">
+        <button
+          @click="openStatusDialog"
+          class="flex-1 px-4 py-2.5 bg-white border border-border rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium flex items-center justify-center space-x-2 text-sm"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+          </svg>
+          <span>更新状态</span>
+        </button>
+        <button
+          @click="openAddInterviewDialog"
+          class="flex-1 px-4 py-2.5 bg-primary text-white rounded-lg hover:bg-secondary shadow-md hover:shadow-lg transition-all duration-200 font-medium flex items-center justify-center space-x-2 text-sm"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <span>添加面试</span>
+        </button>
       </div>
     </div>
 
@@ -311,28 +324,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- 底部操作按钮 -->
-    <div class="flex gap-3 pb-4">
-      <button
-        @click="openStatusDialog"
-        class="flex-1 px-4 py-3 bg-white border border-border rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium flex items-center justify-center space-x-2"
-      >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-        </svg>
-        <span>更新状态</span>
-      </button>
-      <button
-        @click="openAddInterviewDialog"
-        class="flex-1 px-4 py-3 bg-primary text-white rounded-lg hover:bg-secondary shadow-md hover:shadow-lg transition-all duration-200 font-medium flex items-center justify-center space-x-2"
-      >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-        </svg>
-        <span>添加面试</span>
-      </button>
     </div>
   </main>
 

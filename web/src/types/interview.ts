@@ -44,7 +44,7 @@ export interface Interview {
   /** 岗位ID */
   positionId: string
   /** 用户ID */
-  userId: number
+  userId?: number
   /** 面试轮次 */
   interviewRound: string
   /** 面试时间（时间戳） */
