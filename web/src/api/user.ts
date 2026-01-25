@@ -1,4 +1,4 @@
-import { post, postWithAuth, getWithAuth, putWithAuth } from '@/utils/request'
+import { post, postWithAuth, getWithAuth, putWithAuth, delWithAuth } from '@/utils/request'
 import type {
   LoginRequest,
   RegisterRequest,
@@ -32,7 +32,16 @@ export function login(data: LoginRequest): Promise<LoginApiResponse> {
  * @returns 用户信息
  */
 export function getUserInfo(): Promise<UserInfoApiResponse> {
-  return getWithAuth('/users/profile') as Promise<UserInfoApiResponse>
+  return getWithAuth('/users/current') as Promise<UserInfoApiResponse>
+}
+
+/**
+ * 根据id获取用户信息
+ * @param id 用户id
+ * @returns 用户信息
+ */
+export function getUserInfoById(id: string): Promise<UserInfoApiResponse> {
+  return getWithAuth(`/users/${id}`) as Promise<UserInfoApiResponse>
 }
 
 /**
@@ -41,7 +50,16 @@ export function getUserInfo(): Promise<UserInfoApiResponse> {
  * @returns 更新结果
  */
 export function updateUser(data: UpdateUserRequest): Promise<UserInfoApiResponse> {
-  return putWithAuth('/users/profile', data) as Promise<UserInfoApiResponse>
+  return putWithAuth('/users', data) as Promise<UserInfoApiResponse>
+}
+
+/**
+ * 删除用户
+ * @param id - 用户id
+ * @returns 更新结果
+ */
+export function deleteUser(id: string): Promise<UserInfoApiResponse> {
+  return delWithAuth(`/users${id}`) as Promise<UserInfoApiResponse>
 }
 
 /**
