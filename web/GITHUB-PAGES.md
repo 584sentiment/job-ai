@@ -52,20 +52,21 @@
 
 ### 2. Workflow 配置
 
-文件位置：`.github/workflows/deploy.yml`
+⚠️ **重要**: GitHub Actions 的 workflow 文件必须放在**仓库根目录**，不能放在 `web/` 子目录下。
+
+文件位置：`.github/workflows/deploy.yml`（仓库根目录）
 
 关键配置：
-
 ```yaml
-# 触发条件
-on:
-  push:
-    branches: [main, master]  # 推送到 main 或 master 分支时触发
-  workflow_dispatch:          # 允许手动触发
+build:
+  steps:
+    - name: Install dependencies
+      working-directory: ./web  # 在 web 目录下执行
+      run: npm ci
 
-# 环境
-environment:
-  name: github-pages
+    - name: Build
+      working-directory: ./web  # 在 web 目录下执行
+      run: npm run build
 ```
 
 ### 3. Vite 配置
@@ -120,10 +121,10 @@ npm run preview
 
 ## 📦 构建产物
 
-构建完成后，产物位于 `dist/` 目录：
+构建完成后，产物位于 `web/dist/` 目录：
 
 ```
-dist/
+web/dist/
 ├── index.html
 ├── assets/
 │   ├── index-xxx.js
@@ -243,10 +244,27 @@ git push origin main
 
 ### 已完成的配置
 
-- ✅ 创建 GitHub Actions workflow 文件
+- ✅ 创建 GitHub Actions workflow 文件（仓库根目录）
 - ✅ 配置 Vite 支持 GitHub Pages
 - ✅ 添加环境变量支持
 - ✅ 自动化部署流程
+- ✅ 所有命令在 web 目录下执行
+
+### 文件结构
+
+```
+job-ai/                          # 仓库根目录
+├── .github/
+│   ├── workflows/
+│   │   └── deploy.yml          # ✅ GitHub Actions 配置
+│   └── WORKFLOW-SETUP.md       # Workflow 配置说明
+├── web/                         # Web 前端项目
+│   ├── src/
+│   ├── package.json
+│   ├── vite.config.js          # ✅ Vite 配置
+│   └── GITHUB-PAGES.md         # ✅ 部署指南
+└── ...
+```
 
 ### 可能需要的改进
 
