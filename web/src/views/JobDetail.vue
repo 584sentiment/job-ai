@@ -57,7 +57,7 @@
               >
                 {{ getStatusLabel(job.status) }}
               </span>
-              <span class="text-sm text-gray-500">{{ job.deliveryDate }} 投递</span>
+              <span class="text-sm text-gray-500">{{ formatDate(job.deliveryDate) }} 投递</span>
             </div>
           </div>
         </div>
@@ -255,6 +255,7 @@ import { useJobsStore } from '@/store/jobs'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
 import JobForm from '@/components/JobForm.vue'
 import { getStatusLabel } from '@/constants/position'
+import { formatDate } from '@/utils/mappers'
 import * as positionApi from '@/api/position'
 
 const route = useRoute()
@@ -279,7 +280,7 @@ const timeline = computed(() => {
     return [
       {
         status: '已投递',
-        date: job.value?.deliveryDate || '',
+        date: formatDate(job.value?.deliveryDate) || '',
         desc: '简历已投递，等待回复'
       }
     ]
@@ -288,7 +289,7 @@ const timeline = computed(() => {
   // 将面试记录转换为时间线格式
   return job.value.interviewRecordList.map(record => ({
     status: record.interviewRound,
-    date: record.interviewTime,
+    date: formatDate(record.interviewTime) || '',
     desc: `面试地点：${record.interviewLocation}\n面试形式：${record.interviewForm}`
   }))
 })

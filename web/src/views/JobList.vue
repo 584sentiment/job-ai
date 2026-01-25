@@ -150,7 +150,7 @@
         </div>
 
         <div class="mt-3 flex items-center justify-between text-xs text-gray-500">
-          <span>投递日期: {{ job.deliveryDate?.split('T')[0] }}</span>
+          <span>投递日期: {{ formatDate(job.deliveryDate) }}</span>
           <span class="text-primary font-medium">查看详情 →</span>
         </div>
       </div>
@@ -221,7 +221,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useJobsStore } from '@/store/jobs'
 import { getStatusLabel, getStatusClass } from '@/constants/position'
-import { getGradientClass } from '@/utils/mappers'
+import { getGradientClass, formatDate } from '@/utils/mappers'
 import { PositionStatus } from '@/types'
 import { NPagination } from 'naive-ui'
 

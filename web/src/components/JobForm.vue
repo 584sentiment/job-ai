@@ -57,12 +57,14 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
               投递日期 <span class="text-red-500">*</span>
             </label>
-            <input
-              v-model="form.deliveryDate"
+            <n-date-picker
+              v-model:value="form.deliveryDate"
               type="date"
-              required
-              class="form-input w-full px-4 py-3 rounded-lg border border-border bg-white focus:outline-none"
-            >
+              placeholder="请选择日期"
+              class="w-full custom-date-picker"
+              size="large"
+              clearable
+            />
           </div>
         </div>
       </div>
@@ -206,7 +208,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { PositionStatus } from '@/types'
-import { NSelect } from 'naive-ui'
+import { NSelect, NDatePicker } from 'naive-ui'
 
 interface Props {
   mode?: 'add' | 'edit'
@@ -222,13 +224,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['submit'])
 
-// 表单数据 - 使用后端字段名
+// 表单数据 - 使用后端字段名（时间使用时间戳格式）
 const form = ref({
   id: undefined as number | undefined,
   companyName: '',
   positionName: '',
   deliveryChannel: '',
-  deliveryDate: new Date().toISOString().split('T')[0],
+  deliveryDate: Date.now(), // 使用时间戳格式
   workLocation: '',
   salaryRange: '',
   jobDescription: '',
@@ -287,7 +289,7 @@ watch(() => props.initialData, (newData) => {
       companyName: newData.companyName || '',
       positionName: newData.positionName || '',
       deliveryChannel: newData.deliveryChannel || '',
-      deliveryDate: newData.deliveryDate ? newData.deliveryDate.split('T')[0] : new Date().toISOString().split('T')[0],
+      deliveryDate: newData.deliveryDate ? new Date(newData.deliveryDate).getTime() : Date.now(),
       workLocation: newData.workLocation || '',
       salaryRange: newData.salaryRange || '',
       jobDescription: newData.jobDescription || '',

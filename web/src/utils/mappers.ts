@@ -6,6 +6,38 @@ import type { Position, PositionCreateRequest } from '@/types'
 import { PositionStatus, PositionStatusLabels, PositionStatusClasses } from '@/types'
 
 /**
+ * 格式化时间戳为日期字符串（YYYY-MM-DD）
+ * @param timestamp - 时间戳（毫秒）或日期字符串
+ * @returns 格式化的日期字符串
+ */
+export function formatDate(timestamp: number | string | undefined | null): string {
+  if (!timestamp) return ''
+  const date = typeof timestamp === 'number' ? new Date(timestamp) : new Date(timestamp)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+/**
+ * 格式化时间戳为 ISO 字符串
+ * @param timestamp - 时间戳（毫秒）
+ * @returns ISO 格式的日期时间字符串
+ */
+export function toISOString(timestamp: number): string {
+  return new Date(timestamp).toISOString()
+}
+
+/**
+ * 转换 ISO 字符串或日期字符串为时间戳
+ * @param dateStr - 日期字符串
+ * @returns 时间戳（毫秒）
+ */
+export function toTimestamp(dateStr: string): number {
+  return new Date(dateStr).getTime()
+}
+
+/**
  * 获取状态标签文本
  */
 export function getStatusLabel(status: PositionStatus): string {
@@ -69,16 +101,25 @@ export function mapPositionForDisplay(position: Position): Position {
 
 /**
  * 准备岗位创建数据
- * 确保所有必填字段都存在
+ * 确保所有必填字段都存在，并转换时间戳为 ISO 字符串
  */
 export function preparePositionData(data: Partial<PositionCreateRequest>): PositionCreateRequest {
   const now = new Date().toISOString()
+
+  // 处理 deliveryDate - 如果是时间戳，转换为 ISO 字符串
+  let deliveryDate = data.deliveryDate || now
+  if (typeof deliveryDate === 'number') {
+    deliveryDate = toISOString(deliveryDate)
+  } else if (deliveryDate && !deliveryDate.includes('T')) {
+    // 如果是日期字符串（YYYY-MM-DD），转换为 ISO 字符串
+    deliveryDate = new Date(deliveryDate).toISOString()
+  }
 
   return {
     companyName: data.companyName || '',
     positionName: data.positionName || '',
     deliveryChannel: data.deliveryChannel || '',
-    deliveryDate: data.deliveryDate || now,
+    deliveryDate,
     workLocation: data.workLocation || '',
     salaryRange: data.salaryRange || '',
     jobDescription: data.jobDescription || '',
