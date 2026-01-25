@@ -204,7 +204,7 @@
         v-model:page="jobsStore.pagination.current"
         v-model:page-size="jobsStore.pagination.size"
         :page-count="jobsStore.pagination.pages"
-        :page-sizes="[10, 20, 50, 100]"
+        :page-sizes="PAGE_SIZES"
         show-size-picker
         @update:page="handlePageChange"
         @update:page-size="handlePageSizeChange"
@@ -221,6 +221,7 @@ import { getStatusLabel, getStatusClass } from '@/constants/position'
 import { getGradientClass, formatDate } from '@/utils/mappers'
 import { PositionStatus } from '@/types'
 import { NPagination } from 'naive-ui'
+import { PAGE_SIZES } from '@/constants/common'
 
 const router = useRouter()
 const jobsStore = useJobsStore()

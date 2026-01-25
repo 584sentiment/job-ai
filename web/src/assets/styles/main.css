@@ -154,8 +154,8 @@ h6 {
 }
 
 .n-select-menu .n-base-select-option.n-base-select-option--selected {
-  background-color: #eff6ff !important;
-  color: #2563eb !important;
+  background-color: #2563eb !important;
+  color: #ffffff !important;
 }
 
 .n-select-menu .n-base-select-option.n-base-select-option--selected::before {
@@ -203,16 +203,42 @@ h6 {
   background-color: #ffffff !important;
 }
 
-/* 分页大小选择器样式 */
-.n-pagination .n-select {
-  width: 6rem !important;
-}
-
+/* 分页大小选择框样式 */
 .n-pagination .n-select .n-base-selection {
   height: 2.5rem !important;
   min-height: 2.5rem !important;
   padding: 0 0.75rem !important;
   font-size: 0.875rem !important;
+  border-radius: 0.5rem !important;
+  border: 1px solid #e2e8f0 !important;
+  background-color: #ffffff !important;
+  transition: all 0.2s ease !important;
+}
+
+.n-pagination .n-select .n-base-selection:hover {
+  border-color: #2563eb !important;
+}
+
+.n-pagination .n-select .n-base-selection.n-base-selection--focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1) !important;
+}
+
+.n-pagination .n-select .n-base-selection__border,
+.n-pagination .n-select .n-base-selection__state-border {
+  border: none !important;
+}
+
+.n-pagination .n-select .n-base-selection-label {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.n-pagination .n-select .n-base-selection-label .n-base-selection-input {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
 /* Naive UI DatePicker 组件样式覆盖 - 与项目风格保持一致 */
