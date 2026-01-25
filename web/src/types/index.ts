@@ -6,6 +6,18 @@ export * from './enums'
 export * from './position'
 export * from './user'
 
+// 单独导出面试相关类型,避免重复导出枚举
+export type {
+  Interview,
+  InterviewCreateRequest,
+  InterviewUpdateRequest,
+  InterviewListResponse,
+  InterviewResponse,
+  InterviewQueryParams
+} from './interview'
+
+export { InterviewRound, InterviewForm } from './interview'
+
 /**
  * 通用工具类型
  */

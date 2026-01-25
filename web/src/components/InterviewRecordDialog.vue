@@ -117,13 +117,13 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { NModal, NSelect, NDatePicker, NInput, NButton } from 'naive-ui'
-import { InterviewRound, InterviewForm, type InterviewRecord, type InterviewRecordCreateRequest } from '@/types'
+import { InterviewRound, InterviewForm, type Interview, type InterviewCreateRequest } from '@/types'
 
 interface Props {
   open: boolean
   mode: 'add' | 'edit'
   positionId: string
-  initialData?: InterviewRecord | null
+  initialData?: Interview | null
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -185,7 +185,7 @@ watch(() => props.initialData, (newData) => {
   if (newData) {
     form.value = {
       interviewRound: newData.interviewRound || '',
-      interviewTime: newData.interviewTime ? new Date(newData.interviewTime).getTime() : Date.now(),
+      interviewTime: newData.interviewTime || Date.now(),
       interviewLocation: newData.interviewLocation || '',
       interviewForm: newData.interviewForm || '',
       interviewerInfo: newData.interviewerInfo || '',
@@ -230,15 +230,15 @@ const handleSubmit = () => {
     return
   }
 
-  // 将时间戳转换为 ISO 字符串
-  const submitData: InterviewRecordCreateRequest = {
+  // 使用时间戳格式
+  const submitData: InterviewCreateRequest = {
     positionId: props.positionId,
     interviewRound: form.value.interviewRound,
-    interviewTime: new Date(form.value.interviewTime).toISOString(),
+    interviewTime: form.value.interviewTime,
     interviewLocation: form.value.interviewLocation,
     interviewForm: form.value.interviewForm,
-    interviewerInfo: form.value.interviewerInfo || undefined,
-    remarks: form.value.remarks || undefined
+    interviewerInfo: form.value.interviewerInfo,
+    remarks: form.value.remarks
   }
 
   // 如果是编辑模式,添加 id

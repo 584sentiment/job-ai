@@ -1,20 +1,21 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import * as positionApi from '@/api/position';
+import * as interviewApi from '@/api/interview';
 import {
   Position,
   PositionCreateRequest,
   PositionQueryParams,
   PositionStatus,
-  InterviewRecord,
-  InterviewRecordCreateRequest,
-  InterviewRecordUpdateRequest,
+  Interview,
+  InterviewCreateRequest,
+  InterviewUpdateRequest,
 } from '@/types';
 
 export const useJobsStore = defineStore('jobs', () => {
   // 状态
   const jobs = ref<Position[]>([]);
-  const interviewRecords = ref<InterviewRecord[]>([]);
+  const interviewRecords = ref<Interview[]>([]);
   const loading = ref<boolean>(false);
   const currentFilter = ref<number | string | 'all'>('all');
   const searchKeyword = ref<string>('');
@@ -308,7 +309,7 @@ export const useJobsStore = defineStore('jobs', () => {
    */
   async function fetchInterviewRecords(positionId: string): Promise<void> {
     try {
-      const response = await positionApi.getInterviewRecordsByPosition(positionId);
+      const response = await interviewApi.getInterviewsByPosition(positionId);
       if (response.data) {
         interviewRecords.value = response.data;
       }
@@ -324,10 +325,10 @@ export const useJobsStore = defineStore('jobs', () => {
    * @returns 创建的面试记录
    */
   async function addInterviewRecord(
-    data: InterviewRecordCreateRequest,
-  ): Promise<InterviewRecord> {
+    data: InterviewCreateRequest,
+  ): Promise<Interview> {
     try {
-      const response = await positionApi.createInterviewRecord(data);
+      const response = await interviewApi.createInterview(data);
       if (response.data) {
         interviewRecords.value.push(response.data);
 
@@ -351,10 +352,10 @@ export const useJobsStore = defineStore('jobs', () => {
    */
   async function updateInterviewRecord(
     id: number,
-    data: InterviewRecordUpdateRequest,
+    data: InterviewUpdateRequest,
   ): Promise<void> {
     try {
-      const response = await positionApi.updateInterviewRecord(id, data);
+      const response = await interviewApi.updateInterview(id, data);
       if (response.data) {
         const index = interviewRecords.value.findIndex(r => r.id === id);
         if (index !== -1) {
@@ -383,7 +384,7 @@ export const useJobsStore = defineStore('jobs', () => {
    */
   async function deleteInterviewRecord(id: number): Promise<void> {
     try {
-      await positionApi.deleteInterviewRecord(id);
+      await interviewApi.deleteInterview(id);
 
       // 从列表中移除
       const index = interviewRecords.value.findIndex(r => r.id === id);

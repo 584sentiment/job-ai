@@ -149,7 +149,7 @@
           :key="index"
           class="timeline-item relative group"
           :class="{ 'cursor-pointer hover:bg-gray-50 rounded-lg -mx-2 px-2 py-1 transition-colors duration-200': item.recordId }"
-          @click="item.recordId ? openEditInterviewDialog(job?.interviewRecordList?.find((r: InterviewRecord) => r.id === item.recordId)!) : undefined"
+          @click="item.recordId ? openEditInterviewDialog(job?.interviewRecordList?.find((r: Interview) => r.id === item.recordId)!) : undefined"
         >
           <div class="flex items-start justify-between">
             <div class="flex-1">
@@ -463,7 +463,7 @@ import StatusUpdateDialog from '@/components/StatusUpdateDialog.vue'
 import { getStatusLabel } from '@/constants/position'
 import { formatDate } from '@/utils/mappers'
 import * as positionApi from '@/api/position'
-import { PositionStatus, type InterviewRecord, type InterviewRecordCreateRequest } from '@/types'
+import { PositionStatus, type Interview, type InterviewCreateRequest } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -478,7 +478,7 @@ const loading = ref(false)   // 加载状态
 // 面试记录对话框状态
 const isInterviewDialogOpen = ref(false)
 const isStatusDialogOpen = ref(false)
-const editingRecord = ref<InterviewRecord | null>(null)
+const editingRecord = ref<Interview | null>(null)
 
 // 获取路由参数中的岗位 ID,确保是 string 类型
 const jobId = computed(() => {
@@ -506,7 +506,7 @@ const timeline = computed(() => {
   }
 
   // 将面试记录转换为时间线格式
-  return job.value.interviewRecordList.map((record: InterviewRecord) => ({
+  return job.value.interviewRecordList.map((record: Interview) => ({
     status: record.interviewRound,
     date: formatDate(record.interviewTime) || '',
     desc: `面试地点：${record.interviewLocation}\n面试形式：${record.interviewForm}`,
@@ -579,7 +579,7 @@ const openAddInterviewDialog = () => {
 }
 
 // 打开编辑面试记录对话框
-const openEditInterviewDialog = (record: InterviewRecord | undefined) => {
+const openEditInterviewDialog = (record: Interview | undefined) => {
   if (record) {
     editingRecord.value = record
     isInterviewDialogOpen.value = true
@@ -587,7 +587,7 @@ const openEditInterviewDialog = (record: InterviewRecord | undefined) => {
 }
 
 // 处理面试记录提交
-const handleInterviewSubmit = async (formData: InterviewRecordCreateRequest & { id?: number }) => {
+const handleInterviewSubmit = async (formData: InterviewCreateRequest & { id?: number }) => {
   try {
     if (editingRecord.value) {
       // 编辑模式：构造包含 id 的更新请求
@@ -600,7 +600,7 @@ const handleInterviewSubmit = async (formData: InterviewRecordCreateRequest & { 
     } else {
       // 添加模式：不传递 id
       const { id, ...data } = formData
-      await jobsStore.addInterviewRecord(data as InterviewRecordCreateRequest)
+      await jobsStore.addInterviewRecord(data)
     }
     await refreshJobDetail()
   } catch (error) {
