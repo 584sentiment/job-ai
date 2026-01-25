@@ -1,14 +1,19 @@
 <template>
-  <div :class="['min-h-screen', { 'pb-20': showBottomNav }]">
-    <NavBar v-if="showNavBar" />
-    <router-view />
-    <BottomNav v-if="showBottomNav" />
-  </div>
+  <n-message-provider>
+    <n-dialog-provider>
+      <div :class="['min-h-screen', { 'pb-20': showBottomNav }]">
+        <NavBar v-if="showNavBar" />
+        <router-view />
+        <BottomNav v-if="showBottomNav" />
+      </div>
+    </n-dialog-provider>
+  </n-message-provider>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { NMessageProvider, NDialogProvider } from 'naive-ui'
 import NavBar from '@/components/NavBar.vue'
 import BottomNav from '@/components/BottomNav.vue'
 
