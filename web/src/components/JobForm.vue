@@ -42,18 +42,15 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">
               投递渠道 <span class="text-red-500">*</span>
             </label>
-            <select
-              v-model="form.deliveryChannel"
-              required
-              class="form-input w-full px-4 py-3 rounded-lg border border-border bg-white focus:outline-none"
-            >
-              <option value="">请选择</option>
-              <option value="招聘APP">招聘APP</option>
-              <option value="企业官网">企业官网</option>
-              <option value="内推">内推</option>
-              <option value="宣讲会">宣讲会</option>
-              <option value="其他">其他</option>
-            </select>
+            <n-select
+              v-model:value="form.deliveryChannel"
+              :options="deliveryChannelOptions"
+              placeholder="请选择"
+              :consistent-menu-width="false"
+              size="large"
+              class="w-full custom-select"
+              :theme-overrides="selectThemeOverrides"
+            />
           </div>
 
           <div>
@@ -209,6 +206,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { PositionStatus } from '@/types'
+import { NSelect } from 'naive-ui'
 
 interface Props {
   mode?: 'add' | 'edit'
@@ -250,6 +248,36 @@ const statusOptions = [
   { label: '未通过', value: PositionStatus.NOT_PASS },              // 7
   { label: '已拒绝', value: PositionStatus.REJECTED }               // 8
 ]
+
+// 投递渠道选项
+const deliveryChannelOptions = [
+  { label: '招聘APP', value: '招聘APP' },
+  { label: '企业官网', value: '企业官网' },
+  { label: '内推', value: '内推' },
+  { label: '宣讲会', value: '宣讲会' },
+  { label: '其他', value: '其他' }
+]
+
+// NSelect 主题覆盖 - 使其与现有输入框风格一致
+const selectThemeOverrides = {
+  peers: {
+    InternalSelection: {
+      border: '1px solid #E2E8F0',
+      borderRadius: '0.5rem',
+      padding: '0.75rem 1rem',
+      fontSize: '1rem',
+      height: '48px',
+      color: '#1E293B',
+      caretColor: '#2563EB',
+      borderFocus: '1px solid #2563EB',
+      borderHover: '1px solid #2563EB',
+      borderActive: '1px solid #2563EB',
+      boxShadowFocus: '0 0 0 2px rgba(37, 99, 235, 0.1)',
+      textColor: '#1E293B',
+      placeholderColor: '#9CA3AF'
+    }
+  }
+}
 
 // 监听初始数据变化（编辑模式）
 watch(() => props.initialData, (newData) => {
