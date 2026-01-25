@@ -18,6 +18,23 @@ export type {
 
 export { InterviewRound, InterviewForm } from './interview'
 
+// 单独导出面经相关类型,避免重复导出枚举
+export type {
+  Experience,
+  ExperienceCreateRequest,
+  ExperienceUpdateRequest,
+  ExperienceListResponse,
+  ExperienceResponse,
+  ExperienceQueryParams,
+  ExperienceStats,
+  ExperienceComment,
+  ExperienceCommentCreateRequest,
+  ExperienceCommentListResponse,
+  ExperienceFavoriteResponse
+} from './experience'
+
+export { ExperienceRound, ExperienceContentType } from './experience'
+
 /**
  * 通用工具类型
  */
