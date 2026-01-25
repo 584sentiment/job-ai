@@ -455,10 +455,15 @@ import { getStatusLabel } from '@/constants/position'
 import { formatDate } from '@/utils/mappers'
 import * as positionApi from '@/api/position'
 import { PositionStatus, type Interview, type InterviewCreateRequest } from '@/types'
+import { useDialog, useMessage } from 'naive-ui'
 
 const route = useRoute()
 const router = useRouter()
 const jobsStore = useJobsStore()
+
+// Naive UI 对话框和消息提示
+const dialog = useDialog()
+const message = useMessage()
 
 // 编辑对话框状态
 const isEditDialogOpen = ref(false)
@@ -515,10 +520,11 @@ const handleDeleteConfirm = async () => {
   try {
     await jobsStore.deleteJob(jobId.value)
     // 删除成功后跳转到首页
+    message.success('岗位已成功删除')
     router.push('/')
   } catch (error) {
     console.error('删除岗位失败:', error)
-    alert('删除岗位失败，请重试')
+    message.error('删除岗位失败，请重试')
   }
 }
 
@@ -556,10 +562,11 @@ const handleEditSubmit = async (formData: any) => {
       loading.value = false
     }
 
+    message.success('岗位信息已更新')
     closeEditDialog()
   } catch (error) {
     console.error('更新岗位失败:', error)
-    alert('更新岗位失败，请重试')
+    message.error('更新岗位失败，请重试')
   }
 }
 
@@ -588,28 +595,38 @@ const handleInterviewSubmit = async (formData: InterviewCreateRequest & { id?: n
       }
       delete updateData.positionId // 编辑时不需要修改 positionId
       await jobsStore.updateInterviewRecord(editingRecord.value.id, updateData)
+      message.success('面试记录已更新')
     } else {
       // 添加模式：不传递 id
       const { id, ...data } = formData
       await jobsStore.addInterviewRecord(data)
+      message.success('面试记录已添加')
     }
     await refreshJobDetail()
   } catch (error) {
     console.error('面试记录操作失败:', error)
-    alert(editingRecord.value ? '更新面试记录失败' : '添加面试记录失败')
+    message.error(editingRecord.value ? '更新面试记录失败' : '添加面试记录失败')
   }
 }
 
 // 处理删除面试记录
 const handleDeleteRecord = async (recordId: number) => {
-  if (!confirm('确认删除这条面试记录吗？')) return
-  try {
-    await jobsStore.deleteInterviewRecord(recordId)
-    await refreshJobDetail()
-  } catch (error) {
-    console.error('删除面试记录失败:', error)
-    alert('删除面试记录失败')
-  }
+  dialog.warning({
+    title: '确认删除',
+    content: '删除后无法恢复，确定要删除这条面试记录吗？',
+    positiveText: '确认删除',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      try {
+        await jobsStore.deleteInterviewRecord(recordId)
+        await refreshJobDetail()
+        message.success('面试记录已删除')
+      } catch (error) {
+        console.error('删除面试记录失败:', error)
+        message.error('删除面试记录失败')
+      }
+    }
+  })
 }
 
 // 打开状态更新对话框
@@ -630,6 +647,8 @@ const handleStatusUpdate = async ({ status, remark }: { status: PositionStatus, 
       remarks: remark || job.value?.remarks || ''
     })
 
+    message.success('状态已更新')
+
     // 如果切换到"流程中"状态，自动打开面试记录对话框
     if (status === PositionStatus.IN_PROCESS) {
       isStatusDialogOpen.value = false
@@ -640,7 +659,7 @@ const handleStatusUpdate = async ({ status, remark }: { status: PositionStatus, 
     }
   } catch (error) {
     console.error('更新状态失败:', error)
-    alert('更新状态失败')
+    message.error('更新状态失败')
   }
 }
 
