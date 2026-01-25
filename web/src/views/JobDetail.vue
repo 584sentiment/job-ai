@@ -130,7 +130,10 @@
     <div class="glass-card rounded-xl p-6">
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-lg font-semibold">投递进度</h3>
-        <button class="text-primary hover:text-secondary font-medium text-sm flex items-center space-x-1">
+        <button
+          @click="openAddInterviewDialog"
+          class="text-primary hover:text-secondary font-medium text-sm flex items-center space-x-1"
+        >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
           </svg>
@@ -144,14 +147,29 @@
         <div
           v-for="(item, index) in timeline"
           :key="index"
-          class="timeline-item relative"
+          class="timeline-item relative group"
+          :class="{ 'cursor-pointer hover:bg-gray-50 rounded-lg -mx-2 px-2 py-1 transition-colors duration-200': item.recordId }"
+          @click="item.recordId ? openEditInterviewDialog(job?.interviewRecordList?.find((r: InterviewRecord) => r.id === item.recordId)!) : undefined"
         >
           <div class="flex items-start justify-between">
-            <div>
+            <div class="flex-1">
               <p class="font-medium">{{ item.status }}</p>
-              <p class="text-sm text-gray-600 mt-1">{{ item.desc }}</p>
+              <p class="text-sm text-gray-600 mt-1 whitespace-pre-line">{{ item.desc }}</p>
             </div>
-            <span class="text-sm text-gray-500">{{ item.date }}</span>
+            <div class="flex items-center space-x-2">
+              <span class="text-sm text-gray-500">{{ item.date }}</span>
+              <!-- 删除按钮（hover 显示） -->
+              <button
+                v-if="item.recordId"
+                @click.stop="handleDeleteRecord(item.recordId)"
+                class="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 rounded transition-all duration-200 text-red-500"
+                title="删除记录"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -297,13 +315,19 @@
 
     <!-- 底部操作按钮 -->
     <div class="flex gap-3 pb-4">
-      <button class="flex-1 px-4 py-3 bg-white border border-border rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium flex items-center justify-center space-x-2">
+      <button
+        @click="openStatusDialog"
+        class="flex-1 px-4 py-3 bg-white border border-border rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium flex items-center justify-center space-x-2"
+      >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
         </svg>
         <span>更新状态</span>
       </button>
-      <button class="flex-1 px-4 py-3 bg-primary text-white rounded-lg hover:bg-secondary shadow-md hover:shadow-lg transition-all duration-200 font-medium flex items-center justify-center space-x-2">
+      <button
+        @click="openAddInterviewDialog"
+        class="flex-1 px-4 py-3 bg-primary text-white rounded-lg hover:bg-secondary shadow-md hover:shadow-lg transition-all duration-200 font-medium flex items-center justify-center space-x-2"
+      >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
         </svg>
@@ -409,17 +433,37 @@
       </div>
     </div>
   </Dialog>
+
+  <!-- 面试记录对话框 -->
+  <InterviewRecordDialog
+    v-model:open="isInterviewDialogOpen"
+    :mode="editingRecord ? 'edit' : 'add'"
+    :position-id="jobId"
+    :initial-data="editingRecord"
+    @submit="handleInterviewSubmit"
+  />
+
+  <!-- 状态更新对话框 -->
+  <StatusUpdateDialog
+    v-model:open="isStatusDialogOpen"
+    :current-status="job?.status || PositionStatus.TO_BE_DELIVERED"
+    :position-id="jobId"
+    @submit="handleStatusUpdate"
+  />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useJobsStore } from '@/store/jobs'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
 import JobForm from '@/components/JobForm.vue'
+import InterviewRecordDialog from '@/components/InterviewRecordDialog.vue'
+import StatusUpdateDialog from '@/components/StatusUpdateDialog.vue'
 import { getStatusLabel } from '@/constants/position'
 import { formatDate } from '@/utils/mappers'
 import * as positionApi from '@/api/position'
+import { PositionStatus, type InterviewRecord, type InterviewRecordCreateRequest } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -428,12 +472,23 @@ const jobsStore = useJobsStore()
 // 编辑对话框状态
 const isEditDialogOpen = ref(false)
 const isDeleteDialogOpen = ref(false)  // 删除确认对话框状态
-const jobDetail = ref(null)  // 从 API 获取的岗位详情
+const jobDetail = ref<any>(null)  // 从 API 获取的岗位详情
 const loading = ref(false)   // 加载状态
+
+// 面试记录对话框状态
+const isInterviewDialogOpen = ref(false)
+const isStatusDialogOpen = ref(false)
+const editingRecord = ref<InterviewRecord | null>(null)
+
+// 获取路由参数中的岗位 ID,确保是 string 类型
+const jobId = computed(() => {
+  const id = route.params.id
+  return Array.isArray(id) ? id[0] : id
+})
 
 // 优先使用 API 获取的详情，如果没有则使用 store 中的数据
 const job = computed(() => {
-  return jobDetail.value || jobsStore.getJobById(route.params.id)
+  return jobDetail.value || jobsStore.getJobById(jobId.value)
 })
 
 // 计算属性：将面试记录转换为时间线格式
@@ -444,16 +499,18 @@ const timeline = computed(() => {
       {
         status: '已投递',
         date: formatDate(job.value?.deliveryDate) || '',
-        desc: '简历已投递，等待回复'
+        desc: '简历已投递，等待回复',
+        recordId: null
       }
     ]
   }
 
   // 将面试记录转换为时间线格式
-  return job.value.interviewRecordList.map(record => ({
+  return job.value.interviewRecordList.map((record: InterviewRecord) => ({
     status: record.interviewRound,
     date: formatDate(record.interviewTime) || '',
-    desc: `面试地点：${record.interviewLocation}\n面试形式：${record.interviewForm}`
+    desc: `面试地点：${record.interviewLocation}\n面试形式：${record.interviewForm}`,
+    recordId: record.id  // 添加记录 ID 用于编辑和删除
   }))
 })
 
@@ -465,7 +522,7 @@ const deleteJob = () => {
 // 确认删除
 const handleDeleteConfirm = async () => {
   try {
-    await jobsStore.deleteJob(route.params.id)
+    await jobsStore.deleteJob(jobId.value)
     // 删除成功后跳转到首页
     router.push('/')
   } catch (error) {
@@ -490,15 +547,14 @@ const closeDeleteDialog = () => {
 }
 
 // 处理编辑提交
-const handleEditSubmit = async (formData) => {
+const handleEditSubmit = async (formData: any) => {
   try {
     await jobsStore.updateJob(formData)
 
     // 重新获取岗位详情，确保显示最新数据
-    const jobId = route.params.id
     loading.value = true
     try {
-      const response = await positionApi.getPositionById(jobId)
+      const response = await positionApi.getPositionById(jobId.value)
       if (response.data) {
         jobDetail.value = response.data
       }
@@ -516,25 +572,118 @@ const handleEditSubmit = async (formData) => {
   }
 }
 
-onMounted(async () => {
-  // 从路由参数中获取岗位 ID
-  const jobId = route.params.id
+// 打开添加面试记录对话框
+const openAddInterviewDialog = () => {
+  editingRecord.value = null
+  isInterviewDialogOpen.value = true
+}
 
+// 打开编辑面试记录对话框
+const openEditInterviewDialog = (record: InterviewRecord | undefined) => {
+  if (record) {
+    editingRecord.value = record
+    isInterviewDialogOpen.value = true
+  }
+}
+
+// 处理面试记录提交
+const handleInterviewSubmit = async (formData: InterviewRecordCreateRequest & { id?: number }) => {
+  try {
+    if (editingRecord.value) {
+      // 编辑模式：构造包含 id 的更新请求
+      const updateData: any = {
+        id: editingRecord.value.id,
+        ...formData
+      }
+      delete updateData.positionId // 编辑时不需要修改 positionId
+      await jobsStore.updateInterviewRecord(editingRecord.value.id, updateData)
+    } else {
+      // 添加模式：不传递 id
+      const { id, ...data } = formData
+      await jobsStore.addInterviewRecord(data as InterviewRecordCreateRequest)
+    }
+    await refreshJobDetail()
+  } catch (error) {
+    console.error('面试记录操作失败:', error)
+    alert(editingRecord.value ? '更新面试记录失败' : '添加面试记录失败')
+  }
+}
+
+// 处理删除面试记录
+const handleDeleteRecord = async (recordId: number) => {
+  if (!confirm('确认删除这条面试记录吗？')) return
+  try {
+    await jobsStore.deleteInterviewRecord(recordId)
+    await refreshJobDetail()
+  } catch (error) {
+    console.error('删除面试记录失败:', error)
+    alert('删除面试记录失败')
+  }
+}
+
+// 打开状态更新对话框
+const openStatusDialog = () => {
+  isStatusDialogOpen.value = true
+}
+
+// 处理状态更新
+const handleStatusUpdate = async ({ status, remark }: { status: PositionStatus, remark?: string }) => {
+  try {
+    await jobsStore.updateJob({
+      id: jobId.value,
+      companyName: job.value?.companyName || '',
+      positionName: job.value?.positionName || '',
+      deliveryChannel: job.value?.deliveryChannel || '',
+      deliveryDate: job.value?.deliveryDate || '',
+      status,
+      remarks: remark || job.value?.remarks || ''
+    })
+
+    // 如果切换到"流程中"状态，自动打开面试记录对话框
+    if (status === PositionStatus.IN_PROCESS) {
+      isStatusDialogOpen.value = false
+      openAddInterviewDialog()
+    } else {
+      isStatusDialogOpen.value = false
+      await refreshJobDetail()
+    }
+  } catch (error) {
+    console.error('更新状态失败:', error)
+    alert('更新状态失败')
+  }
+}
+
+// 刷新岗位详情
+const refreshJobDetail = async () => {
+  loading.value = true
+  try {
+    const response = await positionApi.getPositionById(jobId.value)
+    if (response.data) {
+      jobDetail.value = response.data
+    }
+  } catch (error) {
+    console.error('刷新岗位详情失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(async () => {
   // 如果 ID 无效，跳转到首页
-  if (!jobId) {
+  if (!jobId.value) {
     router.push('/')
     return
   }
 
   // 先尝试从 store 中获取
-  const existingJob = jobsStore.getJobById(jobId)
+  const existingJob = jobsStore.getJobById(jobId.value)
   if (existingJob) {
     jobDetail.value = existingJob
   } else {
     // 如果 store 中没有，从 API 获取
     loading.value = true
     try {
-      const response = await positionApi.getPositionById(jobId)
+      const response = await positionApi.getPositionById(jobId.value)
       if (response.data) {
         jobDetail.value = response.data
       } else {

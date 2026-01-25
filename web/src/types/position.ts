@@ -214,3 +214,69 @@ export interface InterviewSummary {
   /** 创建时间 */
   createTime: string
 }
+
+/**
+ * 面试轮次枚举
+ */
+export enum InterviewRound {
+  /** 笔试 */
+  WRITTEN_TEST = '笔试',
+  /** 一面 */
+  FIRST_ROUND = '一面',
+  /** 二面 */
+  SECOND_ROUND = '二面',
+  /** 三面 */
+  THIRD_ROUND = '三面',
+  /** 终面 */
+  FINAL_ROUND = '终面'
+}
+
+/**
+ * 面试形式枚举
+ */
+export enum InterviewForm {
+  /** 现场面试 */
+  ONSITE = '现场面试',
+  /** 视频面试 */
+  VIDEO = '视频面试',
+  /** 电话面试 */
+  PHONE = '电话面试'
+}
+
+/**
+ * 面试记录创建请求
+ */
+export interface InterviewRecordCreateRequest {
+  /** 岗位ID */
+  positionId: string
+  /** 面试轮次 */
+  interviewRound: string
+  /** 面试时间（ISO 格式） */
+  interviewTime: string
+  /** 面试地点 */
+  interviewLocation: string
+  /** 面试形式 */
+  interviewForm: string
+  /** 面试官信息 */
+  interviewerInfo?: string
+  /** 备注 */
+  remarks?: string
+}
+
+/**
+ * 面试记录更新请求
+ */
+export interface InterviewRecordUpdateRequest extends Partial<InterviewRecordCreateRequest> {
+  /** 面试记录ID */
+  id: number
+}
+
+/**
+ * 面试记录列表响应
+ */
+export type InterviewRecordListResponse = ApiResponse<InterviewRecord[]>
+
+/**
+ * 面试记录响应
+ */
+export type InterviewRecordResponse = ApiResponse<InterviewRecord>

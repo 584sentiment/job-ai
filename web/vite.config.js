@@ -17,6 +17,7 @@ export default defineConfig({
   base: process.env.NODE_ENV === 'production' ? '/job-ai/' : '/',
   server: {
     port: 3000,
+    host: '127.0.0.1',
     open: true,
     proxy: {
       '/api': {

@@ -11,6 +11,10 @@ import type {
   PositionDetailResponse,
   PositionMutationResponse,
   ApiResponse,
+  InterviewRecordCreateRequest,
+  InterviewRecordUpdateRequest,
+  InterviewRecordListResponse,
+  InterviewRecordResponse,
 } from '@/types';
 
 /**
@@ -74,4 +78,48 @@ export function deletePosition(id: string): Promise<ApiResponse> {
  */
 export function toggleCollect(id: string): Promise<ApiResponse> {
   return postWithAuth(`/positions/${id}/collect`, {}) as Promise<ApiResponse>;
+}
+
+/**
+ * 创建面试记录
+ * @param data - 面试记录数据
+ * @returns 创建的面试记录响应
+ */
+export function createInterviewRecord(
+  data: InterviewRecordCreateRequest,
+): Promise<InterviewRecordResponse> {
+  return postWithAuth('/interview-records', data) as Promise<InterviewRecordResponse>;
+}
+
+/**
+ * 更新面试记录
+ * @param id - 面试记录ID
+ * @param data - 更新数据
+ * @returns 更新后的面试记录响应
+ */
+export function updateInterviewRecord(
+  id: number,
+  data: InterviewRecordUpdateRequest,
+): Promise<InterviewRecordResponse> {
+  return putWithAuth(`/interview-records/${id}`, data) as Promise<InterviewRecordResponse>;
+}
+
+/**
+ * 删除面试记录
+ * @param id - 面试记录ID
+ * @returns 删除结果响应
+ */
+export function deleteInterviewRecord(id: number): Promise<ApiResponse<void>> {
+  return delWithAuth(`/interview-records/${id}`) as Promise<ApiResponse<void>>;
+}
+
+/**
+ * 获取岗位的面试记录列表
+ * @param positionId - 岗位ID
+ * @returns 面试记录列表响应
+ */
+export function getInterviewRecordsByPosition(
+  positionId: string,
+): Promise<InterviewRecordListResponse> {
+  return getWithAuth(`/positions/${positionId}/interview-records`) as Promise<InterviewRecordListResponse>;
 }

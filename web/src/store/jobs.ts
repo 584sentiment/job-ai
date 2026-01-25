@@ -1,11 +1,20 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import * as positionApi from '@/api/position';
-import { Position, PositionCreateRequest, PositionQueryParams, PositionStatus } from '@/types';
+import {
+  Position,
+  PositionCreateRequest,
+  PositionQueryParams,
+  PositionStatus,
+  InterviewRecord,
+  InterviewRecordCreateRequest,
+  InterviewRecordUpdateRequest,
+} from '@/types';
 
 export const useJobsStore = defineStore('jobs', () => {
   // 状态
   const jobs = ref<Position[]>([]);
+  const interviewRecords = ref<InterviewRecord[]>([]);
   const loading = ref<boolean>(false);
   const currentFilter = ref<number | string | 'all'>('all');
   const searchKeyword = ref<string>('');
@@ -293,9 +302,114 @@ export const useJobsStore = defineStore('jobs', () => {
     }
   }
 
+  /**
+   * 获取岗位的面试记录
+   * @param positionId - 岗位ID
+   */
+  async function fetchInterviewRecords(positionId: string): Promise<void> {
+    try {
+      const response = await positionApi.getInterviewRecordsByPosition(positionId);
+      if (response.data) {
+        interviewRecords.value = response.data;
+      }
+    } catch (error) {
+      console.error('获取面试记录失败:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 添加面试记录
+   * @param data - 面试记录数据
+   * @returns 创建的面试记录
+   */
+  async function addInterviewRecord(
+    data: InterviewRecordCreateRequest,
+  ): Promise<InterviewRecord> {
+    try {
+      const response = await positionApi.createInterviewRecord(data);
+      if (response.data) {
+        interviewRecords.value.push(response.data);
+
+        // 同步更新岗位详情中的数据
+        const position = jobs.value.find(j => j.id === data.positionId);
+        if (position?.interviewRecordList) {
+          position.interviewRecordList.push(response.data);
+        }
+      }
+      return response.data;
+    } catch (error) {
+      console.error('添加面试记录失败:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 更新面试记录
+   * @param id - 面试记录ID
+   * @param data - 更新数据
+   */
+  async function updateInterviewRecord(
+    id: number,
+    data: InterviewRecordUpdateRequest,
+  ): Promise<void> {
+    try {
+      const response = await positionApi.updateInterviewRecord(id, data);
+      if (response.data) {
+        const index = interviewRecords.value.findIndex(r => r.id === id);
+        if (index !== -1) {
+          interviewRecords.value[index] = response.data;
+        }
+
+        // 同步更新岗位详情中的数据
+        jobs.value.forEach(job => {
+          if (job.interviewRecordList) {
+            const idx = job.interviewRecordList.findIndex(r => r.id === id);
+            if (idx !== -1) {
+              job.interviewRecordList[idx] = response.data;
+            }
+          }
+        });
+      }
+    } catch (error) {
+      console.error('更新面试记录失败:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 删除面试记录
+   * @param id - 面试记录ID
+   */
+  async function deleteInterviewRecord(id: number): Promise<void> {
+    try {
+      await positionApi.deleteInterviewRecord(id);
+
+      // 从列表中移除
+      const index = interviewRecords.value.findIndex(r => r.id === id);
+      if (index !== -1) {
+        interviewRecords.value.splice(index, 1);
+      }
+
+      // 从岗位详情中移除
+      jobs.value.forEach(job => {
+        if (job.interviewRecordList) {
+          const idx = job.interviewRecordList.findIndex(r => r.id === id);
+          if (idx !== -1) {
+            job.interviewRecordList.splice(idx, 1);
+          }
+        }
+      });
+    } catch (error) {
+      console.error('删除面试记录失败:', error);
+      throw error;
+    }
+  }
+
   return {
     // 状态
     jobs,
+    interviewRecords,
     loading,
     currentFilter,
     searchKeyword,
@@ -311,6 +425,10 @@ export const useJobsStore = defineStore('jobs', () => {
     addJob,
     updateJob,
     deleteJob,
+    fetchInterviewRecords,
+    addInterviewRecord,
+    updateInterviewRecord,
+    deleteInterviewRecord,
     setFilter,
     filterByStatus,
     searchJobs,
