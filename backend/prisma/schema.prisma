@@ -1,4 +1,5 @@
 // Prisma Schema - 求职追踪助手数据库模型定义
+// 与前端 web/src/types/ 保持一致
 
 generator client {
   provider = "prisma-client-js"
@@ -14,7 +15,7 @@ model User {
   id            String    @id @default(uuid())
   phone         String    @unique
   password      String
-  nickname      String?
+  nickname      String
   avatar        String?
   bio           String?
   email         String?
@@ -22,11 +23,12 @@ model User {
   updateTime    DateTime  @updatedAt
 
   // 关联关系
-  positions     Position[]
-  interviews    Interview[]
-  experiences   Experience[]
+  positions        Position[]
+  interviews       Interview[]
+  experiences      Experience[]
   experienceComments ExperienceComment[]
-  summaries     Summary[]
+  commentReplies   ExperienceComment[] @relation("CommentReplies")
+  summaries        Summary[]
 
   @@map("users")
 }
@@ -36,35 +38,35 @@ model Position {
   id            String    @id @default(uuid())
   userId        String
 
-  // 基本信息
-  company       String
-  position      String
-  channel       String?
-  location      String?
-  salary        String?
+  // 基本信息（前端字段名：company -> companyName）
+  companyName   String
+  positionName  String
+  deliveryChannel String
+  deliveryDate  DateTime
+  workLocation  String?
+  salaryRange   String?
+  jobDescription String?  @db.Text
 
-  // JD 和备注
-  jd            String?   @db.Text
-  contact       String?
-  remark        String?   @db.Text
+  // 联系人信息
+  contactName   String?
+  contactPhone  String?
+
+  // 备注
+  remarks       String?   @db.Text
 
   // 状态
   status        String    @default("pending") // pending, applied, interview, offered, rejected
-  isCollected   Boolean   @default(false)
-
-  // 时间线（JSON 格式存储）
-  timeline      Json?
+  isCollected   Int       @default(0) // 0: 否, 1: 是（前端使用 number）
 
   // 时间戳
-  applyDate     DateTime?
   createTime    DateTime  @default(now())
   updateTime    DateTime  @updatedAt
 
   // 关联关系
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  interviews    Interview[] @relation("InterviewPosition")
-  experiences   Experience[] @relation("ExperiencePosition")
-  summaries     Summary[]   @relation("SummaryPosition")
+  interviews    Interview[] @relation("PositionInterviews")
+  experiences   Experience[] @relation("PositionExperiences")
+  summaries     Summary[]   @relation("PositionSummaries")
 
   @@index([userId])
   @@index([status])
@@ -74,27 +76,21 @@ model Position {
 // 面试记录表
 model Interview {
   id            String    @id @default(uuid())
+  positionId    String
   userId        String
-  positionId    String?
 
-  // 基本信息
-  company       String
-  position      String
-  round         String?   // 一面、二面、三面、HR面
+  // 面试信息（前端字段名调整）
+  interviewRound String   // 笔试、一面、二面、三面、终面
+  interviewTime BigInt    // 时间戳（毫秒）
+  interviewLocation String
+  interviewForm   String  // 现场面试、视频面试、电话面试
+  interviewerInfo String? @db.Text // 面试官信息
 
-  // 面试信息
-  date          DateTime?
-  time          String?   // 14:00
-  location      String?
-  form          String?   // 现场面试、视频面试、电话面试
-  status        String    @default("upcoming") // upcoming, completed, cancelled
+  // 备注
+  remarks       String?   @db.Text
 
-  // AI 准备清单（JSON 格式）
-  aiPrepList    Json?
-
-  // 面试反馈
-  feedback      String?   @db.Text
-  result        String?   // pass, fail, pending
+  // 状态
+  status        Int       @default(0) // 前端使用 number
 
   // 时间戳
   createTime    DateTime  @default(now())
@@ -102,55 +98,54 @@ model Interview {
 
   // 关联关系
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  positionRel   Position? @relation("InterviewPosition", fields: [positionId], references: [id], onDelete: SetNull)
+  position      Position  @relation("PositionInterviews", fields: [positionId], references: [id], onDelete: Cascade)
   summaries     Summary[]
 
   @@index([userId])
   @@index([positionId])
-  @@index([status])
-  @@index([date])
+  @@index([interviewTime])
   @@map("interviews")
 }
 
 // 面经表
 model Experience {
   id            String    @id @default(uuid())
-  userId        String
   positionId    String?
+  userId        String
 
-  // 基本信息
-  company       String
-  position      String
+  // 基本信息（前端字段名调整）
+  companyName   String
+  positionName  String
+  interviewRound String   // 笔试、一面、二面、三面、HR面
+  interviewDate DateTime  // ISO 8601格式
 
   // 面经内容
   content       String    @db.Text
-  tags          String[]  // 标签数组
+  contentType   String    @default("markdown") // text, markdown, html
 
-  // 分类
-  category      String?   // 技术面、HR面、综合面
+  // 标签
+  tags          String[]  @default([])
 
-  // 统计
-  viewCount     Int       @default(0)
-  likeCount     Int       @default(0)
-  commentCount  Int       @default(0)
+  // 状态（前端字段名调整）
+  isFavorite    Int       @default(0) // 0: 否, 1: 是
+  isAnonymous   Int       @default(0) // 0: 否, 1: 是
 
-  // 状态
-  isPublic      Boolean   @default(true)
-  isFavorited   Boolean   @default(false)
+  // 统计（前端字段名调整）
+  views         Int       @default(0)
+  comments      Int       @default(0)
 
   // 时间戳
-  interviewDate DateTime?
   createTime    DateTime  @default(now())
   updateTime    DateTime  @updatedAt
 
   // 关联关系
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  positionRel   Position? @relation("ExperiencePosition", fields: [positionId], references: [id], onDelete: SetNull)
-  comments      ExperienceComment[]
+  position      Position? @relation("PositionExperiences", fields: [positionId], references: [id], onDelete: SetNull)
+  commentList   ExperienceComment[]
 
   @@index([userId])
   @@index([positionId])
-  @@index([category])
+  @@index([interviewDate])
   @@index([createTime])
   @@map("experiences")
 }
@@ -158,11 +153,18 @@ model Experience {
 // 面经评论表
 model ExperienceComment {
   id            String    @id @default(uuid())
-  userId        String
   experienceId  String
+  userId        String
+
+  // 回复关系（支持多级评论）
+  parentId      String?
+  replyToUserId String?
 
   // 评论内容
   content       String    @db.Text
+
+  // 统计
+  likes         Int       @default(0)
 
   // 时间戳
   createTime    DateTime  @default(now())
@@ -171,33 +173,37 @@ model ExperienceComment {
   // 关联关系
   user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   experience    Experience  @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  replyToUser   User?       @relation("CommentReplies", fields: [replyToUserId], references: [id], onDelete: SetNull)
+  parent        ExperienceComment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: SetNull)
+  replies       ExperienceComment[] @relation("CommentReplies")
 
   @@index([userId])
   @@index([experienceId])
+  @@index([parentId])
   @@map("experience_comments")
 }
 
 // 面试总结表
 model Summary {
   id            String    @id @default(uuid())
-  userId        String
-  interviewId   String?
   positionId    String?
+  interviewId   String?
+  userId        String
 
   // 基本信息
-  company       String
-  position      String
-  round         String?
+  companyName   String
+  positionName  String
+  interviewRound String?
 
   // 总结内容（结构化数据，JSON 格式）
   // {
-  //   "strengths": ["技术基础扎实", "项目经验丰富"],
-  //   "weaknesses": ["算法需加强", "沟通需提升"],
-  //   "questions": ["请介绍一下你的项目", "如何解决性能问题"],
-  //   "improvements": ["多刷算法题", "提升表达能力"],
-  //   "overall": "整体表现良好，技术能力达到要求"
+  //   "content": "总结内容",
+  //   "highlights": ["亮点1", "亮点2"],
+  //   "improvements": ["改进点1", "改进点2"]
   // }
   content       Json
+  round         String?
+  date          DateTime?
 
   // 时间戳
   createTime    DateTime  @default(now())
@@ -206,7 +212,7 @@ model Summary {
   // 关联关系
   user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   interview     Interview? @relation("SummaryInterview", fields: [interviewId], references: [id], onDelete: SetNull)
-  positionRel   Position?  @relation("SummaryPosition", fields: [positionId], references: [id], onDelete: SetNull)
+  position      Position?  @relation("PositionSummaries", fields: [positionId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([interviewId])
