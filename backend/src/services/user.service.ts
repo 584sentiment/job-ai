@@ -3,7 +3,7 @@
  */
 import bcrypt from 'bcrypt'
 import PrismaConfig from '@/config/database'
-import { ConflictError, NotFoundError, UnauthorizedError } from '@/utils/error'
+import { BadRequestError, NotFoundError, UnauthorizedError } from '@/utils/error'
 import type { User, Prisma } from '@prisma/client'
 
 const prisma = PrismaConfig.getInstance()
@@ -20,7 +20,7 @@ export async function register(phone: string, password: string, nickname?: strin
   })
 
   if (existingUser) {
-    throw new ConflictError('该手机号已注册')
+    throw new BadRequestError('该手机号已注册')
   }
 
   // 加密密码
@@ -102,7 +102,7 @@ export async function updateUser(
     })
 
     if (existingUser && existingUser.id !== id) {
-      throw new ConflictError('该手机号已被使用')
+      throw new BadRequestError('该手机号已被使用')
     }
   }
 
