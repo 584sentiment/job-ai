@@ -29,13 +29,28 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
+   * 保存登录状态
+   * @param {object} userData - 用户数据
+   * @param {string} tokenValue - token
+   */
+  function saveAuthState(userData, tokenValue) {
+    user.value = userData
+    isLoggedIn.value = true
+    token.value = tokenValue
+
+    // 持久化到 localStorage
+    localStorage.setItem('user', JSON.stringify(userData))
+    localStorage.setItem('token', tokenValue)
+  }
+
+  /**
    * 注册
    * @param {object} userData - 注册数据
    * @param {string} userData.phone - 手机号
    * @param {string} userData.password - 密码
    * @param {string} userData.nickname - 昵称
    * @param {string} userData.email - 邮箱（可选）
-   * @returns {Promise} 返回注册结果
+   * @returns {Promise<{hasToken: boolean}>} 返回注册结果和是否有 token
    */
   async function register(userData) {
     try {
@@ -50,8 +65,18 @@ export const useAuthStore = defineStore('auth', () => {
         email: userData.email || undefined
       })
 
-      // 注册成功，不保存状态，需要用户手动登录
-      return response
+      // 检查响应中是否包含 token
+      const hasToken = !!(response.data && response.data.token)
+
+      // 如果返回了 token，直接保存登录状态
+      if (hasToken) {
+        saveAuthState(response.data, response.data.token)
+      }
+
+      return {
+        ...response,
+        hasToken // 返回是否有 token，供页面判断跳转逻辑
+      }
     } catch (error) {
       console.error('注册失败:', error)
       throw error
@@ -76,16 +101,9 @@ export const useAuthStore = defineStore('auth', () => {
         password: hashedPassword
       })
 
-      // 保存用户信息
-      user.value = response.data
-      isLoggedIn.value = true
-
-      // 保存 token
-      token.value = response.data.token || `token-${response.data.id}`
-
-      // 持久化到 localStorage
-      localStorage.setItem('user', JSON.stringify(user.value))
-      localStorage.setItem('token', token.value)
+      // 保存登录状态
+      const tokenValue = response.data.token || `token-${response.data.id}`
+      saveAuthState(response.data, tokenValue)
 
       return response
     } catch (error) {

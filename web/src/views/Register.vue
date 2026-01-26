@@ -330,15 +330,21 @@ const handleRegister = async () => {
 
   try {
     // 调用 store 注册方法（会调用真实 API）
-    await authStore.register({
+    const result = await authStore.register({
       nickname: form.value.nickname,
       phone: form.value.phone,
       password: form.value.password,
       email: form.value.email
     })
 
-    // 注册成功，跳转到首页
-    router.push('/login')
+    // 如果注册接口返回了 token，直接登录并跳转到首页
+    if (result.hasToken) {
+      // 注册成功且已自动登录，跳转到首页
+      router.push('/')
+    } else {
+      // 注册成功但未返回 token，需要手动登录
+      router.push('/login')
+    }
   } catch (error) {
     console.error('注册失败:', error)
 
