@@ -36,7 +36,7 @@ export function errorMiddleware(
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     // 唯一约束冲突（如手机号已注册）
     if (error.code === 'P2002') {
-      fail(res, '该手机号已注册', ResponseCode.CONFLICT)
+      fail(res, '该手机号已注册', ResponseCode.BAD_REQUEST)
       return
     }
 

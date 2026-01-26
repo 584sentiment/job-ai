@@ -1,5 +1,6 @@
 /**
  * 自定义错误类
+ * 与前端 web/src/types/enums.ts 保持一致
  */
 import { ResponseCode } from '@/constants/responseCode'
 
@@ -33,7 +34,7 @@ export class BadRequestError extends AppError {
  * 401 Unauthorized
  */
 export class UnauthorizedError extends AppError {
-  constructor(message: string = '未授权，请重新登录') {
+  constructor(message: string = '未授权，请先登录') {
     super(message, ResponseCode.UNAUTHORIZED)
     this.name = 'UnauthorizedError'
   }
@@ -60,16 +61,6 @@ export class NotFoundError extends AppError {
 }
 
 /**
- * 409 Conflict
- */
-export class ConflictError extends AppError {
-  constructor(message: string = '资源冲突', data?: any) {
-    super(message, ResponseCode.CONFLICT, data)
-    this.name = 'ConflictError'
-  }
-}
-
-/**
  * 500 Internal Server Error
  */
 export class InternalError extends AppError {
@@ -79,23 +70,11 @@ export class InternalError extends AppError {
   }
 }
 
-/**
- * 501 Not Implemented
- */
-export class NotImplementedError extends AppError {
-  constructor(message: string = '功能暂未实现') {
-    super(message, ResponseCode.NOT_IMPLEMENTED)
-    this.name = 'NotImplementedError'
-  }
-}
-
 export default {
   AppError,
   BadRequestError,
   UnauthorizedError,
   ForbiddenError,
   NotFoundError,
-  ConflictError,
   InternalError,
-  NotImplementedError,
 }

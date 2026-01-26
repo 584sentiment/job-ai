@@ -108,7 +108,7 @@ export async function createPosition(req: Request, res: Response, next: NextFunc
       isCollected: isCollected ?? 0,
     })
 
-    created(res, position, '创建成功')
+    success(res, position, '创建成功')
   } catch (error) {
     next(error)
   }

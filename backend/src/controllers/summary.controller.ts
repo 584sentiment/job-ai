@@ -80,7 +80,7 @@ export async function createSummary(req: Request, res: Response, next: NextFunct
       content,
     })
 
-    created(res, summary, '创建成功')
+    success(res, summary, '创建成功')
   } catch (error) {
     next(error)
   }

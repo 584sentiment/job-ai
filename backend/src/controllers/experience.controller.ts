@@ -138,7 +138,7 @@ export async function createExperience(req: Request, res: Response, next: NextFu
       isAnonymous: isAnonymous ?? 0,
     })
 
-    created(res, experience, '创建成功')
+    success(res, experience, '创建成功')
   } catch (error) {
     next(error)
   }

@@ -1,5 +1,6 @@
 /**
  * 统一响应格式工具
+ * 与前端 web/src/types/enums.ts 保持一致
  */
 import { Response } from 'express'
 import { ResponseCode, ResponseMessage } from '@/constants/responseCode'
@@ -15,13 +16,6 @@ export function success<T>(res: Response, data: T, message?: string, code: Respo
     data,
   }
   res.status(code).json(response)
-}
-
-/**
- * 创建成功响应（201）
- */
-export function created<T>(res: Response, data: T, message?: string): void {
-  success(res, data, message, ResponseCode.CREATED)
 }
 
 /**
@@ -60,7 +54,6 @@ export function paginate<T>(
 
 export default {
   success,
-  created,
   fail,
   paginate,
 }

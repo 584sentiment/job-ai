@@ -37,7 +37,7 @@ export async function register(req: Request, res: Response, next: NextFunction):
     const token = generateToken(user)
 
     // 返回用户信息和 Token
-    created(res, {
+    success(res, {
       user,
       token,
     }, '注册成功')

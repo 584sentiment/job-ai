@@ -125,7 +125,7 @@ export async function createInterview(req: Request, res: Response, next: NextFun
       status: status ?? 0,
     })
 
-    created(res, interview, '创建成功')
+    success(res, interview, '创建成功')
   } catch (error) {
     next(error)
   }
