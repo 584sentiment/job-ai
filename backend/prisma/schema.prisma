@@ -1,0 +1,215 @@
+// Prisma Schema - 求职追踪助手数据库模型定义
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户表
+model User {
+  id            String    @id @default(uuid())
+  phone         String    @unique
+  password      String
+  nickname      String?
+  avatar        String?
+  bio           String?
+  email         String?
+  createTime    DateTime  @default(now())
+  updateTime    DateTime  @updatedAt
+
+  // 关联关系
+  positions     Position[]
+  interviews    Interview[]
+  experiences   Experience[]
+  experienceComments ExperienceComment[]
+  summaries     Summary[]
+
+  @@map("users")
+}
+
+// 岗位表
+model Position {
+  id            String    @id @default(uuid())
+  userId        String
+
+  // 基本信息
+  company       String
+  position      String
+  channel       String?
+  location      String?
+  salary        String?
+
+  // JD 和备注
+  jd            String?   @db.Text
+  contact       String?
+  remark        String?   @db.Text
+
+  // 状态
+  status        String    @default("pending") // pending, applied, interview, offered, rejected
+  isCollected   Boolean   @default(false)
+
+  // 时间线（JSON 格式存储）
+  timeline      Json?
+
+  // 时间戳
+  applyDate     DateTime?
+  createTime    DateTime  @default(now())
+  updateTime    DateTime  @updatedAt
+
+  // 关联关系
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interviews    Interview[]
+  experiences   Experience[]
+  summaries     Summary[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("positions")
+}
+
+// 面试记录表
+model Interview {
+  id            String    @id @default(uuid())
+  userId        String
+  positionId    String?
+
+  // 基本信息
+  company       String
+  position      String
+  round         String?   // 一面、二面、三面、HR面
+
+  // 面试信息
+  date          DateTime?
+  time          String?   // 14:00
+  location      String?
+  form          String?   // 现场面试、视频面试、电话面试
+  status        String    @default("upcoming") // upcoming, completed, cancelled
+
+  // AI 准备清单（JSON 格式）
+  aiPrepList    Json?
+
+  // 面试反馈
+  feedback      String?   @db.Text
+  result        String?   // pass, fail, pending
+
+  // 时间戳
+  createTime    DateTime  @default(now())
+  updateTime    DateTime  @updatedAt
+
+  // 关联关系
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  position      Position? @relation(fields: [positionId], references: [id], onDelete: SetNull)
+  summaries     Summary[]
+
+  @@index([userId])
+  @@index([positionId])
+  @@index([status])
+  @@index([date])
+  @@map("interviews")
+}
+
+// 面经表
+model Experience {
+  id            String    @id @default(uuid())
+  userId        String
+  positionId    String?
+
+  // 基本信息
+  company       String
+  position      String
+
+  // 面经内容
+  content       String    @db.Text
+  tags          String[]  // 标签数组
+
+  // 分类
+  category      String?   // 技术面、HR面、综合面
+
+  // 统计
+  viewCount     Int       @default(0)
+  likeCount     Int       @default(0)
+  commentCount  Int       @default(0)
+
+  // 状态
+  isPublic      Boolean   @default(true)
+  isFavorited   Boolean   @default(false)
+
+  // 时间戳
+  interviewDate DateTime?
+  createTime    DateTime  @default(now())
+  updateTime    DateTime  @updatedAt
+
+  // 关联关系
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  position      Position? @relation(fields: [positionId], references: [id], onDelete: SetNull)
+  comments      ExperienceComment[]
+
+  @@index([userId])
+  @@index([positionId])
+  @@index([category])
+  @@index([createTime])
+  @@map("experiences")
+}
+
+// 面经评论表
+model ExperienceComment {
+  id            String    @id @default(uuid())
+  userId        String
+  experienceId  String
+
+  // 评论内容
+  content       String    @db.Text
+
+  // 时间戳
+  createTime    DateTime  @default(now())
+  updateTime    DateTime  @updatedAt
+
+  // 关联关系
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  experience    Experience  @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([experienceId])
+  @@map("experience_comments")
+}
+
+// 面试总结表
+model Summary {
+  id            String    @id @default(uuid())
+  userId        String
+  interviewId   String?
+  positionId    String?
+
+  // 基本信息
+  company       String
+  position      String
+  round         String?
+
+  // 总结内容（结构化数据，JSON 格式）
+  // {
+  //   "strengths": ["技术基础扎实", "项目经验丰富"],
+  //   "weaknesses": ["算法需加强", "沟通需提升"],
+  //   "questions": ["请介绍一下你的项目", "如何解决性能问题"],
+  //   "improvements": ["多刷算法题", "提升表达能力"],
+  //   "overall": "整体表现良好，技术能力达到要求"
+  // }
+  content       Json
+
+  // 时间戳
+  createTime    DateTime  @default(now())
+  updateTime    DateTime  @updatedAt
+
+  // 关联关系
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interview     Interview? @relation(fields: [interviewId], references: [id], onDelete: SetNull)
+  position      Position?  @relation(fields: [positionId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([interviewId])
+  @@index([positionId])
+  @@map("summaries")
+}
