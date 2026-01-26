@@ -13,7 +13,7 @@ export async function getExperiencesPaginated(req: Request, res: Response, next:
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { page, pageSize, category, positionId, tags } = req.body
+    const { page, pageSize, positionId, tags, isFavorite } = req.body
 
     // 参数验证
     if (page !== undefined && (typeof page !== 'number' || page < 1)) {
@@ -28,9 +28,9 @@ export async function getExperiencesPaginated(req: Request, res: Response, next:
     const result = await experienceService.getExperiencesPaginated(userId, {
       page: page || 1,
       pageSize: pageSize || 10,
-      category,
       positionId,
       tags,
+      isFavorite,
     })
 
     paginate(res, result.list, result.total, result.page, result.pageSize)
@@ -106,30 +106,36 @@ export async function createExperience(req: Request, res: Response, next: NextFu
     const userId = req.user!.id
     const {
       positionId,
-      company,
-      position: positionName,
-      content,
-      tags,
-      category,
+      companyName,
+      positionName,
+      interviewRound,
       interviewDate,
-      isPublic,
+      content,
+      contentType,
+      tags,
+      isAnonymous,
     } = req.body
 
     // 参数验证
-    if (!company || !positionName || !content) {
+    if (!companyName || !positionName || !content) {
       throw new BadRequestError('公司、职位名称和内容不能为空')
+    }
+
+    if (!interviewDate) {
+      throw new BadRequestError('面试日期不能为空')
     }
 
     // 调用服务层创建
     const experience = await experienceService.createExperience(userId, {
       positionId,
-      company,
-      position: positionName,
+      companyName,
+      positionName,
+      interviewRound,
+      interviewDate: new Date(interviewDate),
       content,
+      contentType: contentType || 'markdown',
       tags: tags || [],
-      category,
-      interviewDate: interviewDate ? new Date(interviewDate) : null,
-      isPublic: isPublic !== undefined ? isPublic : true,
+      isAnonymous: isAnonymous ?? 0,
     })
 
     created(res, experience, '创建成功')
@@ -148,14 +154,14 @@ export async function updateExperience(req: Request, res: Response, next: NextFu
     const {
       id,
       positionId,
-      company,
-      position: positionName,
-      content,
-      tags,
-      category,
+      companyName,
+      positionName,
+      interviewRound,
       interviewDate,
-      isPublic,
-      isFavorited,
+      content,
+      contentType,
+      tags,
+      isAnonymous,
     } = req.body
 
     // 参数验证
@@ -163,21 +169,21 @@ export async function updateExperience(req: Request, res: Response, next: NextFu
       throw new BadRequestError('面经ID不能为空')
     }
 
-    if (!company || !positionName || !content) {
+    if (!companyName || !positionName || !content) {
       throw new BadRequestError('公司、职位名称和内容不能为空')
     }
 
     // 调用服务层更新
     const experience = await experienceService.updateExperience(id, userId, {
       positionId,
-      company,
-      position: positionName,
+      companyName,
+      positionName,
+      interviewRound,
+      interviewDate: interviewDate ? new Date(interviewDate) : undefined,
       content,
+      contentType,
       tags,
-      category,
-      interviewDate: interviewDate ? new Date(interviewDate) : null,
-      isPublic,
-      isFavorited,
+      isAnonymous,
     })
 
     success(res, experience, '更新成功')

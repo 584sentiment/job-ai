@@ -30,7 +30,7 @@ export async function getPositionsPaginated(req: Request, res: Response, next: N
       pageSize: pageSize || 10,
       status,
       keyword,
-      isCollected: isCollected === 'true' ? true : isCollected === 'false' ? false : undefined,
+      isCollected,
     })
 
     paginate(res, result.list, result.total, result.page, result.pageSize)
@@ -65,37 +65,47 @@ export async function createPosition(req: Request, res: Response, next: NextFunc
     // 从中间件获取用户 ID
     const userId = req.user!.id
     const {
-      company,
-      position: positionName,
-      channel,
-      location,
-      salary,
-      jd,
-      contact,
-      remark,
+      companyName,
+      positionName,
+      deliveryChannel,
+      deliveryDate,
+      workLocation,
+      salaryRange,
+      jobDescription,
+      contactName,
+      contactPhone,
+      remarks,
       status,
-      applyDate,
-      timeline,
+      isCollected,
     } = req.body
 
     // 参数验证
-    if (!company || !positionName) {
+    if (!companyName || !positionName) {
       throw new BadRequestError('公司和职位名称不能为空')
+    }
+
+    if (!deliveryChannel) {
+      throw new BadRequestError('投递渠道不能为空')
+    }
+
+    if (!deliveryDate) {
+      throw new BadRequestError('投递日期不能为空')
     }
 
     // 调用服务层创建
     const position = await positionService.createPosition(userId, {
-      company,
-      position: positionName,
-      channel,
-      location,
-      salary,
-      jd,
-      contact,
-      remark,
+      companyName,
+      positionName,
+      deliveryChannel,
+      deliveryDate: new Date(deliveryDate),
+      workLocation,
+      salaryRange,
+      jobDescription,
+      contactName,
+      contactPhone,
+      remarks,
       status,
-      applyDate: applyDate ? new Date(applyDate) : null,
-      timeline,
+      isCollected: isCollected ?? 0,
     })
 
     created(res, position, '创建成功')
@@ -113,17 +123,17 @@ export async function updatePosition(req: Request, res: Response, next: NextFunc
     const userId = req.user!.id
     const {
       id,
-      company,
-      position: positionName,
-      channel,
-      location,
-      salary,
-      jd,
-      contact,
-      remark,
+      companyName,
+      positionName,
+      deliveryChannel,
+      deliveryDate,
+      workLocation,
+      salaryRange,
+      jobDescription,
+      contactName,
+      contactPhone,
+      remarks,
       status,
-      applyDate,
-      timeline,
       isCollected,
     } = req.body
 
@@ -132,23 +142,23 @@ export async function updatePosition(req: Request, res: Response, next: NextFunc
       throw new BadRequestError('岗位ID不能为空')
     }
 
-    if (!company || !positionName) {
+    if (!companyName || !positionName) {
       throw new BadRequestError('公司和职位名称不能为空')
     }
 
     // 调用服务层更新
     const position = await positionService.updatePosition(id, userId, {
-      company,
-      position: positionName,
-      channel,
-      location,
-      salary,
-      jd,
-      contact,
-      remark,
+      companyName,
+      positionName,
+      deliveryChannel,
+      deliveryDate: deliveryDate ? new Date(deliveryDate) : undefined,
+      workLocation,
+      salaryRange,
+      jobDescription,
+      contactName,
+      contactPhone,
+      remarks,
       status,
-      applyDate: applyDate ? new Date(applyDate) : null,
-      timeline,
       isCollected,
     })
 

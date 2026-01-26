@@ -15,7 +15,7 @@ export async function getInterviewsPaginated(
   params: {
     page?: number
     pageSize?: number
-    status?: string
+    status?: number
     positionId?: string
   }
 ): Promise<{
@@ -33,7 +33,7 @@ export async function getInterviewsPaginated(
   }
 
   // 状态筛选
-  if (status) {
+  if (status !== undefined) {
     where.status = status
   }
 
@@ -50,7 +50,7 @@ export async function getInterviewsPaginated(
     where,
     skip: (page - 1) * pageSize,
     take: pageSize,
-    orderBy: { date: 'desc' },
+    orderBy: { interviewTime: 'desc' },
   })
 
   return {
@@ -83,7 +83,7 @@ export async function getInterviewsByPosition(positionId: string, userId: string
       positionId,
       userId,
     },
-    orderBy: { date: 'desc' },
+    orderBy: { interviewTime: 'desc' },
   })
 }
 

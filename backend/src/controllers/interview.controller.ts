@@ -83,34 +83,46 @@ export async function createInterview(req: Request, res: Response, next: NextFun
     const userId = req.user!.id
     const {
       positionId,
-      company,
-      position: positionName,
-      round,
-      date,
-      time,
-      location,
-      form,
+      interviewRound,
+      interviewTime,
+      interviewLocation,
+      interviewForm,
+      interviewerInfo,
+      remarks,
       status,
-      aiPrepList,
     } = req.body
 
     // 参数验证
-    if (!company || !positionName) {
-      throw new BadRequestError('公司和职位名称不能为空')
+    if (!positionId) {
+      throw new BadRequestError('岗位ID不能为空')
+    }
+
+    if (!interviewRound) {
+      throw new BadRequestError('面试轮次不能为空')
+    }
+
+    if (!interviewTime) {
+      throw new BadRequestError('面试时间不能为空')
+    }
+
+    if (!interviewLocation) {
+      throw new BadRequestError('面试地点不能为空')
+    }
+
+    if (!interviewForm) {
+      throw new BadRequestError('面试形式不能为空')
     }
 
     // 调用服务层创建
     const interview = await interviewService.createInterview(userId, {
       positionId,
-      company,
-      position: positionName,
-      round,
-      date: date ? new Date(date) : null,
-      time,
-      location,
-      form,
-      status,
-      aiPrepList,
+      interviewRound,
+      interviewTime: BigInt(interviewTime),
+      interviewLocation,
+      interviewForm,
+      interviewerInfo,
+      remarks,
+      status: status ?? 0,
     })
 
     created(res, interview, '创建成功')
@@ -129,17 +141,13 @@ export async function updateInterview(req: Request, res: Response, next: NextFun
     const {
       id,
       positionId,
-      company,
-      position: positionName,
-      round,
-      date,
-      time,
-      location,
-      form,
+      interviewRound,
+      interviewTime,
+      interviewLocation,
+      interviewForm,
+      interviewerInfo,
+      remarks,
       status,
-      aiPrepList,
-      feedback,
-      result,
     } = req.body
 
     // 参数验证
@@ -147,24 +155,16 @@ export async function updateInterview(req: Request, res: Response, next: NextFun
       throw new BadRequestError('面试记录ID不能为空')
     }
 
-    if (!company || !positionName) {
-      throw new BadRequestError('公司和职位名称不能为空')
-    }
-
     // 调用服务层更新
     const interview = await interviewService.updateInterview(id, userId, {
       positionId,
-      company,
-      position: positionName,
-      round,
-      date: date ? new Date(date) : null,
-      time,
-      location,
-      form,
+      interviewRound,
+      interviewTime: interviewTime ? BigInt(interviewTime) : undefined,
+      interviewLocation,
+      interviewForm,
+      interviewerInfo,
+      remarks,
       status,
-      aiPrepList,
-      feedback,
-      result,
     })
 
     success(res, interview, '更新成功')

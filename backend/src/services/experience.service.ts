@@ -15,9 +15,9 @@ export async function getExperiencesPaginated(
   params: {
     page?: number
     pageSize?: number
-    category?: string
     positionId?: string
     tags?: string[]
+    isFavorite?: number
   }
 ): Promise<{
   list: Experience[]
@@ -26,17 +26,11 @@ export async function getExperiencesPaginated(
   pageSize: number
   totalPages: number
 }> {
-  const { page = 1, pageSize = 10, category, positionId, tags } = params
+  const { page = 1, pageSize = 10, positionId, tags, isFavorite } = params
 
   // 构建查询条件
   const where: Prisma.ExperienceWhereInput = {
     userId,
-    isPublic: true,
-  }
-
-  // 分类筛选
-  if (category) {
-    where.category = category
   }
 
   // 岗位筛选
@@ -49,6 +43,11 @@ export async function getExperiencesPaginated(
     where.tags = {
       hasSome: tags,
     }
+  }
+
+  // 收藏筛选（前端使用 0/1）
+  if (isFavorite !== undefined) {
+    where.isFavorite = isFavorite
   }
 
   // 查询总数
@@ -94,8 +93,8 @@ export async function searchExperiences(
     where: {
       userId,
       OR: [
-        { company: { contains: keyword, mode: 'insensitive' } },
-        { position: { contains: keyword, mode: 'insensitive' } },
+        { companyName: { contains: keyword, mode: 'insensitive' } },
+        { positionName: { contains: keyword, mode: 'insensitive' } },
         { content: { contains: keyword, mode: 'insensitive' } },
       ],
     },
@@ -112,20 +111,6 @@ export async function getExperienceById(id: string, userId: string): Promise<Exp
       id,
       userId,
     },
-    include: {
-      comments: {
-        orderBy: { createTime: 'desc' },
-        include: {
-          user: {
-            select: {
-              id: true,
-              nickname: true,
-              avatar: true,
-            },
-          },
-        },
-      },
-    },
   })
 
   if (!experience) {
@@ -136,13 +121,13 @@ export async function getExperienceById(id: string, userId: string): Promise<Exp
   await prisma.experience.update({
     where: { id },
     data: {
-      viewCount: {
+      views: {
         increment: 1,
       },
     },
   })
 
-  return experience as Experience
+  return experience
 }
 
 /**
@@ -229,7 +214,7 @@ export async function batchDeleteExperiences(ids: string[], userId: string): Pro
 }
 
 /**
- * 切换面经收藏状态
+ * 切换面经收藏状态（0/1）
  */
 export async function toggleFavoriteExperience(id: string, userId: string): Promise<Experience> {
   // 检查面经是否存在
@@ -241,11 +226,11 @@ export async function toggleFavoriteExperience(id: string, userId: string): Prom
     throw new NotFoundError('面经不存在')
   }
 
-  // 切换收藏状态
+  // 切换收藏状态（0 -> 1, 1 -> 0）
   return prisma.experience.update({
     where: { id },
     data: {
-      isFavorited: !existing.isFavorited,
+      isFavorite: existing.isFavorite === 1 ? 0 : 1,
     },
   })
 }

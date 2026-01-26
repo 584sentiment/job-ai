@@ -17,7 +17,7 @@ export async function getPositionsPaginated(
     pageSize?: number
     status?: string
     keyword?: string
-    isCollected?: boolean
+    isCollected?: number
   }
 ): Promise<{
   list: Position[]
@@ -38,16 +38,16 @@ export async function getPositionsPaginated(
     where.status = status
   }
 
-  // 收藏筛选
+  // 收藏筛选（前端使用 0/1）
   if (isCollected !== undefined) {
     where.isCollected = isCollected
   }
 
-  // 关键词搜索
+  // 关键词搜索（更新字段名）
   if (keyword) {
     where.OR = [
-      { company: { contains: keyword, mode: 'insensitive' } },
-      { position: { contains: keyword, mode: 'insensitive' } },
+      { companyName: { contains: keyword, mode: 'insensitive' } },
+      { positionName: { contains: keyword, mode: 'insensitive' } },
     ]
   }
 
@@ -136,17 +136,17 @@ export async function deletePosition(id: string, userId: string): Promise<void> 
 }
 
 /**
- * 切换岗位收藏状态
+ * 切换岗位收藏状态（0/1）
  */
 export async function toggleCollectPosition(id: string, userId: string): Promise<Position> {
   // 检查岗位是否存在
   const existing = await getPositionById(id, userId)
 
-  // 切换收藏状态
+  // 切换收藏状态（0 -> 1, 1 -> 0）
   return prisma.position.update({
     where: { id },
     data: {
-      isCollected: !existing.isCollected,
+      isCollected: existing.isCollected === 1 ? 0 : 1,
     },
   })
 }
