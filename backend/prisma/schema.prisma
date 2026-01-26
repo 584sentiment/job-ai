@@ -62,9 +62,9 @@ model Position {
 
   // 关联关系
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  interviews    Interview[]
-  experiences   Experience[]
-  summaries     Summary[]
+  interviews    Interview[] @relation("InterviewPosition")
+  experiences   Experience[] @relation("ExperiencePosition")
+  summaries     Summary[]   @relation("SummaryPosition")
 
   @@index([userId])
   @@index([status])
@@ -102,7 +102,7 @@ model Interview {
 
   // 关联关系
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  position      Position? @relation(fields: [positionId], references: [id], onDelete: SetNull)
+  positionRel   Position? @relation("InterviewPosition", fields: [positionId], references: [id], onDelete: SetNull)
   summaries     Summary[]
 
   @@index([userId])
@@ -145,7 +145,7 @@ model Experience {
 
   // 关联关系
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  position      Position? @relation(fields: [positionId], references: [id], onDelete: SetNull)
+  positionRel   Position? @relation("ExperiencePosition", fields: [positionId], references: [id], onDelete: SetNull)
   comments      ExperienceComment[]
 
   @@index([userId])
@@ -205,8 +205,8 @@ model Summary {
 
   // 关联关系
   user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  interview     Interview? @relation(fields: [interviewId], references: [id], onDelete: SetNull)
-  position      Position?  @relation(fields: [positionId], references: [id], onDelete: SetNull)
+  interview     Interview? @relation("SummaryInterview", fields: [interviewId], references: [id], onDelete: SetNull)
+  positionRel   Position?  @relation("SummaryPosition", fields: [positionId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([interviewId])
