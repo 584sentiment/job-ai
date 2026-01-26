@@ -99,7 +99,7 @@ model Interview {
   // 关联关系
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   position      Position  @relation("PositionInterviews", fields: [positionId], references: [id], onDelete: Cascade)
-  summaries     Summary[]
+  summaries     Summary[] @relation("SummaryInterview")
 
   @@index([userId])
   @@index([positionId])
