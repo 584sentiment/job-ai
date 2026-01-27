@@ -9,7 +9,7 @@ import { UnauthorizedError } from '@/utils/error'
  * JWT 认证中间件
  * 验证请求头中的 Authorization: Bearer <token>
  */
-export function authMiddleware(req: Request, res: Response, next: NextFunction): void {
+export function authMiddleware(req: Request, _res: Response, next: NextFunction): void {
   try {
     // 获取 Token
     const authHeader = req.headers.authorization
@@ -44,7 +44,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction):
  * 可选认证中间件
  * 如果有 Token 则验证，没有则跳过
  */
-export function optionalAuthMiddleware(req: Request, res: Response, next: NextFunction): void {
+export function optionalAuthMiddleware(req: Request, _res: Response, next: NextFunction): void {
   try {
     const authHeader = req.headers.authorization
 

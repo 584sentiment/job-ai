@@ -12,7 +12,26 @@ import { PositionStatus, PositionStatusLabels, PositionStatusClasses } from '@/t
  */
 export function formatDate(timestamp: number | string | undefined | null): string {
   if (!timestamp) return ''
-  const date = typeof timestamp === 'number' ? new Date(timestamp) : new Date(timestamp)
+
+  // 处理 BigInt 字符串（如 "1769530615256"）
+  let dateInput: number | Date
+  if (typeof timestamp === 'string') {
+    // 检查是否为纯数字字符串（时间戳）
+    if (/^\d+$/.test(timestamp)) {
+      dateInput = parseInt(timestamp, 10)
+    } else {
+      // 其他格式（ISO 字符串等）
+      dateInput = new Date(timestamp)
+    }
+  } else {
+    dateInput = timestamp
+  }
+
+  const date = typeof dateInput === 'number' ? new Date(dateInput) : dateInput
+
+  // 检查日期是否有效
+  if (isNaN(date.getTime())) return ''
+
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -101,19 +120,18 @@ export function mapPositionForDisplay(position: Position): Position {
 
 /**
  * 准备岗位创建数据
- * 确保所有必填字段都存在，并转换时间戳为 ISO 字符串
+ * 确保所有必填字段都存在，并使用时间戳格式（后端期望时间戳）
  */
 export function preparePositionData(data: Partial<PositionCreateRequest>): PositionCreateRequest {
-  const now = new Date().toISOString()
+  const now = Date.now()
 
-  // 处理 deliveryDate - 如果是时间戳，转换为 ISO 字符串
+  // 处理 deliveryDate - 确保使用时间戳格式（数字）
   let deliveryDate = data.deliveryDate || now
-  if (typeof deliveryDate === 'number') {
-    deliveryDate = toISOString(deliveryDate)
-  } else if (deliveryDate && !deliveryDate.includes('T')) {
-    // 如果是日期字符串（YYYY-MM-DD），转换为 ISO 字符串
-    deliveryDate = new Date(deliveryDate).toISOString()
+  if (typeof deliveryDate === 'string') {
+    // 如果是字符串，转换为时间戳
+    deliveryDate = toTimestamp(deliveryDate)
   }
+  // 如果已经是数字（时间戳），直接使用
 
   return {
     companyName: data.companyName || '',

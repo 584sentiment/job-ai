@@ -2,8 +2,9 @@
  * 面试总结控制器层
  */
 import { Request, Response, NextFunction } from 'express'
+import { Prisma } from '@prisma/client'
 import summaryService from '@/services/summary.service'
-import { success, created, paginate } from '@/utils/response'
+import { success, paginate } from '@/utils/response'
 import { BadRequestError } from '@/utils/error'
 
 /**
@@ -13,21 +14,21 @@ export async function getSummariesPaginated(req: Request, res: Response, next: N
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { page, pageSize, interviewId, positionId } = req.body
+    const { current, size, interviewId, positionId } = req.body
 
     // 参数验证
-    if (page !== undefined && (typeof page !== 'number' || page < 1)) {
+    if (current !== undefined && (typeof current !== 'number' || current < 1)) {
       throw new BadRequestError('页码必须大于0')
     }
 
-    if (pageSize !== undefined && (typeof pageSize !== 'number' || pageSize < 1 || pageSize > 100)) {
+    if (size !== undefined && (typeof size !== 'number' || size < 1 || size > 100)) {
       throw new BadRequestError('每页数量必须在1-100之间')
     }
 
     // 调用服务层查询
     const result = await summaryService.getSummariesPaginated(userId, {
-      page: page || 1,
-      pageSize: pageSize || 10,
+      page: current || 1,
+      pageSize: size || 10,
       interviewId,
       positionId,
     })
@@ -45,7 +46,7 @@ export async function getSummaryById(req: Request, res: Response, next: NextFunc
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { id } = req.params
+    const { id } = req.params as { id: string }
 
     // 调用服务层查询
     const summary = await summaryService.getSummaryById(id, userId)
@@ -63,10 +64,10 @@ export async function createSummary(req: Request, res: Response, next: NextFunct
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { interviewId, positionId, company, position: positionName, round, content } = req.body
+    const { interviewId, positionId, companyName, positionName, round, content } = req.body
 
     // 参数验证
-    if (!company || !positionName || !content) {
+    if (!companyName || !positionName || !content) {
       throw new BadRequestError('公司、职位名称和内容不能为空')
     }
 
@@ -74,11 +75,11 @@ export async function createSummary(req: Request, res: Response, next: NextFunct
     const summary = await summaryService.createSummary(userId, {
       interviewId,
       positionId,
-      company,
-      position: positionName,
+      companyName,
+      positionName,
       round,
       content,
-    })
+    } as Prisma.SummaryUncheckedCreateInput)
 
     success(res, summary, '创建成功')
   } catch (error) {
@@ -93,14 +94,14 @@ export async function updateSummary(req: Request, res: Response, next: NextFunct
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { id, interviewId, positionId, company, position: positionName, round, content } = req.body
+    const { id, interviewId, positionId, companyName, positionName, round, content } = req.body
 
     // 参数验证
     if (!id) {
       throw new BadRequestError('总结ID不能为空')
     }
 
-    if (!company || !positionName || !content) {
+    if (!companyName || !positionName || !content) {
       throw new BadRequestError('公司、职位名称和内容不能为空')
     }
 
@@ -108,11 +109,11 @@ export async function updateSummary(req: Request, res: Response, next: NextFunct
     const summary = await summaryService.updateSummary(id, userId, {
       interviewId,
       positionId,
-      company,
-      position: positionName,
+      companyName,
+      positionName,
       round,
       content,
-    })
+    } as Prisma.SummaryUncheckedUpdateInput)
 
     success(res, summary, '更新成功')
   } catch (error) {
@@ -127,7 +128,7 @@ export async function deleteSummary(req: Request, res: Response, next: NextFunct
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { id } = req.params
+    const { id } = req.params as { id: string }
 
     // 调用服务层删除
     await summaryService.deleteSummary(id, userId)

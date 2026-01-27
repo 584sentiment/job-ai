@@ -240,7 +240,10 @@ export const useJobsStore = defineStore('jobs', () => {
         companyName: job.companyName || '',
         positionName: job.positionName || '',
         deliveryChannel: job.deliveryChannel || '',
-        deliveryDate: job.deliveryDate || new Date().toISOString(),
+        // 确保使用时间戳格式（数字），兼容字符串格式的日期
+        deliveryDate: typeof job.deliveryDate === 'number'
+          ? job.deliveryDate
+          : (job.deliveryDate ? new Date(job.deliveryDate).getTime() : Date.now()),
         workLocation: job.workLocation || '',
         salaryRange: job.salaryRange || '',
         jobDescription: job.jobDescription || '',

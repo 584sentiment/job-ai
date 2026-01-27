@@ -22,8 +22,8 @@ import fetch from 'node-fetch';
 
 // 配置
 const CONFIG = {
-  // API_BASE_URL: process.env.SCRIPT_BASE_URL || 'http://ybb9647b.natappfree.cc/job-track-assistant',
-  // API_TOKEN: process.env.API_TOKEN || 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjIwMTQ5NTczODA3NjA0ODU4OTAsImlhdCI6MTc2OTIzODI2NiwiZXhwIjoxNzY5ODQzMDY2fQ._DviWpCS8BQketW8QAHAVvHumXKGcLl3GYLMfByMdcw',
+  API_BASE_URL: process.env.SCRIPT_BASE_URL || 'http://localhost:8080',
+  API_TOKEN: process.env.API_TOKEN || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImE2MDk3YTM1LWNlZmEtNDE2My1hMmY5LWRjZTU5ZDU4NDc5ZSIsInBob25lIjoiMTg2NzE3MTk2NTIiLCJuaWNrbmFtZSI6IuiAgeeOiyIsImlhdCI6MTc2OTUzMTcwOSwiZXhwIjoxNzcwMTM2NTA5LCJhdWQiOiJqb2ItYWktdXNlcnMiLCJpc3MiOiJqb2ItYWktYmFja2VuZCJ9.iDzRvihlMdNPKdw2aRNAUhd1Z-uNSOwoVa8CQRidFZ0',
   TIMEOUT: 10000, // 10秒超时
 };
 
@@ -56,7 +56,7 @@ function randomDate(days = 30) {
   const past = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
   const randomTime = past.getTime() + Math.random() * (now.getTime() - past.getTime());
   const date = new Date(randomTime);
-  return date.toISOString().split('T')[0]; // YYYY-MM-DD
+  return date.getTime(); // 时间戳
 }
 
 /**

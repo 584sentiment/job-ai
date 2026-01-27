@@ -13,7 +13,7 @@ export type UserCreateInput = Prisma.UserGetPayload<{}>
 /**
  * 用户注册
  */
-export async function register(phone: string, password: string, nickname?: string): Promise<User> {
+export async function register(phone: string, password: string, nickname?: string): Promise<any> {
   // 检查手机号是否已注册
   const existingUser = await prisma.user.findUnique({
     where: { phone },
@@ -26,12 +26,17 @@ export async function register(phone: string, password: string, nickname?: strin
   // 加密密码
   const hashedPassword = await bcrypt.hash(password, 10)
 
+  // 当前时间戳
+  const now = BigInt(Date.now())
+
   // 创建用户
   const user = await prisma.user.create({
     data: {
       phone,
       password: hashedPassword,
       nickname: nickname || phone.slice(-4), // 默认昵称为手机号后4位
+      createTime: now,
+      updateTime: now,
     },
   })
 
@@ -42,7 +47,7 @@ export async function register(phone: string, password: string, nickname?: strin
 /**
  * 用户登录
  */
-export async function login(phone: string, password: string): Promise<User> {
+export async function login(phone: string, password: string): Promise<any> {
   // 查找用户
   const user = await prisma.user.findUnique({
     where: { phone },
@@ -66,7 +71,7 @@ export async function login(phone: string, password: string): Promise<User> {
 /**
  * 根据 ID 获取用户信息
  */
-export async function getUserById(id: string): Promise<User> {
+export async function getUserById(id: string): Promise<any> {
   const user = await prisma.user.findUnique({
     where: { id },
   })
@@ -91,7 +96,7 @@ export async function getCurrentUser(id: string): Promise<User> {
 export async function updateUser(
   id: string,
   data: Prisma.UserUpdateInput
-): Promise<User> {
+): Promise<any> {
   // 移除不允许更新的字段
   const { phone, password, ...allowedData } = data as any
 
@@ -106,10 +111,16 @@ export async function updateUser(
     }
   }
 
+  // 当前时间戳
+  const now = BigInt(Date.now())
+
   // 更新用户信息
   const user = await prisma.user.update({
     where: { id },
-    data: allowedData,
+    data: {
+      ...allowedData,
+      updateTime: now,
+    },
   })
 
   return omitPassword(user)
@@ -171,7 +182,7 @@ export async function logout(): Promise<void> {
  */
 function omitPassword(user: User): Omit<User, 'password'> {
   const { password, ...userWithoutPassword } = user
-  return userWithoutPassword
+  return userWithoutPassword as any
 }
 
 export default {

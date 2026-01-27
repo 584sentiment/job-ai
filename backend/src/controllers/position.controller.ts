@@ -2,8 +2,9 @@
  * 岗位控制器层
  */
 import { Request, Response, NextFunction } from 'express'
+import { Prisma } from '@prisma/client'
 import positionService from '@/services/position.service'
-import { success, created, paginate } from '@/utils/response'
+import { success, paginate } from '@/utils/response'
 import { BadRequestError } from '@/utils/error'
 
 /**
@@ -13,21 +14,21 @@ export async function getPositionsPaginated(req: Request, res: Response, next: N
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { page, pageSize, status, keyword, isCollected } = req.body
+    const { current, size, status, keyword, isCollected } = req.body
 
     // 参数验证
-    if (page !== undefined && (typeof page !== 'number' || page < 1)) {
+    if (current !== undefined && (typeof current !== 'number' || current < 1)) {
       throw new BadRequestError('页码必须大于0')
     }
 
-    if (pageSize !== undefined && (typeof pageSize !== 'number' || pageSize < 1 || pageSize > 100)) {
+    if (size !== undefined && (typeof size !== 'number' || size < 1 || size > 100)) {
       throw new BadRequestError('每页数量必须在1-100之间')
     }
 
     // 调用服务层查询
     const result = await positionService.getPositionsPaginated(userId, {
-      page: page || 1,
-      pageSize: pageSize || 10,
+      page: current || 1,
+      pageSize: size || 10,
       status,
       keyword,
       isCollected,
@@ -49,7 +50,7 @@ export async function getPositionById(req: Request, res: Response, next: NextFun
     const { id } = req.params
 
     // 调用服务层查询
-    const position = await positionService.getPositionById(id, userId)
+    const position = await positionService.getPositionById(id as string, userId)
 
     success(res, position)
   } catch (error) {
@@ -97,7 +98,7 @@ export async function createPosition(req: Request, res: Response, next: NextFunc
       companyName,
       positionName,
       deliveryChannel,
-      deliveryDate: new Date(deliveryDate),
+      deliveryDate: BigInt(deliveryDate),
       workLocation,
       salaryRange,
       jobDescription,
@@ -106,7 +107,7 @@ export async function createPosition(req: Request, res: Response, next: NextFunc
       remarks,
       status,
       isCollected: isCollected ?? 0,
-    })
+    } as Prisma.PositionUncheckedCreateInput)
 
     success(res, position, '创建成功')
   } catch (error) {
@@ -151,7 +152,7 @@ export async function updatePosition(req: Request, res: Response, next: NextFunc
       companyName,
       positionName,
       deliveryChannel,
-      deliveryDate: deliveryDate ? new Date(deliveryDate) : undefined,
+      deliveryDate: deliveryDate ? BigInt(deliveryDate) : undefined,
       workLocation,
       salaryRange,
       jobDescription,
@@ -178,7 +179,7 @@ export async function deletePosition(req: Request, res: Response, next: NextFunc
     const { id } = req.params
 
     // 调用服务层删除
-    await positionService.deletePosition(id, userId)
+    await positionService.deletePosition(id as string, userId)
 
     success(res, null, '删除成功')
   } catch (error) {
@@ -196,7 +197,7 @@ export async function toggleCollectPosition(req: Request, res: Response, next: N
     const { id } = req.params
 
     // 调用服务层切换收藏
-    const position = await positionService.toggleCollectPosition(id, userId)
+    const position = await positionService.toggleCollectPosition(id as string, userId)
 
     success(res, position, '操作成功')
   } catch (error) {

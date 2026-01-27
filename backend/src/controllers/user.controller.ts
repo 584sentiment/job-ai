@@ -4,9 +4,8 @@
 import { Request, Response, NextFunction } from 'express'
 import userService from '@/services/user.service'
 import { generateToken } from '@/utils/jwt'
-import { success, created, fail } from '@/utils/response'
+import { success } from '@/utils/response'
 import { BadRequestError } from '@/utils/error'
-import { ResponseCode } from '@/constants/responseCode'
 
 /**
  * 用户注册
@@ -96,7 +95,7 @@ export async function getCurrentUser(req: Request, res: Response, next: NextFunc
  */
 export async function getUserById(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { id } = req.params
+    const { id } = req.params as { id: string }
 
     // 调用服务层获取用户信息
     const user = await userService.getUserById(id)
@@ -161,7 +160,7 @@ export async function changePassword(req: Request, res: Response, next: NextFunc
 /**
  * 用户登出
  */
-export async function logout(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function logout(_req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     // 调用服务层登出（JWT 无状态，无需特殊处理）
     await userService.logout()
@@ -177,7 +176,7 @@ export async function logout(req: Request, res: Response, next: NextFunction): P
  */
 export async function deleteUser(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { id } = req.params
+    const { id } = req.params as { id: string }
 
     // 调用服务层删除用户
     await userService.deleteUser(id)

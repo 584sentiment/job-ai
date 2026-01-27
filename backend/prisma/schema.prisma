@@ -19,8 +19,8 @@ model User {
   avatar        String?
   bio           String?
   email         String?
-  createTime    DateTime  @default(now())
-  updateTime    DateTime  @updatedAt
+  createTime    BigInt    @default(0)
+  updateTime    BigInt    @default(0)
 
   // 关联关系
   positions        Position[]
@@ -42,7 +42,7 @@ model Position {
   companyName   String
   positionName  String
   deliveryChannel String
-  deliveryDate  DateTime
+  deliveryDate  BigInt    // 投递日期时间戳
   workLocation  String?
   salaryRange   String?
   jobDescription String?  @db.Text
@@ -58,9 +58,9 @@ model Position {
   status        String    @default("pending") // pending, applied, interview, offered, rejected
   isCollected   Int       @default(0) // 0: 否, 1: 是（前端使用 number）
 
-  // 时间戳
-  createTime    DateTime  @default(now())
-  updateTime    DateTime  @updatedAt
+  // 时间戳（毫秒）
+  createTime    BigInt    @default(0)
+  updateTime    BigInt    @default(0)
 
   // 关联关系
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -92,9 +92,9 @@ model Interview {
   // 状态
   status        Int       @default(0) // 前端使用 number
 
-  // 时间戳
-  createTime    DateTime  @default(now())
-  updateTime    DateTime  @updatedAt
+  // 时间戳（毫秒）
+  createTime    BigInt    @default(0)
+  updateTime    BigInt    @default(0)
 
   // 关联关系
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -117,7 +117,7 @@ model Experience {
   companyName   String
   positionName  String
   interviewRound String   // 笔试、一面、二面、三面、HR面
-  interviewDate DateTime  // ISO 8601格式
+  interviewDate BigInt    // 面试日期时间戳
 
   // 面经内容
   content       String    @db.Text
@@ -134,9 +134,9 @@ model Experience {
   views         Int       @default(0)
   comments      Int       @default(0)
 
-  // 时间戳
-  createTime    DateTime  @default(now())
-  updateTime    DateTime  @updatedAt
+  // 时间戳（毫秒）
+  createTime    BigInt    @default(0)
+  updateTime    BigInt    @default(0)
 
   // 关联关系
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -166,9 +166,9 @@ model ExperienceComment {
   // 统计
   likes         Int       @default(0)
 
-  // 时间戳
-  createTime    DateTime  @default(now())
-  updateTime    DateTime  @updatedAt
+  // 时间戳（毫秒）
+  createTime    BigInt    @default(0)
+  updateTime    BigInt    @default(0)
 
   // 关联关系
   user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -203,11 +203,11 @@ model Summary {
   // }
   content       Json
   round         String?
-  date          DateTime?
+  date          BigInt?    // 面试日期时间戳
 
-  // 时间戳
-  createTime    DateTime  @default(now())
-  updateTime    DateTime  @updatedAt
+  // 时间戳（毫秒）
+  createTime    BigInt    @default(0)
+  updateTime    BigInt    @default(0)
 
   // 关联关系
   user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)

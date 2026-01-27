@@ -49,9 +49,3 @@ export interface ErrorResponse {
   message: string
   data?: any
 }
-
-export default {
-  ApiResponse,
-  PageParams,
-  PageResult,
-}

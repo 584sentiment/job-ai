@@ -135,12 +135,17 @@ export async function getExperienceById(id: string, userId: string): Promise<Exp
  */
 export async function createExperience(
   userId: string,
-  data: Prisma.ExperienceCreateInput
+  data: Prisma.ExperienceUncheckedCreateInput
 ): Promise<Experience> {
+  // 当前时间戳
+  const now = BigInt(Date.now())
+
   return prisma.experience.create({
     data: {
       ...data,
       userId,
+      createTime: now,
+      updateTime: now,
     },
   })
 }
@@ -151,7 +156,7 @@ export async function createExperience(
 export async function updateExperience(
   id: string,
   userId: string,
-  data: Prisma.ExperienceUpdateInput
+  data: Prisma.ExperienceUncheckedUpdateInput
 ): Promise<Experience> {
   // 检查面经是否存在
   const existing = await prisma.experience.findFirst({
@@ -162,10 +167,16 @@ export async function updateExperience(
     throw new NotFoundError('面经不存在')
   }
 
+  // 当前时间戳
+  const now = BigInt(Date.now())
+
   // 更新面经
   return prisma.experience.update({
     where: { id },
-    data,
+    data: {
+      ...data,
+      updateTime: now,
+    },
   })
 }
 

@@ -110,12 +110,17 @@ export async function getInterviewById(id: string, userId: string): Promise<Inte
  */
 export async function createInterview(
   userId: string,
-  data: Prisma.InterviewCreateInput
+  data: Prisma.InterviewUncheckedCreateInput
 ): Promise<Interview> {
+  // 当前时间戳
+  const now = BigInt(Date.now())
+
   return prisma.interview.create({
     data: {
       ...data,
       userId,
+      createTime: now,
+      updateTime: now,
     },
   })
 }
@@ -126,15 +131,21 @@ export async function createInterview(
 export async function updateInterview(
   id: string,
   userId: string,
-  data: Prisma.InterviewUpdateInput
+  data: Prisma.InterviewUncheckedUpdateInput
 ): Promise<Interview> {
   // 检查面试记录是否存在
-  const existing = await getInterviewById(id, userId)
+  await getInterviewById(id, userId)
+
+  // 当前时间戳
+  const now = BigInt(Date.now())
 
   // 更新面试记录
   return prisma.interview.update({
     where: { id },
-    data,
+    data: {
+      ...data,
+      updateTime: now,
+    },
   })
 }
 

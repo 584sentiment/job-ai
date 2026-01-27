@@ -33,7 +33,7 @@ export function createApp(): Application {
   app.use(loggerMiddleware)
 
   // 健康检查
-  app.get('/health', (req, res) => {
+  app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() })
   })
 

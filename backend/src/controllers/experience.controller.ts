@@ -2,8 +2,9 @@
  * 面经控制器层
  */
 import { Request, Response, NextFunction } from 'express'
+import { Prisma } from '@prisma/client'
 import experienceService from '@/services/experience.service'
-import { success, created, paginate } from '@/utils/response'
+import { success, paginate } from '@/utils/response'
 import { BadRequestError } from '@/utils/error'
 
 /**
@@ -13,21 +14,21 @@ export async function getExperiencesPaginated(req: Request, res: Response, next:
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { page, pageSize, positionId, tags, isFavorite } = req.body
+    const { current, size, positionId, tags, isFavorite } = req.body
 
     // 参数验证
-    if (page !== undefined && (typeof page !== 'number' || page < 1)) {
+    if (current !== undefined && (typeof current !== 'number' || current < 1)) {
       throw new BadRequestError('页码必须大于0')
     }
 
-    if (pageSize !== undefined && (typeof pageSize !== 'number' || pageSize < 1 || pageSize > 100)) {
+    if (size !== undefined && (typeof size !== 'number' || size < 1 || size > 100)) {
       throw new BadRequestError('每页数量必须在1-100之间')
     }
 
     // 调用服务层查询
     const result = await experienceService.getExperiencesPaginated(userId, {
-      page: page || 1,
-      pageSize: pageSize || 10,
+      page: current || 1,
+      pageSize: size || 10,
       positionId,
       tags,
       isFavorite,
@@ -86,7 +87,7 @@ export async function getExperienceById(req: Request, res: Response, next: NextF
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { id } = req.params
+    const { id } = req.params as { id: string }
 
     // 调用服务层查询
     const experience = await experienceService.getExperienceById(id, userId)
@@ -131,12 +132,12 @@ export async function createExperience(req: Request, res: Response, next: NextFu
       companyName,
       positionName,
       interviewRound,
-      interviewDate: new Date(interviewDate),
+      interviewDate: BigInt(interviewDate),
       content,
       contentType: contentType || 'markdown',
       tags: tags || [],
       isAnonymous: isAnonymous ?? 0,
-    })
+    } as Prisma.ExperienceUncheckedCreateInput)
 
     success(res, experience, '创建成功')
   } catch (error) {
@@ -179,7 +180,7 @@ export async function updateExperience(req: Request, res: Response, next: NextFu
       companyName,
       positionName,
       interviewRound,
-      interviewDate: interviewDate ? new Date(interviewDate) : undefined,
+      interviewDate: interviewDate ? BigInt(interviewDate) : undefined,
       content,
       contentType,
       tags,
@@ -199,7 +200,7 @@ export async function deleteExperience(req: Request, res: Response, next: NextFu
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { id } = req.params
+    const { id } = req.params as { id: string }
 
     // 调用服务层删除
     await experienceService.deleteExperience(id, userId)
@@ -240,7 +241,7 @@ export async function toggleFavoriteExperience(req: Request, res: Response, next
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { id } = req.params
+    const { id } = req.params as { id: string }
 
     // 调用服务层切换收藏
     const experience = await experienceService.toggleFavoriteExperience(id, userId)

@@ -85,12 +85,17 @@ export async function getSummaryById(id: string, userId: string): Promise<Summar
  */
 export async function createSummary(
   userId: string,
-  data: Prisma.SummaryCreateInput
+  data: Prisma.SummaryUncheckedCreateInput
 ): Promise<Summary> {
+  // 当前时间戳
+  const now = BigInt(Date.now())
+
   return prisma.summary.create({
     data: {
       ...data,
       userId,
+      createTime: now,
+      updateTime: now,
     },
   })
 }
@@ -101,7 +106,7 @@ export async function createSummary(
 export async function updateSummary(
   id: string,
   userId: string,
-  data: Prisma.SummaryUpdateInput
+  data: Prisma.SummaryUncheckedUpdateInput
 ): Promise<Summary> {
   // 检查总结是否存在
   const existing = await prisma.summary.findFirst({
@@ -112,10 +117,16 @@ export async function updateSummary(
     throw new NotFoundError('总结不存在')
   }
 
+  // 当前时间戳
+  const now = BigInt(Date.now())
+
   // 更新总结
   return prisma.summary.update({
     where: { id },
-    data,
+    data: {
+      ...data,
+      updateTime: now,
+    },
   })
 }
 

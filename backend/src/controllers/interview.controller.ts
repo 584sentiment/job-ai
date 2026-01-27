@@ -2,8 +2,9 @@
  * 面试控制器层
  */
 import { Request, Response, NextFunction } from 'express'
+import { Prisma } from '@prisma/client'
 import interviewService from '@/services/interview.service'
-import { success, created, paginate } from '@/utils/response'
+import { success, paginate } from '@/utils/response'
 import { BadRequestError } from '@/utils/error'
 
 /**
@@ -13,21 +14,21 @@ export async function getInterviewsPaginated(req: Request, res: Response, next: 
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { page, pageSize, status, positionId } = req.body
+    const { current, size, status, positionId } = req.body
 
     // 参数验证
-    if (page !== undefined && (typeof page !== 'number' || page < 1)) {
+    if (current !== undefined && (typeof current !== 'number' || current < 1)) {
       throw new BadRequestError('页码必须大于0')
     }
 
-    if (pageSize !== undefined && (typeof pageSize !== 'number' || pageSize < 1 || pageSize > 100)) {
+    if (size !== undefined && (typeof size !== 'number' || size < 1 || size > 100)) {
       throw new BadRequestError('每页数量必须在1-100之间')
     }
 
     // 调用服务层查询
     const result = await interviewService.getInterviewsPaginated(userId, {
-      page: page || 1,
-      pageSize: pageSize || 10,
+      page: current || 1,
+      pageSize: size || 10,
       status,
       positionId,
     })
@@ -45,7 +46,7 @@ export async function getInterviewsByPosition(req: Request, res: Response, next:
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { positionId } = req.params
+    const { positionId } = req.params as { positionId: string }
 
     // 调用服务层查询
     const interviews = await interviewService.getInterviewsByPosition(positionId, userId)
@@ -63,7 +64,7 @@ export async function getInterviewById(req: Request, res: Response, next: NextFu
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { id } = req.params
+    const { id } = req.params as { id: string }
 
     // 调用服务层查询
     const interview = await interviewService.getInterviewById(id, userId)
@@ -123,7 +124,7 @@ export async function createInterview(req: Request, res: Response, next: NextFun
       interviewerInfo,
       remarks,
       status: status ?? 0,
-    })
+    } as Prisma.InterviewUncheckedCreateInput)
 
     success(res, interview, '创建成功')
   } catch (error) {
@@ -180,7 +181,7 @@ export async function deleteInterview(req: Request, res: Response, next: NextFun
   try {
     // 从中间件获取用户 ID
     const userId = req.user!.id
-    const { id } = req.params
+    const { id } = req.params as { id: string }
 
     // 调用服务层删除
     await interviewService.deleteInterview(id, userId)

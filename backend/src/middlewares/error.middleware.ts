@@ -15,7 +15,7 @@ export function errorMiddleware(
   error: Error | AppError,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): void {
   // 记录错误日志
   logger.error('Error occurred', {

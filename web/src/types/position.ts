@@ -21,8 +21,8 @@ export interface Position {
   positionName: string
   /** 投递渠道 */
   deliveryChannel: string
-  /** 投递日期 */
-  deliveryDate: string
+  /** 投递日期（时间戳格式） */
+  deliveryDate: number | string
   /** 工作地点 */
   workLocation: string
   /** 薪资范围 */
@@ -93,8 +93,8 @@ export interface PositionCreateRequest {
   positionName: string
   /** 投递渠道 */
   deliveryChannel: string
-  /** 投递日期 */
-  deliveryDate: string
+  /** 投递日期（时间戳格式） */
+  deliveryDate: number | string
   /** 工作地点 */
   workLocation?: string
   /** 薪资范围 */

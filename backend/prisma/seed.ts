@@ -21,6 +21,8 @@ async function main() {
       password: hashedPassword,
       nickname: '测试用户',
       bio: '这是一个测试账号',
+      createTime: BigInt(Date.now()),
+      updateTime: BigInt(Date.now()),
     },
   })
 
@@ -33,18 +35,21 @@ async function main() {
     create: {
       id: 'test-position-1',
       userId: user.id,
-      company: '字节跳动',
-      position: '前端工程师',
-      channel: '招聘网站',
-      location: '北京',
-      salary: '25-40K',
+      companyName: '字节跳动',
+      positionName: '前端工程师',
+      deliveryChannel: '招聘网站',
+      workLocation: '北京',
+      salaryRange: '25-40K',
       status: 'applied',
-      applyDate: new Date(),
-      jd: '负责产品前端开发，使用 Vue3 + TypeScript 技术栈。',
+      deliveryDate: BigInt(Date.now()),
+      jobDescription: '负责产品前端开发，使用 Vue3 + TypeScript 技术栈。',
+      isCollected: 0,
+      createTime: BigInt(Date.now()),
+      updateTime: BigInt(Date.now()),
     },
   })
 
-  console.log('创建岗位:', position.company, position.position)
+  console.log('创建岗位:', position.companyName, position.positionName)
 
   // 创建测试面试
   const interview = await prisma.interview.upsert({
@@ -54,22 +59,17 @@ async function main() {
       id: 'test-interview-1',
       userId: user.id,
       positionId: position.id,
-      company: '字节跳动',
-      position: '前端工程师',
-      round: '一面',
-      date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7天后
-      time: '14:00',
-      location: '北京海淀区',
-      form: '现场面试',
-      status: 'upcoming',
-      aiPrepList: [
-        { id: 1, text: '复习前端核心技能', completed: false },
-        { id: 2, text: '准备项目经验介绍', completed: false },
-      ],
+      interviewRound: '一面',
+      interviewTime: BigInt(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7天后
+      interviewLocation: '北京海淀区',
+      interviewForm: '现场面试',
+      status: 0,
+      createTime: BigInt(Date.now()),
+      updateTime: BigInt(Date.now()),
     },
   })
 
-  console.log('创建面试:', interview.company, interview.round)
+  console.log('创建面试:', position.companyName, interview.interviewRound)
 
   // 创建测试面经
   const experience = await prisma.experience.upsert({
@@ -79,8 +79,10 @@ async function main() {
       id: 'test-experience-1',
       userId: user.id,
       positionId: position.id,
-      company: '阿里巴巴',
-      position: '高级前端工程师',
+      companyName: '阿里巴巴',
+      positionName: '高级前端工程师',
+      interviewRound: '一面',
+      interviewDate: BigInt(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7天前
       content: `
 # 阿里巴巴前端面试经验
 
@@ -113,16 +115,18 @@ async function main() {
 
 整体难度适中，重点考察基础知识和项目经验。建议提前准备算法题和项目细节。
       `.trim(),
+      contentType: 'markdown',
       tags: ['Vue3', 'TypeScript', '前端', '技术面'],
-      category: 'technical',
-      isPublic: true,
-      viewCount: 128,
-      likeCount: 15,
-      commentCount: 3,
+      isAnonymous: 0,
+      isFavorite: 0,
+      views: 128,
+      comments: 3,
+      createTime: BigInt(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      updateTime: BigInt(Date.now()),
     },
   })
 
-  console.log('创建面经:', experience.company, experience.position)
+  console.log('创建面经:', experience.companyName, experience.positionName)
 
   // 创建测试总结
   const summary = await prisma.summary.upsert({
@@ -133,9 +137,10 @@ async function main() {
       userId: user.id,
       interviewId: interview.id,
       positionId: position.id,
-      company: '字节跳动',
-      position: '前端工程师',
+      companyName: '字节跳动',
+      positionName: '前端工程师',
       round: '一面',
+      date: BigInt(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7天后
       content: {
         strengths: ['技术基础扎实', '项目经验丰富', '沟通能力强'],
         weaknesses: ['算法需要加强', '某些设计模式理解不够深入'],
@@ -152,10 +157,12 @@ async function main() {
         ],
         overall: '整体表现良好，技术能力达到要求，需要继续提升算法能力',
       },
+      createTime: BigInt(Date.now()),
+      updateTime: BigInt(Date.now()),
     },
   })
 
-  console.log('创建总结:', summary.company, summary.round)
+  console.log('创建总结:', summary.companyName, summary.round)
 
   console.log('种子数据初始化完成!')
 }

@@ -18,9 +18,9 @@ export default defineConfig({
     open: true,
     proxy: {
       '/api': {
-        target: 'http://ybb9647b.natappfree.cc',
+        target: 'http://localhost:8080',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/job-track-assistant')
+        rewrite: (path) => path.replace(/^\/api/, '/')
       }
     }
   }

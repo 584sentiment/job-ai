@@ -74,7 +74,7 @@ export async function getPositionsPaginated(
 /**
  * 根据 ID 获取岗位详情
  */
-export async function getPositionById(id: string, userId: string): Promise<Position> {
+export async function getPositionById(id: string, userId: string): Promise<Position & { interviewRecordList: any[] }> {
   const position = await prisma.position.findFirst({
     where: {
       id,
@@ -86,7 +86,30 @@ export async function getPositionById(id: string, userId: string): Promise<Posit
     throw new NotFoundError('岗位不存在')
   }
 
-  return position
+  // 查询该岗位的面试记录
+  const interviews = await prisma.interview.findMany({
+    where: {
+      positionId: id,
+      userId,
+    },
+    orderBy: {
+      interviewTime: 'asc',
+    },
+    select: {
+      id: true,
+      interviewRound: true,
+      interviewTime: true,
+      interviewLocation: true,
+      interviewForm: true,
+      status: true,
+      createTime: true,
+    },
+  })
+
+  return {
+    ...position,
+    interviewRecordList: interviews,
+  }
 }
 
 /**
@@ -94,12 +117,17 @@ export async function getPositionById(id: string, userId: string): Promise<Posit
  */
 export async function createPosition(
   userId: string,
-  data: Prisma.PositionCreateInput
+  data: Prisma.PositionUncheckedCreateInput
 ): Promise<Position> {
+  // 当前时间戳
+  const now = BigInt(Date.now())
+
   return prisma.position.create({
     data: {
       ...data,
       userId,
+      createTime: now,
+      updateTime: now,
     },
   })
 }
@@ -110,15 +138,21 @@ export async function createPosition(
 export async function updatePosition(
   id: string,
   userId: string,
-  data: Prisma.PositionUpdateInput
+  data: Prisma.PositionUncheckedUpdateInput
 ): Promise<Position> {
   // 检查岗位是否存在
-  const existing = await getPositionById(id, userId)
+  await getPositionById(id, userId)
+
+  // 当前时间戳
+  const now = BigInt(Date.now())
 
   // 更新岗位
   return prisma.position.update({
     where: { id },
-    data,
+    data: {
+      ...data,
+      updateTime: now,
+    },
   })
 }
 
