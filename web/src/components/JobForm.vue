@@ -275,12 +275,27 @@ const selectThemeOverrides = {
 // 监听初始数据变化（编辑模式）
 watch(() => props.initialData, (newData) => {
   if (newData) {
+    // 处理 deliveryDate - 支持 BigInt 字符串格式（如 "1769530615256"）
+    let deliveryDate = Date.now()
+    if (newData.deliveryDate) {
+      if (typeof newData.deliveryDate === 'string' && /^\d+$/.test(newData.deliveryDate)) {
+        // 纯数字字符串（时间戳），直接转换为数字
+        deliveryDate = parseInt(newData.deliveryDate, 10)
+      } else if (typeof newData.deliveryDate === 'number') {
+        // 已经是数字时间戳，直接使用
+        deliveryDate = newData.deliveryDate
+      } else {
+        // 其他格式（ISO 字符串等），用 Date 解析
+        deliveryDate = new Date(newData.deliveryDate).getTime()
+      }
+    }
+
     form.value = {
       id: newData.id,
       companyName: newData.companyName || '',
       positionName: newData.positionName || '',
       deliveryChannel: newData.deliveryChannel || '',
-      deliveryDate: newData.deliveryDate ? new Date(newData.deliveryDate).getTime() : Date.now(),
+      deliveryDate,
       workLocation: newData.workLocation || '',
       salaryRange: newData.salaryRange || '',
       jobDescription: newData.jobDescription || '',

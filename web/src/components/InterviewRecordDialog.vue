@@ -139,13 +139,14 @@ import { InterviewRound, InterviewForm, type Interview, type InterviewCreateRequ
 interface Props {
   open: boolean
   mode: 'add' | 'edit'
-  positionId: string
+  positionId?: string
   initialData?: Interview | null
 }
 
 const props = withDefaults(defineProps<Props>(), {
   open: false,
   mode: 'add',
+  positionId: '',
   initialData: null
 })
 

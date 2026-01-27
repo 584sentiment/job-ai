@@ -110,7 +110,7 @@ import { PositionStatus } from '@/types'
 interface Props {
   open: boolean
   currentStatus: PositionStatus
-  positionId: string
+  positionId?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
