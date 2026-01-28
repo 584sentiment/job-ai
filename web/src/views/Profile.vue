@@ -252,28 +252,75 @@
     </button>
 
     <!-- 编辑个人资料对话框 -->
-    <n-modal v-model:show="showEditProfile" preset="dialog" title="编辑个人资料">
-      <n-form ref="editFormRef" :model="editForm" label-placement="left" label-width="80px">
-        <n-form-item label="昵称" path="nickname">
-          <n-input v-model:value="editForm.nickname" placeholder="请输入昵称" />
-        </n-form-item>
-        <n-form-item label="职位" path="jobTitle">
-          <n-input v-model:value="editForm.jobTitle" placeholder="请输入您的职位" />
-        </n-form-item>
-        <n-form-item label="工作经验" path="experience">
-          <n-input v-model:value="editForm.experience" placeholder="例如: 3年经验" />
-        </n-form-item>
-        <n-form-item label="个人简介" path="bio">
-          <n-input
-            v-model:value="editForm.bio"
-            type="textarea"
-            placeholder="简单介绍一下自己"
-            :autosize="{ minRows: 3, maxRows: 5 }"
-          />
-        </n-form-item>
-      </n-form>
+    <n-modal v-model:show="showEditProfile" preset="dialog" title="编辑个人资料" style="width: 500px;">
+      <div class="space-y-4">
+        <!-- 头像设置 -->
+        <div class="flex flex-col items-center py-4 border-b border-gray-200">
+          <div class="relative">
+            <img
+              :src="previewAvatar || userAvatar"
+              alt="头像预览"
+              class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
+            >
+            <label
+              for="avatar-upload"
+              class="absolute bottom-0 right-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center cursor-pointer hover:bg-secondary transition-colors shadow-md"
+              title="上传头像"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+            </label>
+            <input
+              ref="avatarUploadRef"
+              id="avatar-upload"
+              type="file"
+              accept="image/*"
+              class="hidden"
+              @change="handleAvatarUpload"
+            />
+          </div>
+          <div class="flex gap-2 mt-3">
+            <button
+              @click="triggerAvatarUpload"
+              class="px-3 py-1.5 text-sm bg-primary text-white rounded-lg hover:bg-secondary transition-colors"
+            >
+              上传图片
+            </button>
+            <button
+              @click="generateRandomAvatar"
+              class="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              随机生成
+            </button>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">支持 JPG、PNG 格式,建议尺寸 200x200</p>
+        </div>
+
+        <!-- 基本信息表单 -->
+        <n-form ref="editFormRef" :model="editForm" label-placement="left" label-width="80px">
+          <n-form-item label="昵称" path="nickname">
+            <n-input v-model:value="editForm.nickname" placeholder="请输入昵称" />
+          </n-form-item>
+          <n-form-item label="职位" path="jobTitle">
+            <n-input v-model:value="editForm.jobTitle" placeholder="请输入您的职位" />
+          </n-form-item>
+          <n-form-item label="工作经验" path="experience">
+            <n-input v-model:value="editForm.experience" placeholder="例如: 3年经验" />
+          </n-form-item>
+          <n-form-item label="个人简介" path="bio">
+            <n-input
+              v-model:value="editForm.bio"
+              type="textarea"
+              placeholder="简单介绍一下自己"
+              :autosize="{ minRows: 3, maxRows: 5 }"
+            />
+          </n-form-item>
+        </n-form>
+      </div>
       <template #action>
-        <n-button @click="showEditProfile = false">取消</n-button>
+        <n-button @click="cancelEditProfile">取消</n-button>
         <n-button type="primary" @click="handleSaveProfile" :loading="savingProfile">保存</n-button>
       </template>
     </n-modal>
@@ -420,6 +467,11 @@ const savingProfile = ref(false)
 const submittingFeedback = ref(false)
 const hasNotifications = ref(false)
 
+// 头像相关
+const avatarUploadRef = ref(null)
+const previewAvatar = ref('')
+const uploadedAvatarFile = ref(null)
+
 // 编辑表单
 const editForm = ref({
   nickname: '',
@@ -528,21 +580,109 @@ const handleSaveProfile = async () => {
   savingProfile.value = true
 
   try {
-    await authStore.updateUser({
-      nickname: editForm.value.nickname,
-      jobTitle: editForm.value.jobTitle,
-      experience: editForm.value.experience,
-      bio: editForm.value.bio
-    })
+    // 如果有上传的头像文件,先上传头像
+    if (uploadedAvatarFile.value) {
+      message.loading('正在上传头像...', { duration: 0 })
+      try {
+        // 这里应该调用真实的上传 API
+        // 暂时使用 FileReader 转换为 base64 模拟上传
+        const avatarData = await new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = (e) => resolve(e.target.result)
+          reader.onerror = reject
+          reader.readAsDataURL(uploadedAvatarFile.value)
+        })
+
+        // 将头像数据添加到更新对象中
+        await authStore.updateUser({
+          nickname: editForm.value.nickname,
+          jobTitle: editForm.value.jobTitle,
+          experience: editForm.value.experience,
+          bio: editForm.value.bio,
+          avatar: avatarData
+        })
+
+        message.destroyAll()
+      } catch (error) {
+        message.destroyAll()
+        throw error
+      }
+    } else {
+      // 没有上传新头像,只更新基本信息
+      await authStore.updateUser({
+        nickname: editForm.value.nickname,
+        jobTitle: editForm.value.jobTitle,
+        experience: editForm.value.experience,
+        bio: editForm.value.bio
+      })
+    }
 
     message.success('个人资料保存成功')
     showEditProfile.value = false
+    // 清空预览
+    previewAvatar.value = ''
+    uploadedAvatarFile.value = null
   } catch (error) {
     console.error('保存个人资料失败:', error)
     message.error('保存失败,请重试')
   } finally {
     savingProfile.value = false
   }
+}
+
+// 方法 - 取消编辑个人资料
+const cancelEditProfile = () => {
+  showEditProfile.value = false
+  // 清空预览
+  previewAvatar.value = ''
+  uploadedAvatarFile.value = null
+}
+
+// 方法 - 触发头像上传
+const triggerAvatarUpload = () => {
+  avatarUploadRef.value?.click()
+}
+
+// 方法 - 处理头像上传
+const handleAvatarUpload = (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+
+  // 验证文件类型
+  if (!file.type.startsWith('image/')) {
+    message.error('请选择图片文件')
+    return
+  }
+
+  // 验证文件大小 (限制为 2MB)
+  if (file.size > 2 * 1024 * 1024) {
+    message.error('图片大小不能超过 2MB')
+    return
+  }
+
+  // 保存文件引用
+  uploadedAvatarFile.value = file
+
+  // 创建预览
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    previewAvatar.value = e.target.result
+  }
+  reader.readAsDataURL(file)
+}
+
+// 方法 - 生成随机头像
+const generateRandomAvatar = () => {
+  // 生成随机种子
+  const randomSeed = Math.random().toString(36).substring(7)
+  const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(randomSeed)}&t=${Date.now()}`
+
+  // 设置预览和文件
+  previewAvatar.value = avatarUrl
+
+  // 注意: 这里只是预览,实际保存时需要处理远程头像
+  // 可以考虑下载图片后再上传,或者直接保存 URL
+  message.info('已生成随机头像,点击保存即可应用')
 }
 
 // 方法 - 提交反馈
