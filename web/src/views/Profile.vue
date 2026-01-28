@@ -1,5 +1,15 @@
 <template>
   <main class="pt-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+    <!-- 调试信息 (开发环境) -->
+    <div v-if="import.meta.env.DEV" class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+      <p class="text-sm font-bold text-yellow-800 mb-2">🔍 调试信息</p>
+      <p class="text-xs text-yellow-700 mb-1">authStore.user 存在: {{ !!authStore.user }}</p>
+      <p class="text-xs text-yellow-700 mb-1">isLoggedIn: {{ authStore.isLoggedIn }}</p>
+      <p class="text-xs text-yellow-700">用户 ID: {{ authStore.user?.id }}</p>
+      <p class="text-xs text-yellow-700">昵称: {{ authStore.user?.nickname }}</p>
+      <p class="text-xs text-yellow-700">手机号: {{ authStore.user?.phone }}</p>
+    </div>
+
     <!-- 用户信息卡片 -->
     <div class="glass-card rounded-xl p-6 mb-6">
       <div class="flex items-center space-x-4">
