@@ -151,7 +151,20 @@
         >
           <div class="flex items-center justify-between">
             <div class="flex-1">
-              <p class="font-medium leading-5">{{ item.status }}</p>
+              <div class="flex items-center gap-2">
+                <p class="font-medium leading-5">{{ item.status }}</p>
+                <!-- 面试状态标签 -->
+                <span
+                  v-if="item.interviewStatus !== undefined"
+                  class="px-2 py-0.5 rounded-full text-xs font-medium"
+                  :class="{
+                    'bg-green-100 text-green-700': item.interviewStatus === 1,
+                    'bg-blue-100 text-blue-700': item.interviewStatus === 0
+                  }"
+                >
+                  {{ item.interviewStatus === 1 ? '已完成' : '即将到来' }}
+                </span>
+              </div>
               <p class="text-sm text-gray-600 mt-1 whitespace-pre-line">{{ item.desc }}</p>
             </div>
             <div class="flex items-center space-x-2">
@@ -380,6 +393,7 @@
               v-if="isEditDialogOpen"
               mode="edit"
               :initial-data="job"
+              :has-real-interviews="hasRealInterviews"
               :on-cancel="closeEditDialog"
               @submit="handleEditSubmit"
             />
@@ -534,13 +548,14 @@ const timeline = computed(() => {
       }
     }
 
-    // 真实面试记录
+    // 真实面试记录 - 添加面试状态
     return {
       status: record.interviewRound,
       date: formatDate(record.interviewTime) || '',
       desc: `面试地点：${record.interviewLocation}\n面试形式：${record.interviewForm}`,
       recordId: record.id,
-      isInitial: false
+      isInitial: false,
+      interviewStatus: record.status // 0=即将到来, 1=已完成
     }
   })
 })

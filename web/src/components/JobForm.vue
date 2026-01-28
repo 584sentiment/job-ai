@@ -153,27 +153,41 @@
 
     <!-- 投递状态 -->
     <div class="glass-card rounded-xl p-6">
-      <div class="flex items-center space-x-2 mb-6">
-        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        <h2 class="text-lg font-semibold">投递状态</h2>
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-2">
+          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h2 class="text-lg font-semibold">投递状态</h2>
+        </div>
+        <!-- 禁用提示 -->
+        <div v-if="hasRealInterviews && mode === 'edit'" class="flex items-start gap-2 px-3 py-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <svg class="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <p class="text-xs text-yellow-700">已有面试记录，投递状态不可修改</p>
+        </div>
       </div>
 
       <div class="grid grid-cols-2 gap-3">
         <label
           v-for="status in statusOptions"
           :key="status.value"
-          class="cursor-pointer"
+          :class="hasRealInterviews && mode === 'edit' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'"
         >
           <input
             v-model="form.status"
             type="radio"
             :value="status.value"
+            :disabled="hasRealInterviews && mode === 'edit'"
             class="sr-only peer"
           >
           <div
-            class="px-4 py-3 rounded-lg border-2 border-border text-center peer-checked:border-primary peer-checked:bg-primary peer-checked:text-white transition-all duration-200 hover:border-gray-300 text-sm font-medium"
+            class="px-4 py-3 rounded-lg border-2 border-border text-center peer-checked:border-primary peer-checked:bg-primary peer-checked:text-white transition-all duration-200 text-sm font-medium"
+            :class="{
+              'hover:border-gray-300': !(hasRealInterviews && mode === 'edit'),
+              'bg-gray-100': hasRealInterviews && mode === 'edit'
+            }"
           >
             {{ status.label }}
           </div>
