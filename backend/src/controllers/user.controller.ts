@@ -187,6 +187,23 @@ export async function deleteUser(req: Request, res: Response, next: NextFunction
   }
 }
 
+/**
+ * 获取用户统计数据
+ */
+export async function getUserStats(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    // 从中间件获取用户 ID
+    const userId = req.user!.id
+
+    // 调用服务层获取用户统计数据
+    const stats = await userService.getUserStats(userId)
+
+    success(res, stats)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export default {
   register,
   login,
@@ -196,4 +213,5 @@ export default {
   changePassword,
   logout,
   deleteUser,
+  getUserStats,
 }

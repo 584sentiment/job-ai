@@ -161,7 +161,7 @@
         </router-link>
 
         <router-link
-          to="/interviews"
+          to="/experiences"
           class="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
         >
           <div class="flex items-center space-x-3">
@@ -171,7 +171,7 @@
             <span class="font-medium">我的面经</span>
           </div>
           <div class="flex items-center space-x-2">
-            <span class="text-sm text-gray-500">{{ interviewsStore.interviews.length }}篇</span>
+            <span class="text-sm text-gray-500">{{ experiencesStore.experiences.length }}篇</span>
             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
@@ -761,10 +761,18 @@ const fetchUserStats = async () => {
     const response = await userApi.getUserStats()
     if (response.code === 200 && response.data) {
       userStatsData.value = response.data
+      console.log('用户统计数据加载成功:', response.data)
+    } else {
+      // API 返回非 200 状态码，使用 store 数据作为后备
+      console.warn('用户统计数据 API 返回非 200 状态码:', response.message)
+      userStatsData.value = null
     }
   } catch (error) {
-    console.error('获取用户统计数据失败:', error)
-    // 失败时使用 store 数据作为后备方案
+    // API 调用失败，静默降级使用 store 数据
+    // 这样即使后端接口未实现，页面也能正常显示
+    if (import.meta.env.DEV) {
+      console.warn('获取用户统计数据失败，使用本地计算数据作为后备方案:', error.message)
+    }
     userStatsData.value = null
   } finally {
     loadingStats.value = false

@@ -57,6 +57,13 @@ router.post('/change-password', authMiddleware, userController.changePassword)
 router.post('/logout', authMiddleware, userController.logout)
 
 /**
+ * @route   GET /users/stats
+ * @desc    获取用户统计数据
+ * @access  Private
+ */
+router.get('/stats', authMiddleware, userController.getUserStats)
+
+/**
  * @route   DELETE /users/:id
  * @desc    删除用户
  * @access  Private

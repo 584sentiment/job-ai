@@ -178,6 +178,86 @@ export async function logout(): Promise<void> {
 }
 
 /**
+ * 获取用户统计数据
+ */
+export async function getUserStats(userId: string): Promise<any> {
+  // 并行查询所有统计数据
+  const [
+    totalPositions,
+    pendingPositions,
+    deliveredPositions,
+    inProcessPositions,
+    offeredPositions,
+    joinedPositions,
+    rejectedPositions,
+    totalInterviews,
+    totalExperiences,
+    totalSummaries,
+  ] = await Promise.all([
+    // 岗位总数
+    prisma.position.count({
+      where: { userId }
+    }),
+    // 待投递岗位数 (status = 0)
+    prisma.position.count({
+      where: { userId, status: 0 }
+    }),
+    // 已投递岗位数 (status = 1)
+    prisma.position.count({
+      where: { userId, status: 1 }
+    }),
+    // 流程中岗位数 (status = 2)
+    prisma.position.count({
+      where: { userId, status: 2 }
+    }),
+    // 已录用岗位数 (status = 3)
+    prisma.position.count({
+      where: { userId, status: 3 }
+    }),
+    // 已入职岗位数 (status = 4)
+    prisma.position.count({
+      where: { userId, status: 4 }
+    }),
+    // 未通过岗位数 (status = 5 或 6)
+    prisma.position.count({
+      where: {
+        userId,
+        status: { in: [5, 6] }
+      }
+    }),
+    // 面试记录总数
+    prisma.interview.count({
+      where: { userId }
+    }),
+    // 面经总数
+    prisma.experience.count({
+      where: { userId }
+    }),
+    // 面试总结总数
+    prisma.summary.count({
+      where: { userId }
+    }),
+  ])
+
+  // 计算待跟进岗位数(待投递 + 已投递)
+  const pendingFollowUp = pendingPositions + deliveredPositions
+
+  return {
+    totalPositions,
+    pendingPositions,
+    deliveredPositions,
+    inProcessPositions,
+    offeredPositions,
+    joinedPositions,
+    rejectedPositions,
+    totalInterviews,
+    totalExperiences,
+    totalSummaries,
+    pendingFollowUp,
+  }
+}
+
+/**
  * 移除用户密码字段
  */
 function omitPassword(user: User): Omit<User, 'password'> {
@@ -194,4 +274,5 @@ export default {
   changePassword,
   deleteUser,
   logout,
+  getUserStats,
 }
