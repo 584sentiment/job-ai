@@ -7,6 +7,7 @@ import positionRoutes from './position.routes'
 import interviewRoutes from './interview.routes'
 import experienceRoutes from './experience.routes'
 import summaryRoutes from './summary.routes'
+import aiRoutes from './ai.routes'
 
 const router = Router()
 
@@ -16,5 +17,6 @@ router.use('/positions', positionRoutes)
 router.use('/interviews', interviewRoutes)
 router.use('/experiences', experienceRoutes)
 router.use('/summaries', summaryRoutes)
+router.use('/ai', aiRoutes)
 
 export default router

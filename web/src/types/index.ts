@@ -35,6 +35,16 @@ export type {
 
 export { ExperienceRound, ExperienceContentType } from './experience'
 
+// 导出AI相关类型
+export type {
+  JDParseResult,
+  JobMatchAnalysis,
+  PrepListItem,
+  AIAction,
+  AIMessage,
+  AIResponse
+} from './ai'
+
 /**
  * 通用工具类型
  */

@@ -79,6 +79,15 @@ const routes = [
     }
   },
   {
+    path: '/ai-assistant',
+    name: 'AIAssistant',
+    component: () => import('@/views/AIAssistant.vue'),
+    meta: {
+      title: 'AI助手',
+      requiresAuth: true
+    }
+  },
+  {
     path: '/profile',
     name: 'Profile',
     component: () => import('@/views/Profile.vue'),

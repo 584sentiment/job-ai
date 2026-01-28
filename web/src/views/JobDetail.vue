@@ -59,6 +59,13 @@
               >
                 {{ getStatusLabel(job.status) }}
               </span>
+              <!-- 已结束标识 -->
+              <span
+                v-if="isPositionEnded"
+                class="px-2 sm:px-2 py-0.5 sm:py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs sm:text-xs font-medium border border-gray-300"
+              >
+                已结束
+              </span>
               <span class="text-xs sm:text-sm text-gray-500 truncate">{{ formatDate(job.deliveryDate) }} 投递</span>
             </div>
           </div>
@@ -130,6 +137,112 @@
             </a>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- AI匹配度分析卡片 -->
+    <div class="glass-card rounded-xl p-6 bg-gradient-to-br from-purple-50 to-indigo-50">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center space-x-2">
+          <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          </svg>
+          <h3 class="text-lg font-semibold text-gray-800">AI匹配度分析</h3>
+        </div>
+        <button
+          @click="analyzeMatchWithAI"
+          :disabled="isAnalyzingMatch"
+          class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-lg hover:from-purple-600 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm font-medium"
+        >
+          <svg v-if="!isAnalyzingMatch" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          <svg v-else class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ isAnalyzingMatch ? '分析中...' : '开始分析' }}
+        </button>
+      </div>
+
+      <!-- 分析结果 -->
+      <div v-if="matchAnalysis" class="space-y-4">
+        <!-- 总体匹配度 -->
+        <div class="bg-white rounded-lg p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-gray-700">总体匹配度</span>
+            <span class="text-2xl font-bold text-purple-600">{{ matchAnalysis.overall }}%</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div
+              class="bg-gradient-to-r from-purple-500 to-indigo-500 h-2 rounded-full transition-all duration-500"
+              :style="{ width: matchAnalysis.overall + '%' }"
+            ></div>
+          </div>
+        </div>
+
+        <!-- 各维度评分 -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div class="bg-white rounded-lg p-3 text-center">
+            <div class="text-2xl font-bold text-blue-600">{{ matchAnalysis.skills }}%</div>
+            <div class="text-xs text-gray-600 mt-1">技能匹配</div>
+          </div>
+          <div class="bg-white rounded-lg p-3 text-center">
+            <div class="text-2xl font-bold text-green-600">{{ matchAnalysis.experience }}%</div>
+            <div class="text-xs text-gray-600 mt-1">经验匹配</div>
+          </div>
+          <div class="bg-white rounded-lg p-3 text-center">
+            <div class="text-2xl font-bold text-yellow-600">{{ matchAnalysis.education }}%</div>
+            <div class="text-xs text-gray-600 mt-1">学历匹配</div>
+          </div>
+          <div class="bg-white rounded-lg p-3 text-center">
+            <div class="text-2xl font-bold text-pink-600">{{ matchAnalysis.salary }}%</div>
+            <div class="text-xs text-gray-600 mt-1">薪资匹配</div>
+          </div>
+        </div>
+
+        <!-- 优势与建议 -->
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+            <div class="flex items-center gap-2 mb-2">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span class="font-medium text-green-800">我的优势</span>
+            </div>
+            <ul class="space-y-1">
+              <li v-for="(advantage, index) in matchAnalysis.advantages" :key="index" class="text-sm text-green-700 flex items-start gap-2">
+                <span class="text-green-500 mt-1">•</span>
+                <span>{{ advantage }}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+            <div class="flex items-center gap-2 mb-2">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span class="font-medium text-blue-800">改进建议</span>
+            </div>
+            <ul class="space-y-1">
+              <li v-for="(suggestion, index) in matchAnalysis.suggestions" :key="index" class="text-sm text-blue-700 flex items-start gap-2">
+                <span class="text-blue-500 mt-1">•</span>
+                <span>{{ suggestion }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 空状态 -->
+      <div v-else class="text-center py-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-100 mb-4">
+          <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          </svg>
+        </div>
+        <p class="text-gray-600 mb-2">点击"开始分析"按钮</p>
+        <p class="text-sm text-gray-500">AI将根据岗位信息和您的简历进行匹配度分析</p>
       </div>
     </div>
 
@@ -209,6 +322,7 @@
           @click="openAddInterviewDialog"
           :disabled="!canAddInterview"
           class="flex-1 px-4 py-2.5 bg-primary text-white rounded-lg hover:bg-secondary shadow-md hover:shadow-lg transition-all duration-200 font-medium flex items-center justify-center space-x-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          :title="getAddInterviewDisabledReason()"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -462,6 +576,7 @@
     :mode="editingRecord ? 'edit' : 'add'"
     :position-id="jobId"
     :initial-data="editingRecord"
+    :submitting="addingInterview"
     @submit="handleInterviewSubmit"
   />
 
@@ -488,6 +603,8 @@ import { formatDate } from '@/utils/mappers'
 import * as positionApi from '@/api/position'
 import { PositionStatus, type Interview, type InterviewCreateRequest } from '@/types'
 import { useDialog, useMessage } from 'naive-ui'
+import aiAPI from '@/api/ai'
+import type { JobMatchAnalysis } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -508,6 +625,11 @@ const isInterviewDialogOpen = ref(false)
 const isStatusDialogOpen = ref(false)
 const editingRecord = ref<Interview | null>(null)
 const updatingStatus = ref(false)  // 更新状态loading
+const addingInterview = ref(false)  // 添加面试loading
+
+// AI匹配度分析状态
+const matchAnalysis = ref<JobMatchAnalysis | null>(null)
+const isAnalyzingMatch = ref(false)
 
 // 获取路由参数中的岗位 ID,确保是 string 类型
 const jobId = computed(() => {
@@ -594,10 +716,22 @@ const hasRealInterviews = computed(() => {
   return realInterviews.length > 0
 })
 
+// 计算属性：岗位是否已结束（终态）
+const isPositionEnded = computed(() => {
+  const status = job.value?.status
+  return [PositionStatus.OFFER, PositionStatus.JOINED, PositionStatus.NOT_PASS, PositionStatus.REJECTED].includes(status)
+})
+
 // 计算属性：是否可以添加面试
 const canAddInterview = computed(() => {
   // 未投递状态下不能添加面试
   if (isNotDelivered.value) {
+    return false
+  }
+
+  // 终态（已入职/已Offer/未通过/已拒绝）不能添加面试
+  const status = job.value?.status
+  if ([PositionStatus.OFFER, PositionStatus.JOINED, PositionStatus.NOT_PASS, PositionStatus.REJECTED].includes(status)) {
     return false
   }
 
@@ -690,6 +824,28 @@ const openAddInterviewDialog = () => {
   isInterviewDialogOpen.value = true
 }
 
+// 获取添加面试按钮禁用原因
+const getAddInterviewDisabledReason = () => {
+  if (canAddInterview.value) {
+    return ''
+  }
+
+  if (isNotDelivered.value) {
+    return '未投递状态下不能添加面试'
+  }
+
+  const status = job.value?.status
+  if ([PositionStatus.OFFER, PositionStatus.JOINED, PositionStatus.NOT_PASS, PositionStatus.REJECTED].includes(status)) {
+    return '该岗位已结束，无法添加面试'
+  }
+
+  if (hasUnfinishedInterviews.value) {
+    return '请先完成当前未完成的面试'
+  }
+
+  return ''
+}
+
 // 打开编辑面试记录对话框
 const openEditInterviewDialog = (record: Interview | undefined) => {
   if (record) {
@@ -700,6 +856,7 @@ const openEditInterviewDialog = (record: Interview | undefined) => {
 
 // 处理面试记录提交
 const handleInterviewSubmit = async (formData: InterviewCreateRequest & { id?: number }) => {
+  addingInterview.value = true
   try {
     if (editingRecord.value) {
       // 编辑模式：构造包含 id 的更新请求
@@ -720,6 +877,8 @@ const handleInterviewSubmit = async (formData: InterviewCreateRequest & { id?: n
   } catch (error) {
     console.error('面试记录操作失败:', error)
     message.error(editingRecord.value ? '更新面试记录失败' : '添加面试记录失败')
+  } finally {
+    addingInterview.value = false
   }
 }
 
@@ -785,6 +944,38 @@ const refreshJobDetail = async () => {
     console.error('刷新岗位详情失败:', error)
   } finally {
     loading.value = false
+  }
+}
+
+// AI匹配度分析
+async function analyzeMatchWithAI() {
+  if (!job.value) {
+    message.warning('岗位信息加载中，请稍后重试')
+    return
+  }
+
+  isAnalyzingMatch.value = true
+
+  try {
+    // 获取用户信息（这里可以改为从用户store获取）
+    const userProfile = {
+      // 这里可以获取用户真实简历信息
+      skills: [],
+      experience: '',
+      education: ''
+    }
+
+    const response = await aiAPI.analyzeMatch(job.value, userProfile)
+
+    // 后端返回格式：{ code, message, data: { overall, skills, ... } }
+    matchAnalysis.value = response.data || response
+
+    message.success('AI分析完成！')
+  } catch (error) {
+    message.error('AI分析失败，请稍后重试')
+    console.error('AI match analysis error:', error)
+  } finally {
+    isAnalyzingMatch.value = false
   }
 }
 

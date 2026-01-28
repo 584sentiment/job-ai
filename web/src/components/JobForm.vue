@@ -115,6 +115,25 @@
             placeholder="粘贴岗位描述..."
             class="form-input w-full px-4 py-3 rounded-lg border border-border bg-white focus:outline-none resize-none"
           ></textarea>
+          <!-- AI智能解析按钮 -->
+          <div class="mt-2 flex items-center justify-between">
+            <button
+              type="button"
+              @click="parseJDWithAI"
+              :disabled="!form.jobDescription.trim() || isParsingJD"
+              class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-lg hover:from-purple-600 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm font-medium"
+            >
+              <svg v-if="!isParsingJD" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+              <svg v-else class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {{ isParsingJD ? 'AI解析中...' : 'AI智能解析JD' }}
+            </button>
+            <span class="text-xs text-gray-500">AI将自动提取关键信息填充表单</span>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -218,7 +237,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { PositionStatus } from '@/types'
-import { NSelect, NDatePicker } from 'naive-ui'
+import { NSelect, NDatePicker, useMessage } from 'naive-ui'
+import aiAPI from '@/api/ai'
 
 interface Props {
   mode?: 'add' | 'edit'
@@ -235,6 +255,10 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits(['submit'])
+const message = useMessage()
+
+// AI解析状态
+const isParsingJD = ref(false)
 
 // 表单数据 - 使用后端字段名（时间使用时间戳格式）
 const form = ref({
@@ -325,5 +349,55 @@ watch(() => props.initialData, (newData) => {
 
 const handleSubmit = () => {
   emit('submit', { ...form.value })
+}
+
+// AI智能解析JD
+async function parseJDWithAI() {
+  const jdText = form.value.jobDescription.trim()
+  if (!jdText) {
+    message.warning('请先粘贴岗位描述(JD)')
+    return
+  }
+
+  isParsingJD.value = true
+
+  try {
+    const response = await aiAPI.parseJD(jdText)
+
+    // 后端返回格式：{ code, message, data: { location, salaryRange, ... } }
+    const result = response.data || response
+
+    // 自动填充表单
+    if (result.location && result.location !== '未提及') {
+      form.value.workLocation = result.location
+    }
+    if (result.salaryRange && result.salaryRange !== '未提及') {
+      form.value.salaryRange = result.salaryRange
+    }
+
+    // 显示解析结果
+    message.success('AI解析成功！已自动填充工作地点和薪资范围')
+
+    // 显示更多解析信息
+    if (result.responsibilities || (result.skills && result.skills.length > 0)) {
+      setTimeout(() => {
+        const details = []
+        if (result.responsibilities && result.responsibilities !== '未提及') {
+          details.push(`**岗位职责**: ${result.responsibilities}`)
+        }
+        if (result.skills && result.skills.length > 0 && result.skills[0] !== '未提及') {
+          details.push(`**技能要求**: ${result.skills.join('、')}`)
+        }
+        if (details.length > 0) {
+          message.info(details.join('\n'), { duration: 5000 })
+        }
+      }, 500)
+    }
+  } catch (error) {
+    message.error('AI解析失败，请稍后重试')
+    console.error('JD parsing error:', error)
+  } finally {
+    isParsingJD.value = false
+  }
 }
 </script>

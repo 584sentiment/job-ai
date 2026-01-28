@@ -1,15 +1,13 @@
 <template>
-  <n-theme-editor>
-    <n-message-provider>
-      <n-dialog-provider>
-        <div :class="['min-h-screen', { 'pb-20': showBottomNav }]">
-          <NavBar v-if="showNavBar" />
-          <router-view />
-          <BottomNav v-if="showBottomNav" />
-        </div>
-      </n-dialog-provider>
-    </n-message-provider>
-  </n-theme-editor>
+  <n-message-provider>
+    <n-dialog-provider>
+      <div :class="['min-h-screen', { 'pb-20': showBottomNav }]">
+        <NavBar v-if="showNavBar" />
+        <router-view />
+        <BottomNav v-if="showBottomNav" />
+      </div>
+    </n-dialog-provider>
+  </n-message-provider>
 </template>
 
 <script setup>

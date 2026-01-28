@@ -43,6 +43,28 @@
     <div class="glass-card rounded-xl p-6 mb-6">
       <h3 class="text-lg font-semibold mb-4">我的岗位</h3>
       <div class="grid grid-cols-2 gap-3">
+        <!-- AI助手卡片 - 紫色渐变突出显示 -->
+        <router-link
+          to="/ai-assistant"
+          class="col-span-2 flex items-center justify-between p-4 rounded-lg transition-all duration-200 cursor-pointer"
+          style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+              </svg>
+            </div>
+            <div class="text-white">
+              <div class="font-bold">AI助手</div>
+              <div class="text-xs opacity-90">简历优化 · 面试准备</div>
+            </div>
+          </div>
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </router-link>
+
         <router-link
           to="/"
           class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
@@ -102,6 +124,30 @@
     <!-- 功能列表 -->
     <div class="glass-card rounded-xl overflow-hidden">
       <div class="divide-y divide-border">
+        <!-- AI助手入口 - 放在首位突出显示 -->
+        <router-link
+          to="/ai-assistant"
+          class="flex items-center justify-between p-4 hover:bg-purple-50 transition-colors duration-200 cursor-pointer"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+              </svg>
+            </div>
+            <div>
+              <span class="font-medium text-purple-700">AI助手</span>
+              <p class="text-xs text-gray-500">智能简历优化 · 面试准备 · 匹配分析</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2 py-0.5 text-xs bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-full">智能</span>
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </div>
+        </router-link>
+
         <router-link
           to="/interviews"
           class="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
