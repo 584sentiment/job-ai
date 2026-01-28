@@ -6,6 +6,7 @@ import type {
   LoginApiResponse,
   RegisterApiResponse,
   UserInfoApiResponse,
+  UserStatsApiResponse,
   ApiResponse
 } from '@/types'
 
@@ -77,4 +78,12 @@ export function changePassword(data: { oldPassword: string; newPassword: string 
  */
 export function logout(): Promise<ApiResponse> {
   return postWithAuth('/users/logout', {}) as Promise<ApiResponse>
+}
+
+/**
+ * 获取用户统计数据
+ * @returns 用户统计数据
+ */
+export function getUserStats(): Promise<UserStatsApiResponse> {
+  return getWithAuth('/users/stats') as Promise<UserStatsApiResponse>
 }

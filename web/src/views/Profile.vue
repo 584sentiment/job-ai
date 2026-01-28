@@ -30,19 +30,23 @@
     <!-- 统计概览 -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
       <div class="glass-card rounded-xl p-4 text-center">
-        <p class="text-3xl font-bold text-primary">{{ jobStats.total }}</p>
+        <p v-if="loadingStats" class="text-3xl font-bold text-primary animate-pulse">-</p>
+        <p v-else class="text-3xl font-bold text-primary">{{ jobStats.total }}</p>
         <p class="text-sm text-gray-600 mt-1">投递岗位</p>
       </div>
       <div class="glass-card rounded-xl p-4 text-center">
-        <p class="text-3xl font-bold text-blue-600">{{ jobStats.inProcess }}</p>
+        <p v-if="loadingStats" class="text-3xl font-bold text-blue-600 animate-pulse">-</p>
+        <p v-else class="text-3xl font-bold text-blue-600">{{ jobStats.inProcess }}</p>
         <p class="text-sm text-gray-600 mt-1">流程中</p>
       </div>
       <div class="glass-card rounded-xl p-4 text-center">
-        <p class="text-3xl font-bold text-green-600">{{ jobStats.offered }}</p>
+        <p v-if="loadingStats" class="text-3xl font-bold text-green-600 animate-pulse">-</p>
+        <p v-else class="text-3xl font-bold text-green-600">{{ jobStats.offered }}</p>
         <p class="text-sm text-gray-600 mt-1">已录用</p>
       </div>
       <div class="glass-card rounded-xl p-4 text-center">
-        <p class="text-3xl font-bold text-purple-600">{{ totalExperiencesAndSummaries }}</p>
+        <p v-if="loadingStats" class="text-3xl font-bold text-purple-600 animate-pulse">-</p>
+        <p v-else class="text-3xl font-bold text-purple-600">{{ totalExperiencesAndSummaries }}</p>
         <p class="text-sm text-gray-600 mt-1">面经/总结</p>
       </div>
     </div>
@@ -449,6 +453,7 @@ import { useJobsStore } from '@/store/jobs'
 import { useInterviewsStore } from '@/store/interviews'
 import { useSummariesStore } from '@/store/summaries'
 import { useExperienceStore } from '@/store/experiences'
+import * as userApi from '@/api/user'
 
 const router = useRouter()
 const dialog = useDialog()
@@ -471,6 +476,10 @@ const hasNotifications = ref(false)
 const avatarUploadRef = ref(null)
 const previewAvatar = ref('')
 const uploadedAvatarFile = ref(null)
+
+// 统计数据相关
+const userStatsData = ref(null)
+const loadingStats = ref(false)
 
 // 编辑表单
 const editForm = ref({
@@ -533,15 +542,40 @@ const userExperience = computed(() => {
 })
 
 // 计算属性 - 岗位统计
-const jobStats = computed(() => jobsStore.jobStats)
+const jobStats = computed(() => {
+  // 如果有 API 数据,使用 API 数据,否则使用 store 数据作为后备
+  if (userStatsData.value) {
+    return {
+      total: userStatsData.value.totalPositions,
+      pending: userStatsData.value.pendingPositions,
+      delivered: userStatsData.value.deliveredPositions,
+      inProcess: userStatsData.value.inProcessPositions,
+      offered: userStatsData.value.offeredPositions,
+      joined: userStatsData.value.joinedPositions,
+      rejected: userStatsData.value.rejectedPositions
+    }
+  }
+  // 后备方案:使用 store 数据
+  return jobsStore.jobStats
+})
 
 // 计算属性 - 待跟进岗位数量(待投递 + 已投递)
 const pendingJobsCount = computed(() => {
+  // 如果有 API 数据,使用 API 数据
+  if (userStatsData.value) {
+    return userStatsData.value.pendingFollowUp
+  }
+  // 后备方案:使用计算属性
   return jobStats.value.pending + jobStats.value.delivered
 })
 
 // 计算属性 - 面经和总结总数
 const totalExperiencesAndSummaries = computed(() => {
+  // 如果有 API 数据,使用 API 数据
+  if (userStatsData.value) {
+    return userStatsData.value.totalExperiences + userStatsData.value.totalSummaries
+  }
+  // 后备方案:使用 store 数据
   return experiencesStore.experiences.length + summariesStore.summaries.length
 })
 
@@ -720,8 +754,29 @@ const handleDarkModeChange = (value) => {
   }
 }
 
+// 方法 - 获取用户统计数据
+const fetchUserStats = async () => {
+  loadingStats.value = true
+  try {
+    const response = await userApi.getUserStats()
+    if (response.code === 200 && response.data) {
+      userStatsData.value = response.data
+    }
+  } catch (error) {
+    console.error('获取用户统计数据失败:', error)
+    // 失败时使用 store 数据作为后备方案
+    userStatsData.value = null
+  } finally {
+    loadingStats.value = false
+  }
+}
+
 // 页面加载时初始化编辑表单
 onMounted(() => {
+  // 获取用户统计数据
+  fetchUserStats()
+
+  // 初始化编辑表单
   if (authStore.user) {
     editForm.value = {
       nickname: authStore.user.nickname || '',

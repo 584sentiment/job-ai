@@ -91,7 +91,46 @@ export interface UpdateUserRequest {
   avatar?: string
   /** 邮箱 */
   email?: string
+  /** 职位 */
+  jobTitle?: string
+  /** 工作经验 */
+  experience?: string
+  /** 个人简介 */
+  bio?: string
 }
+
+/**
+ * 用户统计数据
+ */
+export interface UserStats {
+  /** 投递岗位总数 */
+  totalPositions: number
+  /** 待投递岗位数 */
+  pendingPositions: number
+  /** 已投递岗位数 */
+  deliveredPositions: number
+  /** 流程中岗位数 */
+  inProcessPositions: number
+  /** 已录用岗位数 */
+  offeredPositions: number
+  /** 已入职岗位数 */
+  joinedPositions: number
+  /** 未通过岗位数 */
+  rejectedPositions: number
+  /** 面试记录总数 */
+  totalInterviews: number
+  /** 面经总数 */
+  totalExperiences: number
+  /** 面试总结总数 */
+  totalSummaries: number
+  /** 待跟进岗位数(待投递+已投递) */
+  pendingFollowUp: number
+}
+
+/**
+ * 用户统计数据响应
+ */
+export type UserStatsApiResponse = ApiResponse<UserStats>
 
 /**
  * API 响应
