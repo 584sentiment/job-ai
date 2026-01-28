@@ -181,79 +181,103 @@ export async function logout(): Promise<void> {
  * 获取用户统计数据
  */
 export async function getUserStats(userId: string): Promise<any> {
-  // 并行查询所有统计数据
-  const [
-    totalPositions,
-    pendingPositions,
-    deliveredPositions,
-    inProcessPositions,
-    offeredPositions,
-    joinedPositions,
-    rejectedPositions,
-    totalInterviews,
-    totalExperiences,
-    totalSummaries,
-  ] = await Promise.all([
-    // 岗位总数
-    prisma.position.count({
-      where: { userId }
-    }),
-    // 待投递岗位数 (status = 0)
-    prisma.position.count({
-      where: { userId, status: 0 }
-    }),
-    // 已投递岗位数 (status = 1)
-    prisma.position.count({
-      where: { userId, status: 1 }
-    }),
-    // 流程中岗位数 (status = 2)
-    prisma.position.count({
-      where: { userId, status: 2 }
-    }),
-    // 已录用岗位数 (status = 3)
-    prisma.position.count({
-      where: { userId, status: 3 }
-    }),
-    // 已入职岗位数 (status = 4)
-    prisma.position.count({
-      where: { userId, status: 4 }
-    }),
-    // 未通过岗位数 (status = 5 或 6)
-    prisma.position.count({
-      where: {
-        userId,
-        status: { in: [5, 6] }
-      }
-    }),
-    // 面试记录总数
-    prisma.interview.count({
-      where: { userId }
-    }),
-    // 面经总数
-    prisma.experience.count({
-      where: { userId }
-    }),
-    // 面试总结总数
-    prisma.summary.count({
-      where: { userId }
-    }),
-  ])
+  // 添加调试日志
+  console.log('[getUserStats] 开始获取用户统计数据, userId:', userId)
 
-  // 计算待跟进岗位数(待投递 + 已投递)
-  const pendingFollowUp = pendingPositions + deliveredPositions
+  // 先检查用户是否存在
+  const userExists = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, phone: true, nickname: true }
+  })
 
-  return {
-    totalPositions,
-    pendingPositions,
-    deliveredPositions,
-    inProcessPositions,
-    offeredPositions,
-    joinedPositions,
-    rejectedPositions,
-    totalInterviews,
-    totalExperiences,
-    totalSummaries,
-    pendingFollowUp,
+  if (!userExists) {
+    console.error('[getUserStats] 用户不存在, userId:', userId)
+    throw new NotFoundError('用户不存在')
+  }
+
+  console.log('[getUserStats] 用户存在:', userExists)
+
+  try {
+    // 并行查询所有统计数据
+    const [
+      totalPositions,
+      pendingPositions,
+      deliveredPositions,
+      inProcessPositions,
+      offeredPositions,
+      joinedPositions,
+      rejectedPositions,
+      totalInterviews,
+      totalExperiences,
+      totalSummaries,
+    ] = await Promise.all([
+      // 岗位总数
+      prisma.position.count({
+        where: { userId }
+      }),
+      // 待投递岗位数 (status = '0')
+      prisma.position.count({
+        where: { userId, status: '0' }
+      }),
+      // 已投递岗位数 (status = '1')
+      prisma.position.count({
+        where: { userId, status: '1' }
+      }),
+      // 流程中岗位数 (status = '2')
+      prisma.position.count({
+        where: { userId, status: '2' }
+      }),
+      // 已录用岗位数 (status = '3')
+      prisma.position.count({
+        where: { userId, status: '3' }
+      }),
+      // 已入职岗位数 (status = '4')
+      prisma.position.count({
+        where: { userId, status: '4' }
+      }),
+      // 未通过岗位数 (status = '5' 或 '-1')
+      prisma.position.count({
+        where: {
+          userId,
+          status: { in: ['5', '-1'] }
+        }
+      }),
+      // 面试记录总数
+      prisma.interview.count({
+        where: { userId }
+      }),
+      // 面经总数
+      prisma.experience.count({
+        where: { userId }
+      }),
+      // 面试总结总数
+      prisma.summary.count({
+        where: { userId }
+      }),
+    ])
+
+    // 计算待跟进岗位数(待投递 + 已投递)
+    const pendingFollowUp = pendingPositions + deliveredPositions
+
+    const stats = {
+      totalPositions,
+      pendingPositions,
+      deliveredPositions,
+      inProcessPositions,
+      offeredPositions,
+      joinedPositions,
+      rejectedPositions,
+      totalInterviews,
+      totalExperiences,
+      totalSummaries,
+      pendingFollowUp,
+    }
+
+    console.log('[getUserStats] 统计数据获取成功:', stats)
+    return stats
+  } catch (error) {
+    console.error('[getUserStats] 查询统计数据时出错:', error)
+    throw error
   }
 }
 
