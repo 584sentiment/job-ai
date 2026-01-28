@@ -384,7 +384,19 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useDialog, useMessage } from 'naive-ui'
+import {
+  useDialog,
+  useMessage,
+  NModal,
+  NForm,
+  NFormItem,
+  NInput,
+  NButton,
+  NSwitch,
+  NTabs,
+  NTabPane,
+  NSelect
+} from 'naive-ui'
 import { useAuthStore } from '@/store/auth'
 import { useJobsStore } from '@/store/jobs'
 import { useInterviewsStore } from '@/store/interviews'
