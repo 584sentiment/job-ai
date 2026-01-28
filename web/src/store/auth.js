@@ -65,12 +65,18 @@ export const useAuthStore = defineStore('auth', () => {
         email: userData.email || undefined
       })
 
+      // 后端返回的数据结构是 { user: {...}, token: "..." }
+      // 需要提取出 user 对象和 token
+      const registerData = response.data
+      const userObj = registerData.user || registerData
+      const tokenValue = registerData.token || userObj.token
+
       // 检查响应中是否包含 token
-      const hasToken = !!(response.data && response.data.token)
+      const hasToken = !!tokenValue
 
       // 如果返回了 token，直接保存登录状态
       if (hasToken) {
-        saveAuthState(response.data, response.data.token)
+        saveAuthState(userObj, tokenValue)
       }
 
       return {
@@ -101,9 +107,13 @@ export const useAuthStore = defineStore('auth', () => {
         password: hashedPassword
       })
 
+      // 后端返回的数据结构是 { user: {...}, token: "..." }
+      // 需要提取出 user 对象和 token
+      const userData = response.data.user || response.data
+      const tokenValue = response.data.token || userData.token || `token-${userData.id || userData.userId}`
+
       // 保存登录状态
-      const tokenValue = response.data.token || `token-${response.data.id}`
-      saveAuthState(response.data, tokenValue)
+      saveAuthState(userData, tokenValue)
 
       return response
     } catch (error) {

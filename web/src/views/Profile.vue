@@ -1,15 +1,5 @@
 <template>
   <main class="pt-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-    <!-- 调试信息 (开发环境) -->
-    <div v-if="import.meta.env.DEV" class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-      <p class="text-sm font-bold text-yellow-800 mb-2">🔍 调试信息</p>
-      <p class="text-xs text-yellow-700 mb-1">authStore.user 存在: {{ !!authStore.user }}</p>
-      <p class="text-xs text-yellow-700 mb-1">isLoggedIn: {{ authStore.isLoggedIn }}</p>
-      <p class="text-xs text-yellow-700">用户 ID: {{ authStore.user?.id }}</p>
-      <p class="text-xs text-yellow-700">昵称: {{ authStore.user?.nickname }}</p>
-      <p class="text-xs text-yellow-700">手机号: {{ authStore.user?.phone }}</p>
-    </div>
-
     <!-- 用户信息卡片 -->
     <div class="glass-card rounded-xl p-6 mb-6">
       <div class="flex items-center space-x-4">
@@ -771,18 +761,13 @@ const fetchUserStats = async () => {
     const response = await userApi.getUserStats()
     if (response.code === 200 && response.data) {
       userStatsData.value = response.data
-      console.log('用户统计数据加载成功:', response.data)
     } else {
       // API 返回非 200 状态码，使用 store 数据作为后备
-      console.warn('用户统计数据 API 返回非 200 状态码:', response.message)
       userStatsData.value = null
     }
   } catch (error) {
     // API 调用失败，静默降级使用 store 数据
     // 这样即使后端接口未实现，页面也能正常显示
-    if (import.meta.env.DEV) {
-      console.warn('获取用户统计数据失败，使用本地计算数据作为后备方案:', error.message)
-    }
     userStatsData.value = null
   } finally {
     loadingStats.value = false
@@ -791,18 +776,6 @@ const fetchUserStats = async () => {
 
 // 页面加载时初始化编辑表单
 onMounted(() => {
-  // 添加调试日志：查看用户信息
-  console.log('[Profile onMounted] 当前用户信息:', authStore.user)
-  console.log('[Profile onMounted] 用户详情:', {
-    nickname: authStore.user?.nickname,
-    phone: authStore.user?.phone,
-    avatar: authStore.user?.avatar,
-    bio: authStore.user?.bio,
-    email: authStore.user?.email,
-    jobTitle: authStore.user?.jobTitle,
-    experience: authStore.user?.experience
-  })
-
   // 获取用户统计数据
   fetchUserStats()
 
