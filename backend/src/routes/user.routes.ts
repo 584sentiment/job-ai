@@ -29,11 +29,11 @@ router.post('/login', userController.login)
 router.get('/current', authMiddleware, userController.getCurrentUser)
 
 /**
- * @route   GET /users/:id
- * @desc    根据 ID 获取用户信息
+ * @route   GET /users/stats
+ * @desc    获取用户统计数据
  * @access  Private
  */
-router.get('/:id', authMiddleware, userController.getUserById)
+router.get('/stats', authMiddleware, userController.getUserStats)
 
 /**
  * @route   PUT /users
@@ -41,6 +41,13 @@ router.get('/:id', authMiddleware, userController.getUserById)
  * @access  Private
  */
 router.put('/', authMiddleware, userController.updateUser)
+
+/**
+ * @route   GET /users/:id
+ * @desc    根据 ID 获取用户信息
+ * @access  Private
+ */
+router.get('/:id', authMiddleware, userController.getUserById)
 
 /**
  * @route   POST /users/change-password
