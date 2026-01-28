@@ -23,6 +23,13 @@ export function authMiddleware(req: Request, _res: Response, next: NextFunction)
     // 验证 Token
     const decoded = verifyToken(token)
 
+    // 添加调试日志
+    console.log('[Auth Middleware] Token 验证成功:', {
+      id: decoded.id,
+      phone: decoded.phone,
+      nickname: decoded.nickname
+    })
+
     // 将用户信息附加到 request 对象
     req.user = {
       id: decoded.id,
@@ -32,6 +39,7 @@ export function authMiddleware(req: Request, _res: Response, next: NextFunction)
 
     next()
   } catch (error) {
+    console.error('[Auth Middleware] Token 验证失败:', error)
     if (error instanceof Error) {
       next(new UnauthorizedError(error.message))
     } else {

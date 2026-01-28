@@ -195,11 +195,15 @@ export async function getUserStats(req: Request, res: Response, next: NextFuncti
     // 从中间件获取用户 ID
     const userId = req.user!.id
 
+    // 添加调试日志
+    console.log('[Controller getUserStats] 从中间件获取的用户信息:', req.user)
+
     // 调用服务层获取用户统计数据
     const stats = await userService.getUserStats(userId)
 
     success(res, stats)
   } catch (error) {
+    console.error('[Controller getUserStats] 获取统计数据失败:', error)
     next(error)
   }
 }
