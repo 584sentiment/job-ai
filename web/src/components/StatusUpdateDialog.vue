@@ -64,17 +64,6 @@
                   class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 resize-none"
                 ></textarea>
               </div>
-
-              <!-- 流程中状态提示 -->
-              <div
-                v-if="form.status === PositionStatus.IN_PROCESS"
-                class="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg"
-              >
-                <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <p class="text-sm text-blue-700">选择了"流程中"状态，建议添加面试记录以跟踪面试进度。</p>
-              </div>
             </form>
           </div>
 
@@ -83,15 +72,20 @@
             <button
               @click="handleSubmit"
               type="button"
-              :disabled="!form.status"
+              :disabled="!form.status || props.updating"
               class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              更新状态
+              <svg v-if="props.updating" class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {{ props.updating ? '更新中...' : '更新状态' }}
             </button>
             <button
               @click="handleClose"
               type="button"
-              class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:w-auto sm:text-sm transition-colors duration-200"
+              :disabled="props.updating"
+              class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:w-auto sm:text-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               取消
             </button>
@@ -111,11 +105,13 @@ interface Props {
   open: boolean
   currentStatus: PositionStatus
   positionId?: string
+  updating?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   open: false,
-  positionId: ''
+  positionId: '',
+  updating: false
 })
 
 const emit = defineEmits(['update:open', 'submit'])
@@ -126,15 +122,13 @@ const form = ref({
   remark: ''
 })
 
-// 状态选项 - 使用后端枚举值
+// 状态选项 - 去掉待投递、已投递和流程中，只保留已通过及之后的状态
 const statusOptions = [
-  { label: '待投递', value: PositionStatus.TO_BE_DELIVERED },       // 0
-  { label: '已投递', value: PositionStatus.DELIVERED },             // 1
-  { label: '流程中', value: PositionStatus.IN_PROCESS },            // 2
+  { label: '已通过', value: PositionStatus.IN_PROCESS },            // 2 (流程中 -> 已通过)
   { label: '已Offer', value: PositionStatus.OFFER },                // 3
   { label: '已入职', value: PositionStatus.JOINED },                // 4
-  { label: '未通过', value: PositionStatus.NOT_PASS },              // 7
-  { label: '已拒绝', value: PositionStatus.REJECTED }               // 8
+  { label: '未通过', value: PositionStatus.NOT_PASS },              // -1
+  { label: '已拒绝', value: PositionStatus.REJECTED }               // 5
 ]
 
 // 对话框打开时初始化状态

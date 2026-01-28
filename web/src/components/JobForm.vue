@@ -210,12 +210,14 @@ interface Props {
   mode?: 'add' | 'edit'
   initialData?: any
   onCancel?: (() => void) | null
+  hasRealInterviews?: boolean // 是否有真实面试记录
 }
 
 const props = withDefaults(defineProps<Props>(), {
   mode: 'add',
   initialData: null,
-  onCancel: null
+  onCancel: null,
+  hasRealInterviews: false
 })
 
 const emit = defineEmits(['submit'])

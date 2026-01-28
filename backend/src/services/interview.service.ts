@@ -3,6 +3,7 @@
  */
 import PrismaConfig from '@/config/database'
 import { NotFoundError } from '@/utils/error'
+import { INITIAL_INTERVIEW_ROUND, INITIAL_INTERVIEW_FORM } from '@/constants'
 import type { Interview, Prisma } from '@prisma/client'
 
 const prisma = PrismaConfig.getInstance()
@@ -115,7 +116,8 @@ export async function createInterview(
   // 当前时间戳
   const now = BigInt(Date.now())
 
-  return prisma.interview.create({
+  // 创建面试记录
+  const interview = await prisma.interview.create({
     data: {
       ...data,
       userId,
@@ -123,6 +125,36 @@ export async function createInterview(
       updateTime: now,
     },
   })
+
+  // 自动流转逻辑：检查是否是第一个真实面试
+  // 如果是第一个真实面试，自动将岗位状态更新为"流程中"
+  const allInterviews = await prisma.interview.findMany({
+    where: {
+      positionId: data.positionId,
+      userId,
+    },
+  })
+
+  // 检查是否包含初始投递记录
+  const hasInitialRecord = allInterviews.some(
+    r => r.interviewRound === INITIAL_INTERVIEW_ROUND && r.interviewForm === INITIAL_INTERVIEW_FORM
+  )
+
+  // 如果有初始记录且只有一条初始记录（说明这是第一个真实面试）
+  if (hasInitialRecord && allInterviews.length === 2) {
+    // 更新岗位状态为"流程中"（'2'）
+    await prisma.position.update({
+      where: { id: data.positionId },
+      data: {
+        status: '2',
+        updateTime: now,
+      },
+    })
+  }
+  // 如果没有初始记录且这是第一条记录，说明是旧数据，不需要自动流转
+  // 这种情况保持原样
+
+  return interview
 }
 
 /**
@@ -134,7 +166,13 @@ export async function updateInterview(
   data: Prisma.InterviewUncheckedUpdateInput
 ): Promise<Interview> {
   // 检查面试记录是否存在
-  await getInterviewById(id, userId)
+  const interview = await getInterviewById(id, userId)
+
+  // 检查是否是初始投递记录
+  if (interview.interviewRound === INITIAL_INTERVIEW_ROUND &&
+      interview.interviewForm === INITIAL_INTERVIEW_FORM) {
+    throw new Error('初始投递记录不能编辑')
+  }
 
   // 当前时间戳
   const now = BigInt(Date.now())
@@ -154,7 +192,13 @@ export async function updateInterview(
  */
 export async function deleteInterview(id: string, userId: string): Promise<void> {
   // 检查面试记录是否存在
-  await getInterviewById(id, userId)
+  const interview = await getInterviewById(id, userId)
+
+  // 检查是否是初始投递记录
+  if (interview.interviewRound === INITIAL_INTERVIEW_ROUND &&
+      interview.interviewForm === INITIAL_INTERVIEW_FORM) {
+    throw new Error('初始投递记录不能删除')
+  }
 
   // 删除面试记录
   await prisma.interview.delete({

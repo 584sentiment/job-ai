@@ -39,13 +39,14 @@ h6 {
   content: '';
   position: absolute;
   left: -1.375rem;
-  top: 0.25rem;
+  top: 0.625rem;
   width: 0.75rem;
   height: 0.75rem;
   border-radius: 50%;
   background-color: #2563eb;
   border: 2px solid white;
   box-shadow: 0 0 0 2px #2563eb;
+  flex-shrink: 0;
 }
 
 .timeline-line {

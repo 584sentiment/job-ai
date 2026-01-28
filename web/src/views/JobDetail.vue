@@ -146,27 +146,31 @@
           v-for="(item, index) in timeline"
           :key="index"
           class="timeline-item relative group"
-          :class="{ 'cursor-pointer hover:bg-gray-50 rounded-lg -mx-2 px-2 py-1 transition-colors duration-200': item.recordId }"
-          @click="item.recordId ? openEditInterviewDialog(job?.interviewRecordList?.find((r: Interview) => r.id === item.recordId)!) : undefined"
+          :class="{ 'cursor-pointer hover:bg-gray-50 rounded-lg py-1 transition-colors duration-200': item.recordId && !item.isInitial }"
+          @click="item.recordId && !item.isInitial ? openEditInterviewDialog(job?.interviewRecordList?.find((r: Interview) => r.id === item.recordId)!) : undefined"
         >
-          <div class="flex items-start justify-between">
+          <div class="flex items-center justify-between">
             <div class="flex-1">
-              <p class="font-medium">{{ item.status }}</p>
+              <p class="font-medium leading-5">{{ item.status }}</p>
               <p class="text-sm text-gray-600 mt-1 whitespace-pre-line">{{ item.desc }}</p>
             </div>
             <div class="flex items-center space-x-2">
-              <span class="text-sm text-gray-500">{{ item.date }}</span>
-              <!-- 删除按钮（hover 显示） -->
+              <span class="text-sm text-gray-500 leading-5">{{ item.date }}</span>
+              <!-- 删除按钮（hover 显示）- 初始记录不显示 -->
               <button
-                v-if="item.recordId"
+                v-if="item.recordId && !item.isInitial"
                 @click.stop="handleDeleteRecord(item.recordId)"
-                class="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 rounded transition-all duration-200 text-red-500"
+                class="opacity-0 group-hover:opacity-100 w-6 h-6 flex items-center justify-center hover:bg-red-100 rounded transition-all duration-200 text-red-500 flex-shrink-0"
                 title="删除记录"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                 </svg>
               </button>
+              <!-- 初始记录的占位元素，保持布局对齐 -->
+              <div v-if="item.isInitial" class="w-6 h-6 flex items-center justify-center flex-shrink-0">
+                <!-- 空占位，与删除按钮尺寸相同 -->
+              </div>
             </div>
           </div>
         </div>
@@ -176,16 +180,22 @@
       <div class="flex gap-3 mt-6 pt-6 border-t border-border">
         <button
           @click="openStatusDialog"
-          class="flex-1 px-4 py-2.5 bg-white border border-border rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium flex items-center justify-center space-x-2 text-sm"
+          :disabled="!canUpdateStatus || updatingStatus"
+          class="flex-1 px-4 py-2.5 bg-white border border-border rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium flex items-center justify-center space-x-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg v-if="!updatingStatus" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
           </svg>
-          <span>更新状态</span>
+          <svg v-else class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>{{ updatingStatus ? '更新中...' : '更新状态' }}</span>
         </button>
         <button
           @click="openAddInterviewDialog"
-          class="flex-1 px-4 py-2.5 bg-primary text-white rounded-lg hover:bg-secondary shadow-md hover:shadow-lg transition-all duration-200 font-medium flex items-center justify-center space-x-2 text-sm"
+          :disabled="!canAddInterview"
+          class="flex-1 px-4 py-2.5 bg-primary text-white rounded-lg hover:bg-secondary shadow-md hover:shadow-lg transition-all duration-200 font-medium flex items-center justify-center space-x-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -446,6 +456,7 @@
     v-model:open="isStatusDialogOpen"
     :current-status="job?.status || PositionStatus.TO_BE_DELIVERED"
     :position-id="jobId"
+    :updating="updatingStatus"
     @submit="handleStatusUpdate"
   />
 </template>
@@ -482,6 +493,7 @@ const loading = ref(false)   // 加载状态
 const isInterviewDialogOpen = ref(false)
 const isStatusDialogOpen = ref(false)
 const editingRecord = ref<Interview | null>(null)
+const updatingStatus = ref(false)  // 更新状态loading
 
 // 获取路由参数中的岗位 ID,确保是 string 类型
 const jobId = computed(() => {
@@ -503,18 +515,98 @@ const timeline = computed(() => {
         status: '已投递',
         date: formatDate(job.value?.deliveryDate) || '',
         desc: '简历已投递，等待回复',
-        recordId: null
+        recordId: null,
+        isInitial: true
       }
     ]
   }
 
   // 将面试记录转换为时间线格式
-  return job.value.interviewRecordList.map((record: Interview) => ({
-    status: record.interviewRound,
-    date: formatDate(record.interviewTime) || '',
-    desc: `面试地点：${record.interviewLocation}\n面试形式：${record.interviewForm}`,
-    recordId: record.id  // 添加记录 ID 用于编辑和删除
-  }))
+  return job.value.interviewRecordList.map((record: Interview) => {
+    // 初始投递记录
+    if (record.interviewRound === '投递状态' && record.interviewForm === '投递') {
+      return {
+        status: record.status === 1 ? '已投递' : '未投递',
+        date: formatDate(record.interviewTime) || '',
+        desc: record.status === 1 ? '已投递，等待回复' : '等待投递',
+        recordId: record.id,
+        isInitial: true
+      }
+    }
+
+    // 真实面试记录
+    return {
+      status: record.interviewRound,
+      date: formatDate(record.interviewTime) || '',
+      desc: `面试地点：${record.interviewLocation}\n面试形式：${record.interviewForm}`,
+      recordId: record.id,
+      isInitial: false
+    }
+  })
+})
+
+// 计算属性：检查是否是未投递状态
+const isNotDelivered = computed(() => {
+  return job.value?.status === PositionStatus.TO_BE_DELIVERED
+})
+
+// 计算属性：检查是否有未完成的面试（排除初始投递状态记录）
+const hasUnfinishedInterviews = computed(() => {
+  if (!job.value?.interviewRecordList || job.value.interviewRecordList.length === 0) {
+    return false
+  }
+
+  // 检查是否有未完成的面试（排除初始投递状态记录）
+  // 初始投递记录的特征是：interviewRound === '投递状态' 或 interviewForm === '投递'
+  const realInterviews = job.value.interviewRecordList.filter(
+    (record: Interview) => record.interviewRound !== '投递状态' && record.interviewForm !== '投递'
+  )
+
+  // 如果有真实面试记录，检查是否有未完成的
+  return realInterviews.some((record: Interview) => record.status === 0)  // 0 表示即将到来/未完成
+})
+
+// 计算属性：是否有真实面试记录（排除初始投递记录）
+const hasRealInterviews = computed(() => {
+  if (!job.value?.interviewRecordList || job.value.interviewRecordList.length === 0) {
+    return false
+  }
+
+  const realInterviews = job.value.interviewRecordList.filter(
+    (record: Interview) => record.interviewRound !== '投递状态' && record.interviewForm !== '投递'
+  )
+
+  return realInterviews.length > 0
+})
+
+// 计算属性：是否可以添加面试
+const canAddInterview = computed(() => {
+  // 未投递状态下不能添加面试
+  if (isNotDelivered.value) {
+    return false
+  }
+
+  // 已投递状态下，如果有未完成的面试，不能添加新面试
+  if (hasUnfinishedInterviews.value) {
+    return false
+  }
+
+  return true
+})
+
+// 计算属性：是否可以更新状态
+const canUpdateStatus = computed(() => {
+  // 未投递状态下不能更新状态
+  if (isNotDelivered.value) {
+    return false
+  }
+
+  // 已投递状态下，只有添加了真实面试后才能更新状态
+  if (!hasRealInterviews.value) {
+    return false
+  }
+
+  return true
 })
 
 const deleteJob = () => {
@@ -643,6 +735,7 @@ const openStatusDialog = () => {
 
 // 处理状态更新
 const handleStatusUpdate = async ({ status, remark }: { status: PositionStatus, remark?: string }) => {
+  updatingStatus.value = true
   try {
     await jobsStore.updateJob({
       id: jobId.value,
@@ -655,18 +748,13 @@ const handleStatusUpdate = async ({ status, remark }: { status: PositionStatus, 
     })
 
     message.success('状态已更新')
-
-    // 如果切换到"流程中"状态，自动打开面试记录对话框
-    if (status === PositionStatus.IN_PROCESS) {
-      isStatusDialogOpen.value = false
-      openAddInterviewDialog()
-    } else {
-      isStatusDialogOpen.value = false
-      await refreshJobDetail()
-    }
+    isStatusDialogOpen.value = false
+    await refreshJobDetail()
   } catch (error) {
     console.error('更新状态失败:', error)
     message.error('更新状态失败')
+  } finally {
+    updatingStatus.value = false
   }
 }
 
@@ -692,27 +780,21 @@ onMounted(async () => {
     return
   }
 
-  // 先尝试从 store 中获取
-  const existingJob = jobsStore.getJobById(jobId.value)
-  if (existingJob) {
-    jobDetail.value = existingJob
-  } else {
-    // 如果 store 中没有，从 API 获取
-    loading.value = true
-    try {
-      const response = await positionApi.getPositionById(jobId.value)
-      if (response.data) {
-        jobDetail.value = response.data
-      } else {
-        console.error('岗位不存在:', jobId)
-        router.push('/')
-      }
-    } catch (error) {
-      console.error('获取岗位详情失败:', error)
+  // 每次进入详情页都从 API 获取最新数据
+  loading.value = true
+  try {
+    const response = await positionApi.getPositionById(jobId.value)
+    if (response.data) {
+      jobDetail.value = response.data
+    } else {
+      console.error('岗位不存在:', jobId)
       router.push('/')
-    } finally {
-      loading.value = false
     }
+  } catch (error) {
+    console.error('获取岗位详情失败:', error)
+    router.push('/')
+  } finally {
+    loading.value = false
   }
 })
 </script>

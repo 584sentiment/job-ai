@@ -18,6 +18,16 @@ export const INTERVIEW_STATUS = {
   CANCELLED: 'cancelled',   // 已取消
 } as const
 
+// 初始面试记录状态（投递状态）
+export const INITIAL_INTERVIEW_STATUS = {
+  NOT_DELIVERED: 0,         // 未投递
+  DELIVERED: 1,             // 已投递
+} as const
+
+// 初始面试记录轮次和形式
+export const INITIAL_INTERVIEW_ROUND = '投递状态'
+export const INITIAL_INTERVIEW_FORM = '投递'
+
 // 面试结果
 export const INTERVIEW_RESULT = {
   PASS: 'pass',             // 通过
