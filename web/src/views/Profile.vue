@@ -781,6 +781,18 @@ const fetchUserStats = async () => {
 
 // 页面加载时初始化编辑表单
 onMounted(() => {
+  // 添加调试日志：查看用户信息
+  console.log('[Profile onMounted] 当前用户信息:', authStore.user)
+  console.log('[Profile onMounted] 用户详情:', {
+    nickname: authStore.user?.nickname,
+    phone: authStore.user?.phone,
+    avatar: authStore.user?.avatar,
+    bio: authStore.user?.bio,
+    email: authStore.user?.email,
+    jobTitle: authStore.user?.jobTitle,
+    experience: authStore.user?.experience
+  })
+
   // 获取用户统计数据
   fetchUserStats()
 
