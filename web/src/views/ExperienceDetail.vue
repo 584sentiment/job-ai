@@ -328,10 +328,24 @@ function formatTimestamp(timestamp: string | number | bigint): string {
 }
 
 /**
- * 格式化日期字符串
+ * 格式化日期字符串或时间戳字符串
  */
 function formatDate(dateString: string) {
-  const date = new Date(dateString)
+  let date: Date
+
+  // 如果是纯数字字符串（时间戳），先转换为数字
+  if (/^\d+$/.test(dateString)) {
+    date = new Date(parseInt(dateString))
+  } else {
+    // 否则直接当作日期字符串处理
+    date = new Date(dateString)
+  }
+
+  // 检查日期是否有效
+  if (isNaN(date.getTime())) {
+    return dateString // 如果解析失败，返回原字符串
+  }
+
   return date.toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',
