@@ -6,6 +6,8 @@
 
 - 2025-01-17: 初始创建文档文件
 - 2025-01-17: 添加AI增强版产品架构设计
+- 2025-01-30: 添加Web端架构设计
+- 2025-01-30: 添加后端API架构设计
 
 ---
 
@@ -569,3 +571,853 @@ AIConversation（AI对话）
 **文档版本**: V1.0
 **更新时间**: 2025-01-17
 **维护人**: 产品团队
+
+---
+
+# Web端架构设计
+
+## 一、技术栈
+
+### 前端框架
+- **Vue 3**: 组合式API (Composition API)
+- **Vite**: 构建工具
+- **Vue Router 4**: 路由管理
+- **Pinia**: 状态管理
+
+### UI和样式
+- **Tailwind CSS**: 实用优先的CSS框架
+- **PostCSS**: CSS处理器
+- **Autoprefixer**: CSS浏览器前缀自动补全
+- **响应式设计**: 桌面端 + 移动端适配
+
+### 富文本编辑器
+- **Tiptap**: 基于 ProseMirror 的富文本编辑器
+- **lowlight**: 代码语法高亮
+
+### 其他依赖
+- **@headlessui/vue**: 无样式UI组件
+- **naive-ui**: Vue 3 组件库
+- **crypto-js**: 加密库
+- **node-fetch**: HTTP请求库
+
+### 开发工具
+- **ESLint**: 代码检查
+- **Prettier**: 代码格式化
+- **Vite Plugin**: Vue支持、HTML重写
+
+## 二、项目结构
+
+```
+web/
+├── public/                      # 静态资源
+├── src/
+│   ├── main.js                  # 应用入口
+│   ├── App.vue                  # 根组件
+│   │
+│   ├── router/                  # 路由配置
+│   │   └── index.js            # 路由定义、守卫
+│   │
+│   ├── store/                   # Pinia状态管理
+│   │   ├── auth.js             # 用户认证状态
+│   │   ├── jobs.js             # 岗位数据状态
+│   │   ├── interviews.js       # 面试数据状态
+│   │   ├── experiences.js      # 面经数据状态
+│   │   └── summaries.js        # 总结数据状态
+│   │
+│   ├── views/                   # 页面组件
+│   │   ├── JobList.vue         # 岗位列表
+│   │   ├── AddJob.vue          # 添加岗位
+│   │   ├── JobDetail.vue       # 岗位详情
+│   │   ├── Interviews.vue      # 面试记录
+│   │   ├── Experiences.vue     # 面经管理
+│   │   ├── AddExperience.vue   # 添加面经
+│   │   ├── ExperienceDetail.vue # 面经详情
+│   │   ├── Summaries.vue       # 面试总结
+│   │   ├── AIAssistant.vue     # AI助手
+│   │   ├── Profile.vue         # 个人中心
+│   │   ├── Register.vue        # 用户注册
+│   │   ├── Login.vue           # 用户登录
+│   │   └── errors/             # 错误页面
+│   │       ├── 404.vue
+│   │       └── 500.vue
+│   │
+│   ├── components/              # 共享组件
+│   │   ├── NavBar.vue          # 顶部导航栏
+│   │   ├── BottomNav.vue       # 底部导航栏
+│   │   ├── JobForm.vue         # 岗位表单组件
+│   │   ├── TiptapEditor.vue    # 富文本编辑器
+│   │   ├── StatusUpdateDialog.vue # 状态更新对话框
+│   │   └── InterviewRecordDialog.vue # 面试记录对话框
+│   │
+│   ├── api/                     # API接口
+│   │   ├── index.js            # API实例配置
+│   │   ├── auth.js             # 认证接口
+│   │   ├── jobs.js             # 岗位接口
+│   │   ├── interviews.js       # 面试接口
+│   │   ├── experiences.js      # 面经接口
+│   │   ├── comments.js         # 评论接口
+│   │   └── summaries.js        # 总结接口
+│   │
+│   ├── types/                   # TypeScript类型定义
+│   ├── constants/               # 常量定义
+│   └── utils/                   # 工具函数
+│
+├── index.html                   # HTML入口
+├── package.json                 # 项目配置
+├── vite.config.js              # Vite配置
+├── tailwind.config.js          # Tailwind配置
+└── postcss.config.js           # PostCSS配置
+```
+
+## 三、核心设计模式
+
+### 3.1 路由设计
+
+**路由守卫**:
+- 检查用户登录状态
+- 未登录自动重定向到登录页
+- 保存原始目标路径,登录后跳转回原页面
+- 动态设置页面标题
+
+**路由结构**:
+```
+/ → 岗位列表(需认证)
+/register → 用户注册(公开)
+/login → 用户登录(公开)
+/add-job → 添加岗位(需认证)
+/job/:id → 岗位详情(需认证)
+/interviews → 面试记录(需认证)
+/experiences → 面经管理(需认证)
+/add-experience → 添加面经(需认证)
+/experience-detail → 面经详情(需认证)
+/summaries → 面试总结(需认证)
+/ai-assistant → AI助手(需认证)
+/profile → 个人中心(需认证)
+/404 → 404错误页
+/500 → 500错误页
+```
+
+### 3.2 状态管理(Pinia)
+
+**认证状态 (auth.js)**:
+```javascript
+{
+  user: {},              // 用户信息
+  token: '',             // JWT token
+  isLoggedIn: false,     // 登录状态
+
+  // Actions
+  register(credentials),    // 注册
+  login(credentials),       // 登录
+  logout(),                // 登出
+  fetchUserProfile(),      // 获取用户信息
+  updateProfile(data),     // 更新用户信息
+  changePassword(data)     // 修改密码
+}
+```
+
+**岗位状态 (jobs.js)**:
+```javascript
+{
+  jobs: [],              // 岗位列表
+  currentFilter: 'all',  // 当前筛选状态
+
+  // Actions
+  fetchJobs(),           // 获取岗位列表
+  addJob(job),           // 添加岗位
+  updateJob(id, data),   // 更新岗位
+  deleteJob(id),         // 删除岗位
+  searchJobs(keyword),   // 搜索岗位
+  filterJobs(status)     // 筛选岗位
+}
+```
+
+**面经状态 (experiences.js)**:
+```javascript
+{
+  experiences: [],       // 面经列表
+  currentFilter: 'all',  // 当前筛选
+
+  // Actions
+  fetchExperiences(),      // 获取面经列表
+  addExperience(exp),      // 添加面经
+  updateExperience(id, data),
+  deleteExperience(id),
+  toggleFavorite(id),      // 收藏/取消收藏
+  searchExperiences(keyword)
+}
+```
+
+### 3.3 API设计
+
+**API实例配置**:
+```javascript
+// api/index.js
+import axios from 'axios'
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  timeout: 10000
+})
+
+// 请求拦截器 - 自动添加token
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
+// 响应拦截器 - 统一错误处理
+api.interceptors.response.use(
+  response => response.data,
+  error => {
+    if (error.response?.status === 401) {
+      // Token过期,自动登出
+      localStorage.removeItem('token')
+      window.location.href = '/login'
+    }
+    return Promise.reject(error)
+  }
+)
+```
+
+**API模块化**:
+- `api/auth.js` - 认证相关接口
+- `api/jobs.js` - 岗位管理接口
+- `api/interviews.js` - 面试管理接口
+- `api/experiences.js` - 面经管理接口
+- `api/comments.js` - 评论管理接口
+- `api/summaries.js` - 总结管理接口
+
+### 3.4 组件设计
+
+**布局组件**:
+- **NavBar.vue**: 顶部导航栏(桌面端显示)
+- **BottomNav.vue**: 底部导航栏(移动端显示)
+- 响应式切换: 移动端(<768px)显示底部导航,桌面端显示顶部导航
+
+**共享组件**:
+- **JobForm.vue**: 岗位表单组件(添加/编辑共用)
+- **TiptapEditor.vue**: 富文本编辑器组件(支持Markdown、代码高亮)
+- **StatusUpdateDialog.vue**: 状态更新对话框
+- **InterviewRecordDialog.vue**: 面试记录对话框
+
+### 3.5 样式系统
+
+**Tailwind CSS配置**:
+```javascript
+// tailwind.config.js
+module.exports = {
+  content: ['./index.html', './src/**/*.{vue,js}'],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#0369A1',
+        secondary: '#0EA5E9',
+        ai: {
+          primary: '#6366F1',
+          secondary: '#8B5CF6'
+        }
+      }
+    }
+  },
+  plugins: []
+}
+```
+
+**玻璃卡片效果**:
+```css
+.glass-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+```
+
+**响应式断点**:
+- 移动端: <768px
+- 平板: 768px - 1024px
+- 桌面: >1024px
+
+## 四、数据流
+
+### 4.1 用户认证流程
+
+```
+用户注册
+  ↓
+Register.vue (表单验证)
+  ↓
+auth API → POST /users/register
+  ↓
+后端创建用户并返回token
+  ↓
+存储到localStorage
+  ↓
+自动登录并跳转首页
+```
+
+### 4.2 数据获取流程
+
+```
+页面加载
+  ↓
+onMounted生命周期
+  ↓
+调用Pinia store的action
+  ↓
+store调用API模块
+  ↓
+API发送HTTP请求
+  ↓
+响应拦截器处理
+  ↓
+更新store状态
+  ↓
+组件自动响应更新
+```
+
+### 4.3 数据持久化
+
+**LocalStorage**:
+- token: JWT认证令牌
+- user: 用户基本信息
+
+**后端数据库**:
+- 所有业务数据存储在后端PostgreSQL数据库
+- 通过API进行CRUD操作
+
+## 五、性能优化
+
+### 5.1 路由懒加载
+```javascript
+const JobList = () => import('@/views/JobList.vue')
+```
+
+### 5.2 组件缓存
+使用`<keep-alive>`缓存频繁切换的页面
+
+### 5.3 防抖和节流
+搜索输入使用防抖,减少API请求频率
+
+### 5.4 虚拟滚动
+长列表使用虚拟滚动(待实现)
+
+---
+
+# 后端API架构设计
+
+## 一、技术栈
+
+### 核心框架
+- **Node.js**: 运行时环境
+- **Express.js**: Web应用框架
+- **TypeScript**: 类型安全的JavaScript超集
+
+### 数据库
+- **PostgreSQL**: 关系型数据库
+- **Prisma ORM**: 类型安全的ORM
+
+### 认证和安全
+- **JWT**: JSON Web Token认证
+- **bcrypt**: 密码加密
+- **Helmet**: HTTP安全头
+- **CORS**: 跨域资源共享
+- **express-rate-limit**: 请求限流
+
+### 日志和验证
+- **Winston**: 日志系统
+- **Joi**: 数据验证
+
+### 开发工具
+- **tsx**: TypeScript执行器
+- **tsc**: TypeScript编译器
+- **nodemon**: 文件监听(开发时)
+
+## 二、项目结构
+
+```
+backend/
+├── src/
+│   ├── index.ts                 # 主入口文件
+│   ├── app.ts                   # Express应用配置
+│   │
+│   ├── config/                  # 配置文件
+│   │   └── database.ts         # 数据库配置
+│   │
+│   ├── routes/                  # 路由定义
+│   │   ├── index.ts            # 路由入口
+│   │   ├── user.routes.ts      # 用户路由
+│   │   ├── position.routes.ts  # 岗位路由
+│   │   ├── interview.routes.ts # 面试路由
+│   │   ├── experience.routes.ts# 面经路由
+│   │   ├── comment.routes.ts   # 评论路由
+│   │   ├── summary.routes.ts   # 总结路由
+│   │   └── ai.routes.ts        # AI功能路由
+│   │
+│   ├── controllers/             # 控制器(业务逻辑)
+│   │   ├── user.controller.ts
+│   │   ├── position.controller.ts
+│   │   ├── interview.controller.ts
+│   │   ├── experience.controller.ts
+│   │   ├── comment.controller.ts
+│   │   ├── summary.controller.ts
+│   │   └── ai.controller.ts
+│   │
+│   ├── services/                # 服务层(复杂业务逻辑)
+│   │   ├── auth.service.ts
+│   │   ├── position.service.ts
+│   │   └── ...
+│   │
+│   ├── middlewares/             # 中间件
+│   │   ├── auth.middleware.ts  # 认证中间件
+│   │   ├── error.middleware.ts # 错误处理中间件
+│   │   └── validate.middleware.ts # 数据验证中间件
+│   │
+│   ├── types/                   # TypeScript类型定义
+│   │   └── index.ts
+│   │
+│   ├── constants/               # 常量定义
+│   │   └── index.ts
+│   │
+│   └── utils/                   # 工具函数
+│       ├── logger.ts           # 日志工具
+│       └── helpers.ts          # 辅助函数
+│
+├── prisma/
+│   ├── schema.prisma           # 数据库模型定义
+│   └── seed.ts                 # 种子数据
+│
+├── logs/                        # 日志文件
+├── dist/                        # 编译输出
+├── package.json
+├── tsconfig.json               # TypeScript配置
+└── .env                        # 环境变量
+```
+
+## 三、数据库设计
+
+### 3.1 数据模型
+
+**User(用户表)**:
+```prisma
+model User {
+  id            String    @id @default(uuid())
+  phone         String    @unique
+  password      String    // bcrypt加密
+  nickname      String
+  avatar        String?
+  bio           String?
+  email         String?
+  createTime    BigInt    @default(0)
+  updateTime    BigInt    @default(0)
+
+  // 关联关系
+  positions        Position[]
+  interviews       Interview[]
+  experiences      Experience[]
+  experienceComments ExperienceComment[]
+  summaries        Summary[]
+}
+```
+
+**Position(岗位表)**:
+```prisma
+model Position {
+  id              String    @id @default(uuid())
+  userId          String
+
+  companyName     String
+  positionName    String
+  deliveryChannel String
+  deliveryDate    BigInt
+  workLocation    String?
+  salaryRange     String?
+  jobDescription  String?   @db.Text
+
+  contactName     String?
+  contactPhone    String?
+  remarks         String?   @db.Text
+
+  status          String    @default("pending")
+  isCollected     Int       @default(0)
+
+  createTime      BigInt    @default(0)
+  updateTime      BigInt    @default(0)
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interviews      Interview[]
+  experiences     Experience[]
+  summaries       Summary[]
+}
+```
+
+**Interview(面试表)**:
+```prisma
+model Interview {
+  id                String    @id @default(uuid())
+  positionId        String
+  userId            String
+
+  interviewRound    String
+  interviewTime     BigInt
+  interviewLocation String
+  interviewForm     String
+  interviewerInfo   String?   @db.Text
+
+  remarks           String?   @db.Text
+  status            Int       @default(0)
+
+  createTime        BigInt    @default(0)
+  updateTime        BigInt    @default(0)
+
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  position          Position  @relation(fields: [positionId], references: [id], onDelete: Cascade)
+  summaries         Summary[]
+}
+```
+
+**Experience(面经表)**:
+```prisma
+model Experience {
+  id              String    @id @default(uuid())
+  positionId      String?
+  userId          String
+
+  companyName     String
+  positionName    String
+  interviewRound  String
+  interviewDate   BigInt
+
+  content         String    @db.Text
+  contentType     String    @default("markdown")
+
+  tags            String[]  @default([])
+
+  isFavorite      Int       @default(0)
+  isAnonymous     Int       @default(0)
+
+  views           Int       @default(0)
+  comments        Int       @default(0)
+
+  createTime      BigInt    @default(0)
+  updateTime      BigInt    @default(0)
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  position        Position?         @relation(fields: [positionId], references: [id], onDelete: SetNull)
+  commentList     ExperienceComment[]
+}
+```
+
+**ExperienceComment(评论表)**:
+```prisma
+model ExperienceComment {
+  id             String    @id @default(uuid())
+  experienceId   String
+  userId         String
+
+  parentId       String?
+  replyToUserId  String?
+
+  content        String    @db.Text
+
+  likes          Int       @default(0)
+
+  createTime     BigInt    @default(0)
+  updateTime     BigInt    @default(0)
+
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  experience     Experience        @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  replyToUser    User?             @relation("CommentReplies", fields: [replyToUserId], references: [id])
+  parent         ExperienceComment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies        ExperienceComment[] @relation("CommentReplies")
+}
+```
+
+**Summary(总结表)**:
+```prisma
+model Summary {
+  id              String    @id @default(uuid())
+  positionId      String?
+  interviewId     String?
+  userId          String
+
+  companyName     String
+  positionName    String
+  interviewRound  String?
+
+  content         Json      // 结构化数据
+  round           String?
+  date            BigInt?
+
+  createTime      BigInt    @default(0)
+  updateTime      BigInt    @default(0)
+
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interview       Interview? @relation(fields: [interviewId], references: [id], onDelete: SetNull)
+  position        Position?  @relation(fields: [positionId], references: [id], onDelete: SetNull)
+}
+```
+
+### 3.2 索引设计
+
+- **用户索引**: `userId` (所有业务表)
+- **岗位索引**: `status`, `userId`
+- **面试索引**: `interviewTime`, `positionId`
+- **面经索引**: `interviewDate`, `createTime`, `isFavorite`
+
+## 四、API设计
+
+### 4.1 RESTful API规范
+
+**基础URL**: `/api`
+
+**认证方式**: JWT Bearer Token
+
+**响应格式**:
+```json
+{
+  "success": true,
+  "data": {},
+  "message": "操作成功"
+}
+```
+
+**错误格式**:
+```json
+{
+  "success": false,
+  "error": "错误信息",
+  "code": "ERROR_CODE"
+}
+```
+
+### 4.2 API路由清单
+
+**用户认证** (`/users`):
+- `POST /users/register` - 用户注册
+- `POST /users/login` - 用户登录
+- `GET /users/profile` - 获取用户信息
+- `PUT /users/profile` - 更新用户信息
+- `POST /users/change-password` - 修改密码
+- `POST /users/logout` - 用户登出
+
+**岗位管理** (`/positions`):
+- `GET /positions` - 获取岗位列表
+- `GET /positions/:id` - 获取岗位详情
+- `POST /positions` - 创建岗位
+- `PUT /positions/:id` - 更新岗位
+- `DELETE /positions/:id` - 删除岗位
+- `GET /positions/search` - 搜索岗位
+
+**面试管理** (`/interviews`):
+- `GET /interviews` - 获取面试列表
+- `GET /interviews/:id` - 获取面试详情
+- `POST /interviews` - 创建面试
+- `PUT /interviews/:id` - 更新面试
+- `DELETE /interviews/:id` - 删除面试
+
+**面经管理** (`/experiences`):
+- `GET /experiences` - 获取面经列表
+- `GET /experiences/:id` - 获取面经详情
+- `POST /experiences` - 创建面经
+- `PUT /experiences/:id` - 更新面经
+- `DELETE /experiences/:id` - 删除面经
+- `POST /experiences/:id/favorite` - 收藏/取消收藏
+- `GET /experiences/search` - 搜索面经
+
+**评论管理** (`/comments`):
+- `GET /experiences/:id/comments` - 获取评论列表
+- `POST /experiences/:id/comments` - 创建评论
+- `PUT /comments/:id` - 更新评论
+- `DELETE /comments/:id` - 删除评论
+- `POST /comments/:id/like` - 点赞评论
+
+**总结管理** (`/summaries`):
+- `GET /summaries` - 获取总结列表
+- `GET /summaries/:id` - 获取总结详情
+- `POST /summaries` - 创建总结
+- `PUT /summaries/:id` - 更新总结
+- `DELETE /summaries/:id` - 删除总结
+
+**AI功能** (`/ai`):
+- `POST /ai/parse-jd` - JD智能解析
+- `POST /ai/analyze-match` - 岗位匹配度分析
+- `POST /ai/generate-prep-list` - 生成面试准备清单
+- `POST /ai/generate-summary` - 生成面试总结
+
+## 五、中间件设计
+
+### 5.1 认证中间件
+
+```typescript
+// middlewares/auth.middleware.ts
+export const authMiddleware = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '')
+
+    if (!token) {
+      return res.status(401).json({ error: '未提供认证令牌' })
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    req.user = decoded
+
+    next()
+  } catch (error) {
+    res.status(401).json({ error: '无效的认证令牌' })
+  }
+}
+```
+
+### 5.2 错误处理中间件
+
+```typescript
+// middlewares/error.middleware.ts
+export const errorHandler = (err, req, res, next) => {
+  logger.error(err.stack)
+
+  res.status(err.status || 500).json({
+    success: false,
+    error: err.message || '服务器内部错误',
+    code: err.code || 'INTERNAL_SERVER_ERROR'
+  })
+}
+```
+
+### 5.3 数据验证中间件
+
+```typescript
+// middlewares/validate.middleware.ts
+import Joi from 'joi'
+
+export const validate = (schema) => {
+  return (req, res, next) => {
+    const { error } = schema.validate(req.body)
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        error: error.details[0].message
+      })
+    }
+
+    next()
+  }
+}
+```
+
+## 六、安全设计
+
+### 6.1 认证和授权
+
+- **JWT**: 无状态认证机制
+- **Token过期时间**: 7天
+- **密码加密**: bcrypt加盐哈希
+- **HTTPS**: 生产环境强制HTTPS
+
+### 6.2 数据验证
+
+- **输入验证**: 使用Joi进行schema验证
+- **SQL注入防护**: Prisma ORM自动参数化查询
+- **XSS防护**: 输入转义和CSP头
+
+### 6.3 请求限流
+
+```typescript
+import rateLimit from 'express-rate-limit'
+
+export const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15分钟
+  max: 100, // 限制100个请求
+  message: '请求过于频繁,请稍后再试'
+})
+```
+
+### 6.4 安全头
+
+```typescript
+import helmet from 'helmet'
+
+app.use(helmet())
+```
+
+## 七、日志系统
+
+### 7.1 Winston日志配置
+
+```typescript
+// utils/logger.ts
+import winston from 'winston'
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'logs/combined.log' })
+  ]
+})
+
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple()
+  }))
+}
+
+export default logger
+```
+
+### 7.2 日志级别
+
+- **error**: 错误日志
+- **warn**: 警告日志
+- **info**: 信息日志
+- **debug**: 调试日志
+
+## 八、部署架构
+
+### 8.1 环境变量
+
+```env
+# .env
+DATABASE_URL="postgresql://user:password@localhost:5432/job_tracker"
+JWT_SECRET="your-secret-key"
+JWT_EXPIRES_IN="7d"
+PORT=3000
+NODE_ENV="development"
+```
+
+### 8.2 部署方案
+
+**开发环境**:
+- 本地PostgreSQL数据库
+- nodemon热重载
+- tsx实时编译TypeScript
+
+**生产环境**:
+- Vercel部署
+- Vercel Postgres数据库
+- Prisma自动迁移
+- Winston日志记录
+
+### 8.3 数据库迁移
+
+```bash
+# 开发环境迁移
+npx prisma migrate dev
+
+# 生产环境迁移
+npx prisma migrate deploy
+
+# 生成Prisma Client
+npx prisma generate
+```
+
+---
+
+**文档版本**: V2.0
+**更新时间**: 2025-01-30
+**维护人**: 技术团队
