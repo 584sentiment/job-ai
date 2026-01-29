@@ -35,4 +35,18 @@ router.post('/generate-prep-list', authMiddleware, aiController.generatePrepList
  */
 router.post('/chat', authMiddleware, aiController.chat)
 
+/**
+ * @route   POST /ai/generate-experience
+ * @desc    AI辅助生成面经内容
+ * @access  Private
+ */
+router.post('/generate-experience', authMiddleware, aiController.generateExperienceContent)
+
+/**
+ * @route   POST /ai/optimize-experience
+ * @desc    AI优化面经内容
+ * @access  Private
+ */
+router.post('/optimize-experience', authMiddleware, aiController.optimizeExperienceContent)
+
 export default router

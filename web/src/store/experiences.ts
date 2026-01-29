@@ -5,72 +5,7 @@ import type { Experience, ExperienceCreateRequest, ExperienceUpdateRequest, Expe
 
 export const useExperienceStore = defineStore('experience', () => {
   // 状态
-  const experiences = ref<Experience[]>([
-    {
-      id: 1,
-      companyName: '字节跳动',
-      positionName: '前端开发工程师',
-      interviewRound: '一面',
-      interviewDate: '2025-01-20',
-      content: '<h2>面试概述</h2><p>主要考察了Vue3的响应式原理、性能优化、组件通信等内容。面试官很专业，问题比较有深度。</p><h2>具体问题</h2><ol><li>Vue3的响应式原理与Vue2的区别</li><li>如何优化Vue应用的性能</li><li>provide/inject的实现原理</li><li>手写一个简单的响应式系统</li></ol>',
-      contentType: 'html',
-      tags: ['Vue3', '性能优化', '源码'],
-      isFavorite: 1,
-      isAnonymous: 1,
-      views: 128,
-      comments: 8,
-      createTime: '2025-01-20T10:00:00Z',
-      updateTime: '2025-01-20T10:00:00Z'
-    },
-    {
-      id: 2,
-      companyName: '腾讯',
-      positionName: '全栈开发工程师',
-      interviewRound: '二面',
-      interviewDate: '2025-01-18',
-      content: '<h2>面试概述</h2><p>二面主要考察系统设计和架构能力。需要设计一个在线协作文档系统，考察了实时通信方案、数据一致性处理、多人冲突解决等。</p>',
-      contentType: 'html',
-      tags: ['系统设计', '架构', '实时通信'],
-      isFavorite: 0,
-      isAnonymous: 0,
-      views: 89,
-      comments: 5,
-      createTime: '2025-01-18T10:00:00Z',
-      updateTime: '2025-01-18T10:00:00Z'
-    },
-    {
-      id: 3,
-      companyName: '阿里巴巴',
-      positionName: '前端开发工程师',
-      interviewRound: '终面',
-      interviewDate: '2025-01-15',
-      content: '<h2>面试概述</h2><p>终面是交叉面，由其他团队的Leader面试。主要考察项目经验和团队协作能力，问了很多之前项目的架构设计和技术选型理由。</p>',
-      contentType: 'html',
-      tags: ['项目经验', '团队协作', '架构设计'],
-      isFavorite: 1,
-      isAnonymous: 1,
-      views: 256,
-      comments: 15,
-      createTime: '2025-01-15T10:00:00Z',
-      updateTime: '2025-01-15T10:00:00Z'
-    },
-    {
-      id: 4,
-      companyName: '美团',
-      positionName: '后端开发工程师',
-      interviewRound: '笔试',
-      interviewDate: '2025-01-10',
-      content: '<h2>面试概述</h2><p>笔试主要考察算法和编程能力，包括动态规划、图论、字符串处理等。题目难度适中，需要熟悉常见数据结构和算法。</p>',
-      contentType: 'html',
-      tags: ['算法', '动态规划', '数据结构'],
-      isFavorite: 0,
-      isAnonymous: 0,
-      views: 64,
-      comments: 3,
-      createTime: '2025-01-10T10:00:00Z',
-      updateTime: '2025-01-10T10:00:00Z'
-    }
-  ])
+  const experiences = ref<Experience[]>([])
   const currentExperience = ref<Experience | null>(null)
   const loading = ref<boolean>(false)
   const currentFilter = ref<'all' | 'favorite'>('all')
@@ -125,11 +60,6 @@ export const useExperienceStore = defineStore('experience', () => {
    * @param params - 查询参数
    */
   async function fetchExperiences(params?: Partial<ExperienceQueryParams>) {
-    // 如果已经有模拟数据，直接返回
-    if (experiences.value.length > 0) {
-      return
-    }
-
     loading.value = true
     try {
       const queryParams: ExperienceQueryParams = {
@@ -141,15 +71,18 @@ export const useExperienceStore = defineStore('experience', () => {
       const response = await experienceApi.getExperiencesPage(queryParams)
 
       if (response.code === 200 && response.data) {
-        experiences.value = response.data
-
-        // 更新分页信息（如果后端返回了分页信息）
-        // 注意：这里假设后端在响应中包含分页信息
-        // 实际实现可能需要根据后端响应结构调整
+        // 如果后端返回的是分页响应结构 { list, total, page, pageSize }
+        if (response.data.list && Array.isArray(response.data.list)) {
+          experiences.value = response.data.list
+          pagination.value.total = response.data.total || 0
+          pagination.value.pages = Math.ceil(pagination.value.total / pagination.value.size)
+        } else if (Array.isArray(response.data)) {
+          // 如果后端直接返回数组
+          experiences.value = response.data
+        }
       }
     } catch (error) {
       console.error('获取面经列表失败:', error)
-      // 保持模拟数据，不清空
     } finally {
       loading.value = false
     }
@@ -162,14 +95,7 @@ export const useExperienceStore = defineStore('experience', () => {
   async function fetchExperienceById(id: number) {
     loading.value = true
     try {
-      // 先从模拟数据中查找
-      const mockData = experiences.value.find(exp => exp.id === id)
-      if (mockData) {
-        currentExperience.value = mockData
-        return currentExperience.value
-      }
-
-      // 如果模拟数据中没有，再调用API
+      // 直接调用真实API
       const response = await experienceApi.getExperienceById(id)
 
       if (response.code === 200 && response.data) {

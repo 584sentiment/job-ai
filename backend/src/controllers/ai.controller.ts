@@ -103,9 +103,75 @@ export async function chat(req: Request, res: Response, next: NextFunction): Pro
   }
 }
 
+/**
+ * AI辅助生成面经内容
+ */
+export async function generateExperienceContent(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { companyName, positionName, interviewRound, interviewDate, existingContent } = req.body
+
+    // 参数验证
+    if (!companyName || typeof companyName !== 'string') {
+      throw new BadRequestError('公司名称不能为空')
+    }
+
+    if (!positionName || typeof positionName !== 'string') {
+      throw new BadRequestError('岗位名称不能为空')
+    }
+
+    if (!interviewRound || typeof interviewRound !== 'string') {
+      throw new BadRequestError('面试轮次不能为空')
+    }
+
+    if (!interviewDate || typeof interviewDate !== 'string') {
+      throw new BadRequestError('面试日期不能为空')
+    }
+
+    // 调用AI服务生成面经内容
+    const result = await aiService.generateExperienceContent({
+      companyName,
+      positionName,
+      interviewRound,
+      interviewDate,
+      existingContent
+    })
+
+    success(res, result, '面经内容生成成功')
+  } catch (error) {
+    next(error)
+  }
+}
+
+/**
+ * AI优化面经内容
+ */
+export async function optimizeExperienceContent(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { content } = req.body
+
+    // 参数验证
+    if (!content || typeof content !== 'string') {
+      throw new BadRequestError('面经内容不能为空')
+    }
+
+    if (content.length > 50000) {
+      throw new BadRequestError('面经内容过长，请控制在50000字符以内')
+    }
+
+    // 调用AI服务优化面经内容
+    const result = await aiService.optimizeExperienceContent(content)
+
+    success(res, result, '面经内容优化成功')
+  } catch (error) {
+    next(error)
+  }
+}
+
 export default {
   parseJD,
   analyzeMatch,
   generatePrepList,
-  chat
+  chat,
+  generateExperienceContent,
+  optimizeExperienceContent
 }

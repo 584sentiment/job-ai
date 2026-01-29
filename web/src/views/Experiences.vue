@@ -111,7 +111,7 @@
         <div class="mb-4">
           <div class="flex items-center space-x-2 mb-2">
             <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">{{ exp.interviewRound }}</span>
-            <span class="text-xs text-gray-500">{{ exp.interviewDate }}</span>
+            <span class="text-xs text-gray-500">{{ formatTimestamp(exp.interviewDate) }}</span>
           </div>
           <p class="text-gray-700 text-sm line-clamp-3">
             {{ exp.content.substring(0, 150) }}...
@@ -200,6 +200,42 @@ async function handleToggleFavorite(id: number) {
   } catch (error) {
     console.error('操作失败:', error)
   }
+}
+
+/**
+ * 格式化 BigInt 时间戳或日期字符串
+ */
+function formatTimestamp(timestamp: string | number | bigint): string {
+  let ms: number
+
+  // 处理 BigInt
+  if (typeof timestamp === 'bigint') {
+    ms = Number(timestamp)
+  }
+  // 处理数字字符串或数字
+  else if (typeof timestamp === 'string') {
+    // 如果是纯数字字符串，当作时间戳处理
+    if (/^\d+$/.test(timestamp)) {
+      ms = parseInt(timestamp)
+    } else {
+      // 否则直接返回（已经是格式化的日期字符串）
+      return timestamp
+    }
+  }
+  // 处理数字
+  else if (typeof timestamp === 'number') {
+    ms = timestamp
+  }
+  else {
+    return timestamp.toString()
+  }
+
+  const date = new Date(ms)
+  return date.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  })
 }
 
 onMounted(() => {

@@ -132,9 +132,10 @@ export async function createExperience(req: Request, res: Response, next: NextFu
       companyName,
       positionName,
       interviewRound,
-      interviewDate: BigInt(interviewDate),
+      // 将日期字符串转换为时间戳（毫秒）
+      interviewDate: BigInt(new Date(interviewDate).getTime()),
       content,
-      contentType: contentType || 'markdown',
+      contentType: contentType || 'html',
       tags: tags || [],
       isAnonymous: isAnonymous ?? 0,
     } as Prisma.ExperienceUncheckedCreateInput)
@@ -180,7 +181,8 @@ export async function updateExperience(req: Request, res: Response, next: NextFu
       companyName,
       positionName,
       interviewRound,
-      interviewDate: interviewDate ? BigInt(interviewDate) : undefined,
+      // 将日期字符串转换为时间戳（毫秒）
+      interviewDate: interviewDate ? BigInt(new Date(interviewDate).getTime()) : undefined,
       content,
       contentType,
       tags,

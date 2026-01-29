@@ -63,7 +63,7 @@
                 <h1 class="text-2xl font-bold text-gray-900 mb-1">{{ experience.companyName }} - {{ experience.positionName }}</h1>
                 <div class="flex items-center space-x-3 text-sm text-gray-500">
                   <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded">{{ experience.interviewRound }}</span>
-                  <span>{{ experience.interviewDate }}</span>
+                  <span>{{ formatTimestamp(experience.interviewDate) }}</span>
                   <span class="flex items-center space-x-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -292,7 +292,43 @@ function submitComment() {
 }
 
 /**
- * 格式化日期
+ * 格式化 BigInt 时间戳或日期字符串
+ */
+function formatTimestamp(timestamp: string | number | bigint): string {
+  let ms: number
+
+  // 处理 BigInt
+  if (typeof timestamp === 'bigint') {
+    ms = Number(timestamp)
+  }
+  // 处理数字字符串或数字
+  else if (typeof timestamp === 'string') {
+    // 如果是纯数字字符串，当作时间戳处理
+    if (/^\d+$/.test(timestamp)) {
+      ms = parseInt(timestamp)
+    } else {
+      // 否则当作日期字符串处理
+      return formatDate(timestamp)
+    }
+  }
+  // 处理数字
+  else if (typeof timestamp === 'number') {
+    ms = timestamp
+  }
+  else {
+    return timestamp.toString()
+  }
+
+  const date = new Date(ms)
+  return date.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  })
+}
+
+/**
+ * 格式化日期字符串
  */
 function formatDate(dateString: string) {
   const date = new Date(dateString)

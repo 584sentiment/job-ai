@@ -60,6 +60,32 @@ class AIAPI {
     const response = await postWithAuth('/ai/chat', { message, history })
     return response.data as { content: string; actions?: any[] }
   }
+
+  /**
+   * AI辅助生成面经内容
+   * @param experienceInfo 面经信息
+   * @returns 生成的面经HTML内容
+   */
+  async generateExperienceContent(experienceInfo: {
+    companyName: string
+    positionName: string
+    interviewRound: string
+    interviewDate: string
+    existingContent?: string
+  }): Promise<{ content: string }> {
+    const response = await postWithAuth('/ai/generate-experience', experienceInfo)
+    return response.data as { content: string }
+  }
+
+  /**
+   * AI优化面经内容
+   * @param content 原始面经内容
+   * @returns 优化后的面经HTML内容
+   */
+  async optimizeExperienceContent(content: string): Promise<{ content: string; suggestions?: string[] }> {
+    const response = await postWithAuth('/ai/optimize-experience', { content })
+    return response.data as { content: string; suggestions?: string[] }
+  }
 }
 
 export default new AIAPI()

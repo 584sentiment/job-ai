@@ -166,16 +166,17 @@
       </div>
 
       <!-- 分析结果 -->
-      <div v-if="matchAnalysis" class="space-y-4">
+      <div v-if="matchAnalysis" class="space-y-5">
         <!-- 总体匹配度 -->
-        <div class="bg-white rounded-lg p-4">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-medium text-gray-700">总体匹配度</span>
-            <span class="text-2xl font-bold text-purple-600">{{ matchAnalysis.overall }}%</span>
+        <div class="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-purple-100 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm font-semibold text-gray-700">总体匹配度</span>
+            <span class="text-3xl font-bold" style="color: #667eea;">{{ matchAnalysis.overall }}%</span>
           </div>
-          <div class="w-full bg-gray-200 rounded-full h-2">
+          <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
             <div
-              class="bg-gradient-to-r from-purple-500 to-indigo-500 h-2 rounded-full transition-all duration-500"
+              class="h-3 rounded-full transition-all duration-700 ease-out"
+              style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);"
               :style="{ width: matchAnalysis.overall + '%' }"
             ></div>
           </div>
@@ -183,50 +184,58 @@
 
         <!-- 各维度评分 -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div class="bg-white rounded-lg p-3 text-center">
-            <div class="text-2xl font-bold text-blue-600">{{ matchAnalysis.skills }}%</div>
-            <div class="text-xs text-gray-600 mt-1">技能匹配</div>
+          <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center border border-blue-200 shadow-sm hover:shadow-md transition-all duration-250">
+            <div class="text-2xl font-bold text-blue-700">{{ matchAnalysis.skills }}%</div>
+            <div class="text-xs text-blue-600 mt-1.5 font-medium">技能匹配</div>
           </div>
-          <div class="bg-white rounded-lg p-3 text-center">
-            <div class="text-2xl font-bold text-green-600">{{ matchAnalysis.experience }}%</div>
-            <div class="text-xs text-gray-600 mt-1">经验匹配</div>
+          <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center border border-green-200 shadow-sm hover:shadow-md transition-all duration-250">
+            <div class="text-2xl font-bold text-green-700">{{ matchAnalysis.experience }}%</div>
+            <div class="text-xs text-green-600 mt-1.5 font-medium">经验匹配</div>
           </div>
-          <div class="bg-white rounded-lg p-3 text-center">
-            <div class="text-2xl font-bold text-yellow-600">{{ matchAnalysis.education }}%</div>
-            <div class="text-xs text-gray-600 mt-1">学历匹配</div>
+          <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-4 text-center border border-yellow-200 shadow-sm hover:shadow-md transition-all duration-250">
+            <div class="text-2xl font-bold text-yellow-700">{{ matchAnalysis.education }}%</div>
+            <div class="text-xs text-yellow-600 mt-1.5 font-medium">学历匹配</div>
           </div>
-          <div class="bg-white rounded-lg p-3 text-center">
-            <div class="text-2xl font-bold text-pink-600">{{ matchAnalysis.salary }}%</div>
-            <div class="text-xs text-gray-600 mt-1">薪资匹配</div>
+          <div class="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-4 text-center border border-pink-200 shadow-sm hover:shadow-md transition-all duration-250">
+            <div class="text-2xl font-bold text-pink-700">{{ matchAnalysis.salary }}%</div>
+            <div class="text-xs text-pink-600 mt-1.5 font-medium">薪资匹配</div>
           </div>
         </div>
 
         <!-- 优势与建议 -->
         <div class="grid md:grid-cols-2 gap-4">
-          <div class="bg-green-50 rounded-lg p-4 border border-green-200">
-            <div class="flex items-center gap-2 mb-2">
-              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              <span class="font-medium text-green-800">我的优势</span>
+          <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-200 shadow-sm">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <span class="font-semibold text-green-800">我的优势</span>
             </div>
-            <ul class="space-y-1">
+            <ul class="space-y-2">
               <li v-for="(advantage, index) in matchAnalysis.advantages" :key="index" class="text-sm text-green-700 flex items-start gap-2">
-                <span class="text-green-500 mt-1">•</span>
+                <svg class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
                 <span>{{ advantage }}</span>
               </li>
             </ul>
           </div>
-          <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
-            <div class="flex items-center gap-2 mb-2">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              <span class="font-medium text-blue-800">改进建议</span>
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200 shadow-sm">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+              </div>
+              <span class="font-semibold text-blue-800">改进建议</span>
             </div>
-            <ul class="space-y-1">
+            <ul class="space-y-2">
               <li v-for="(suggestion, index) in matchAnalysis.suggestions" :key="index" class="text-sm text-blue-700 flex items-start gap-2">
-                <span class="text-blue-500 mt-1">•</span>
+                <svg class="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
                 <span>{{ suggestion }}</span>
               </li>
             </ul>
@@ -235,14 +244,14 @@
       </div>
 
       <!-- 空状态 -->
-      <div v-else class="text-center py-8">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-100 mb-4">
-          <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div v-else class="text-center py-10">
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-purple-100 to-indigo-100 mb-5">
+          <svg class="w-10 h-10" style="color: #667eea;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
           </svg>
         </div>
-        <p class="text-gray-600 mb-2">点击"开始分析"按钮</p>
-        <p class="text-sm text-gray-500">AI将根据岗位信息和您的简历进行匹配度分析</p>
+        <p class="text-gray-700 font-medium mb-2">点击"开始分析"按钮</p>
+        <p class="text-sm text-gray-500">AI将根据岗位信息和您的简历进行智能匹配度分析</p>
       </div>
     </div>
 

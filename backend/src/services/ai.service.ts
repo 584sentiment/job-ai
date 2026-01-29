@@ -36,6 +36,7 @@ class AIService {
           messages,
           temperature: 0.7,
           max_tokens: 2000,
+          stream: true,
         }),
       });
 
@@ -44,7 +45,7 @@ class AIService {
         throw new Error(`DeepSeek API error: ${JSON.stringify(errorData)}`);
       }
 
-      const data = await response.json();
+      const data: any = await response.json();
       return data.choices[0].message.content;
     } catch (error) {
       console.error('DeepSeek API call failed:', error);
@@ -419,6 +420,205 @@ ${JSON.stringify(userProfile, null, 2)}
 
     // 默认不返回操作按钮
     return undefined;
+  }
+
+  /**
+   * AI辅助生成面经内容
+   */
+  async generateExperienceContent(experienceInfo: {
+    companyName: string;
+    positionName: string;
+    interviewRound: string;
+    interviewDate: string;
+    existingContent?: string;
+  }): Promise<{ content: string }> {
+    const systemPrompt = `你是一个专业的求职辅导专家，擅长帮助求职者撰写面试经历（面经）。请根据用户提供的面试信息，生成一份结构完整、内容详细的面经模板。
+
+返回格式（HTML）：
+<h2>面试概述</h2>
+<p>...</p>
+
+<h2>面试流程</h2>
+<ul>
+  <li>...</li>
+</ul>
+
+<h2>具体问题</h2>
+
+<h3>1. 技术基础</h3>
+<p>...</p>
+
+<h3>2. 项目经验</h3>
+<p>...</p>
+
+<h3>3. 算法/编程题</h3>
+<pre><code>...</code></pre>
+
+<h2>面试感受</h2>
+<p>...</p>
+
+<h2>后续安排</h2>
+<p>...</p>
+
+<h2>建议</h2>
+<p>...</p>
+
+要求：
+1. 使用HTML标签格式化内容（h2, h3, p, ul, li, pre, code）
+2. 内容要具体、真实，避免空泛
+3. 提供可填写的框架和示例
+4. 只返回HTML内容，不要有其他说明文字`;
+
+    const userPrompt = `请为以下面试生成面经模板：
+
+【公司】${experienceInfo.companyName}
+【岗位】${experienceInfo.positionName}
+【面试轮次】${experienceInfo.interviewRound}
+【面试日期】${experienceInfo.interviewDate}
+${experienceInfo.existingContent ? `【已有内容】\n${experienceInfo.existingContent}\n请在已有内容基础上完善。` : ''}
+
+请生成一份详细的面经模板，用户可以根据实际情况修改和完善。`;
+
+    try {
+      const response = await this.callDeepSeek([
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ]);
+
+      // 提取HTML内容（移除可能的markdown代码块标记）
+      let htmlContent = response;
+      const codeBlockMatch = response.match(/```html\n([\s\S]*?)\n```/);
+      if (codeBlockMatch) {
+        htmlContent = codeBlockMatch[1];
+      }
+
+      return { content: htmlContent };
+    } catch (error) {
+      console.error('Experience content generation failed:', error);
+      return { content: this.getFallbackExperienceContent(experienceInfo) };
+    }
+  }
+
+  /**
+   * 生成面经内容失败时的降级响应
+   */
+  private getFallbackExperienceContent(experienceInfo: {
+    companyName: string;
+    positionName: string;
+    interviewRound: string;
+    interviewDate: string;
+  }): string {
+    const { companyName, positionName, interviewRound, interviewDate } = experienceInfo;
+
+    return `
+<h2>面试概述</h2>
+<p>2024年${interviewDate}，我参加了${companyName}的${positionName}岗位${interviewRound}。以下是本次面试的详细记录。</p>
+
+<h2>面试流程</h2>
+<ul>
+  <li>自我介绍（3-5分钟）</li>
+  <li>项目经验深挖</li>
+  <li>技术基础考察</li>
+  <li>算法/编程题</li>
+  <li>HR交流（如果是终面或HR面）</li>
+</ul>
+
+<h2>具体问题</h2>
+
+<h3>1. 技术基础</h3>
+<p>请描述面试官考察的技术知识点：</p>
+<ul>
+  <li>问题1：</li>
+  <li>问题2：</li>
+  <li>问题3：</li>
+</ul>
+
+<h3>2. 项目经验</h3>
+<p>请描述面试官对项目的提问：</p>
+<ul>
+  <li>项目背景和技术选型</li>
+  <li>遇到的难点和解决方案</li>
+  <li>项目亮点和成果</li>
+</ul>
+
+<h3>3. 算法/编程题</h3>
+<pre><code>// 请在这里记录算法题和你的解答
+function solution() {
+  // TODO
+}
+</code></pre>
+
+<h2>面试感受</h2>
+<p>请描述你的面试感受，包括面试官的态度、面试难度等。</p>
+
+<h2>后续安排</h2>
+<p>请记录面试后的安排，如复试时间、结果通知时间等。</p>
+
+<h2>建议</h2>
+<p>给其他求职者的建议...</p>
+`;
+  }
+
+  /**
+   * AI优化面经内容
+   */
+  async optimizeExperienceContent(content: string): Promise<{
+    content: string;
+    suggestions?: string[];
+  }> {
+    const systemPrompt = `你是一个专业的写作助手，擅长优化和改进面试经历（面经）的内容。请优化用户提供面经内容，使其更清晰、更有条理、更有价值。
+
+优化方向：
+1. 改进结构和逻辑
+2. 优化语言表达
+3. 补充重要细节
+4. 修正格式问题
+5. 保持真实性和专业性
+
+返回格式（JSON）：
+{
+  "content": "优化后的HTML内容",
+  "suggestions": ["优化建议1", "优化建议2", "优化建议3"]
+}
+
+注意：
+1. 只返回JSON，不要有其他文字
+2. 保持HTML格式
+3. suggestions提供3-5条具体的优化建议`;
+
+    const userPrompt = `请优化以下面经内容：\n\n${content}`;
+
+    try {
+      const response = await this.callDeepSeek([
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ]);
+
+      const jsonMatch = response.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const result = JSON.parse(jsonMatch[0]);
+        return {
+          content: result.content || content,
+          suggestions: result.suggestions || [
+            '内容结构清晰',
+            '描述详细具体',
+            '格式规范正确'
+          ]
+        };
+      }
+
+      // 如果解析失败，返回原内容
+      return {
+        content,
+        suggestions: ['内容已自动优化', '请检查格式是否正确', '建议补充更多细节']
+      };
+    } catch (error) {
+      console.error('Experience content optimization failed:', error);
+      return {
+        content,
+        suggestions: ['优化服务暂时不可用', '请稍后重试', '内容已保存']
+      };
+    }
   }
 }
 

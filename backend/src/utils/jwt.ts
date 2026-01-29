@@ -25,7 +25,7 @@ export function generateToken(user: Pick<User, 'id' | 'phone' | 'nickname'>): st
     expiresIn: JWT_CONFIG.expiresIn,
     issuer: JWT_CONFIG.issuer,
     audience: JWT_CONFIG.audience,
-  })
+  } as any)
 }
 
 /**
