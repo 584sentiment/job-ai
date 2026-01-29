@@ -124,7 +124,7 @@
       </div>
 
       <!-- 关联岗位卡片 -->
-      <div v-if="experience.positionId">
+      <div v-if="experience.positionId" class="mt-6 mb-6">
         <!-- 加载中 -->
         <div v-if="positionLoading" class="glass-card rounded-xl p-6">
           <div class="flex items-center justify-center">
@@ -450,13 +450,16 @@ async function loadDetail() {
   const id = (route.query.id || route.params.id) as string
   if (id) {
     await experienceStore.fetchExperienceById(id)
-    // 加载评论列表
-    await commentStore.fetchComments(id)
 
-    // 如果有关联岗位，加载岗位详情
+    // 并行加载评论列表和岗位详情
+    const promises = [commentStore.fetchComments(id)]
+
+    // 如果有关联岗位，并行加载岗位详情
     if (experience.value?.positionId) {
-      await loadPositionDetails(experience.value.positionId)
+      promises.push(loadPositionDetails(experience.value.positionId))
     }
+
+    await Promise.all(promises)
   }
 }
 
