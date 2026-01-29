@@ -5,6 +5,21 @@
       <div>
         <h1 class="text-2xl font-bold">面经管理</h1>
         <p class="text-gray-600 mt-1">记录和整理面试经验</p>
+        <!-- 筛选提示 -->
+        <div v-if="filterPositionId" class="mt-3 flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+          </svg>
+          <span class="text-sm text-blue-700">
+            正在查看: <span class="font-semibold">{{ filterPositionName }}</span>
+          </span>
+          <button
+            @click="clearPositionFilter"
+            class="ml-2 px-2 py-1 bg-white text-blue-600 text-xs rounded hover:bg-blue-100 transition-colors duration-200"
+          >
+            清除筛选
+          </button>
+        </div>
       </div>
       <div class="flex gap-3">
         <div class="relative">
@@ -170,18 +185,42 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useExperienceStore } from '@/store/experiences'
+import { useJobsStore } from '@/store/jobs'
 
 const router = useRouter()
+const route = useRoute()
 const experienceStore = useExperienceStore()
+const jobsStore = useJobsStore()
+
+// 筛选岗位ID和名称
+const filterPositionId = ref<string>('')
+const filterPositionName = ref<string>('')
+
+/**
+ * 清除岗位筛选
+ */
+function clearPositionFilter() {
+  filterPositionId.value = ''
+  filterPositionName.value = ''
+  // 重新加载所有面经
+  loadExperiences()
+}
 
 /**
  * 加载面经列表
  */
 async function loadExperiences() {
-  await experienceStore.fetchExperiences()
+  // 如果有岗位筛选，传递positionId参数
+  if (filterPositionId.value) {
+    await experienceStore.fetchExperiences({
+      positionId: filterPositionId.value
+    })
+  } else {
+    await experienceStore.fetchExperiences()
+  }
 }
 
 /**
@@ -238,8 +277,38 @@ function formatTimestamp(timestamp: string | number | bigint): string {
   })
 }
 
-onMounted(() => {
-  loadExperiences()
+onMounted(async () => {
+  // 检查路由参数中是否有positionId
+  const positionId = route.query.positionId as string
+
+  if (positionId) {
+    filterPositionId.value = positionId
+
+    // 获取岗位信息以显示岗位名称
+    try {
+      const job = jobsStore.getJobById(positionId)
+      if (job) {
+        filterPositionName.value = `${job.companyName} - ${job.positionName}`
+      } else {
+        // 如果store中没有，从API获取
+        const response = await fetch(`/api/positions/${positionId}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }).then(res => res.json())
+
+        if (response.code === 200 && response.data) {
+          filterPositionName.value = `${response.data.companyName} - ${response.data.positionName}`
+        }
+      }
+    } catch (error) {
+      console.error('获取岗位信息失败:', error)
+      filterPositionName.value = '未知岗位'
+    }
+  }
+
+  // 加载面经列表
+  await loadExperiences()
 })
 </script>
 

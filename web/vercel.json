@@ -4,10 +4,6 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "http://ybb9647b.natappfree.cc/job-track-assistant/:path*"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

@@ -374,14 +374,15 @@
           <div
             v-for="exp in job.relatedExperiences.slice(0, 3)"
             :key="exp.id"
+            @click="router.push(`/experience-detail?id=${exp.id}`)"
             class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-purple-300 transition-colors duration-200 cursor-pointer"
           >
             <div class="flex items-center justify-between mb-2">
               <div class="flex items-center space-x-2">
                 <span class="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">
-                  {{ exp.position }}
+                  {{ exp.interviewRound }}
                 </span>
-                <span class="text-sm text-gray-600">{{ formatDate(exp.date) }}</span>
+                <span class="text-sm text-gray-600">{{ formatDate(exp.interviewDate) }}</span>
               </div>
               <button class="text-gray-400 hover:text-gray-600">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -389,8 +390,8 @@
                 </svg>
               </button>
             </div>
-            <p class="text-sm font-medium text-gray-900 mb-1">{{ exp.title }}</p>
-            <p class="text-sm text-gray-700 line-clamp-2">{{ exp.summary }}</p>
+            <p class="text-sm font-medium text-gray-900 mb-1">{{ exp.companyName }} - {{ exp.positionName }}</p>
+            <p class="text-sm text-gray-700 line-clamp-2">{{ getExperienceSummary(exp.content) }}</p>
             <div v-if="exp.tags && exp.tags.length" class="flex flex-wrap gap-1 mt-2">
               <span v-for="tag in exp.tags" :key="tag" class="px-2 py-0.5 bg-gray-200 text-gray-600 text-xs rounded-full">
                 {{ tag }}
@@ -400,7 +401,10 @@
 
           <!-- 查看更多提示 -->
           <div v-if="job.relatedExperiences.length > 3" class="text-center pt-2">
-            <button class="text-sm text-primary hover:text-secondary font-medium">
+            <button
+              @click="router.push(`/experiences?positionId=${jobId}`)"
+              class="text-sm text-primary hover:text-secondary font-medium"
+            >
               查看全部 {{ job.relatedExperiences.length }} 条面经 →
             </button>
           </div>
@@ -443,25 +447,25 @@
             <div class="flex items-center justify-between mb-2">
               <div class="flex items-center space-x-2">
                 <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium">
-                  {{ summary.round }}
+                  {{ summary.interviewRound || '总结' }}
                 </span>
                 <span class="text-sm text-gray-600">{{ formatDate(summary.date) }}</span>
               </div>
             </div>
-            <p class="text-sm text-gray-700 line-clamp-3 mb-2">{{ summary.content }}</p>
-            <div v-if="summary.highlights && summary.highlights.length" class="mb-2">
+            <p class="text-sm text-gray-700 line-clamp-3 mb-2">{{ formatSummaryContent(summary) }}</p>
+            <div v-if="summary.content?.highlights && summary.content.highlights.length" class="mb-2">
               <p class="text-xs font-medium text-gray-700 mb-1">亮点：</p>
               <ul class="text-xs text-gray-600 space-y-1">
-                <li v-for="item in summary.highlights.slice(0, 2)" :key="item" class="flex items-start">
+                <li v-for="item in summary.content.highlights.slice(0, 2)" :key="item" class="flex items-start">
                   <span class="text-green-500 mr-1">✓</span>
                   <span>{{ item }}</span>
                 </li>
               </ul>
             </div>
-            <div v-if="summary.improvements && summary.improvements.length">
+            <div v-if="summary.content?.improvements && summary.content.improvements.length">
               <p class="text-xs font-medium text-gray-700 mb-1">改进点：</p>
               <ul class="text-xs text-gray-600 space-y-1">
-                <li v-for="item in summary.improvements.slice(0, 2)" :key="item" class="flex items-start">
+                <li v-for="item in summary.content.improvements.slice(0, 2)" :key="item" class="flex items-start">
                   <span class="text-orange-500 mr-1">•</span>
                   <span>{{ item }}</span>
                 </li>
@@ -986,6 +990,36 @@ async function analyzeMatchWithAI() {
   } finally {
     isAnalyzingMatch.value = false
   }
+}
+
+// 提取面经内容摘要（去除Markdown标记，取前100个字符）
+const getExperienceSummary = (content: string): string => {
+  if (!content) return ''
+
+  // 如果是HTML或Markdown格式，去除标签
+  let text = content
+    .replace(/<[^>]*>/g, '') // 去除HTML标签
+    .replace(/#{1,6}\s/g, '') // 去除Markdown标题标记
+    .replace(/\*\*/g, '') // 去除Markdown粗体标记
+    .replace(/\*/g, '') // 去除Markdown斜体标记
+    .replace(/\n/g, ' ') // 换行替换为空格
+    .trim()
+
+  // 取前100个字符
+  return text.length > 100 ? text.substring(0, 100) + '...' : text
+}
+
+// 格式化总结内容
+const formatSummaryContent = (summary: any): string => {
+  if (!summary || !summary.content) return ''
+
+  // 如果content是对象（结构化数据）
+  if (typeof summary.content === 'object') {
+    return summary.content.content || JSON.stringify(summary.content)
+  }
+
+  // 如果是字符串
+  return String(summary.content)
 }
 
 onMounted(async () => {

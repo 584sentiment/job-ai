@@ -3,7 +3,6 @@
  */
 import PrismaConfig from '@/config/database'
 import { NotFoundError, BadRequestError } from '@/utils/error'
-import type { Prisma } from '@prisma/client'
 
 const prisma = PrismaConfig.getInstance()
 

@@ -75,7 +75,7 @@ export async function getPositionsPaginated(
 /**
  * 根据 ID 获取岗位详情
  */
-export async function getPositionById(id: string, userId: string): Promise<Position & { interviewRecordList: any[] }> {
+export async function getPositionById(id: string, userId: string): Promise<Position & { interviewRecordList: any[]; relatedExperiences: any[]; summaries: any[] }> {
   const position = await prisma.position.findFirst({
     where: {
       id,
@@ -107,9 +107,55 @@ export async function getPositionById(id: string, userId: string): Promise<Posit
     },
   })
 
+  // 查询该岗位关联的面经
+  const experiences = await prisma.experience.findMany({
+    where: {
+      positionId: id,
+      userId,
+    },
+    orderBy: {
+      interviewDate: 'desc',
+    },
+    select: {
+      id: true,
+      companyName: true,
+      positionName: true,
+      interviewRound: true,
+      interviewDate: true,
+      content: true,
+      tags: true,
+      isFavorite: true,
+      views: true,
+      comments: true,
+      createTime: true,
+    },
+  })
+
+  // 查询该岗位关联的总结
+  const summaries = await prisma.summary.findMany({
+    where: {
+      positionId: id,
+      userId,
+    },
+    orderBy: {
+      createTime: 'desc',
+    },
+    select: {
+      id: true,
+      companyName: true,
+      positionName: true,
+      interviewRound: true,
+      content: true,
+      date: true,
+      createTime: true,
+    },
+  })
+
   return {
     ...position,
     interviewRecordList: interviews,
+    relatedExperiences: experiences,
+    summaries: summaries,
   }
 }
 
