@@ -211,7 +211,7 @@ const experience = computed(() => experienceStore.currentExperience)
  * 加载面经详情
  */
 async function loadDetail() {
-  const id = Number(route.query.id || route.params.id)
+  const id = (route.query.id || route.params.id) as string
   if (id) {
     await experienceStore.fetchExperienceById(id)
   }

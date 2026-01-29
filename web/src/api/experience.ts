@@ -41,7 +41,7 @@ export function createExperience(
  * @returns 更新后的面经响应
  */
 export function updateExperience(
-  id: number,
+  id: string,
   data: ExperienceUpdateRequest,
 ): Promise<ExperienceResponse> {
   return putWithAuth(`/experiences/${id}`, data) as Promise<ExperienceResponse>;
@@ -52,7 +52,7 @@ export function updateExperience(
  * @param id - 面经ID
  * @returns 删除结果响应
  */
-export function deleteExperience(id: number): Promise<ApiResponse<void>> {
+export function deleteExperience(id: string): Promise<ApiResponse<void>> {
   return delWithAuth(`/experiences/${id}`) as Promise<ApiResponse<void>>;
 }
 
@@ -61,7 +61,7 @@ export function deleteExperience(id: number): Promise<ApiResponse<void>> {
  * @param id - 面经ID
  * @returns 面经详情响应
  */
-export function getExperienceById(id: number): Promise<ExperienceResponse> {
+export function getExperienceById(id: string): Promise<ExperienceResponse> {
   return getWithAuth(`/experiences/${id}`) as Promise<ExperienceResponse>;
 }
 
@@ -104,7 +104,7 @@ export function getExperiencesByPosition(
  * @param id - 面经ID
  * @returns 收藏操作响应
  */
-export function toggleExperienceFavorite(id: number): Promise<ExperienceFavoriteResponse> {
+export function toggleExperienceFavorite(id: string): Promise<ExperienceFavoriteResponse> {
   return postWithAuth(`/experiences/${id}/favorite`, {}) as Promise<ExperienceFavoriteResponse>;
 }
 
@@ -156,7 +156,7 @@ export function getExperienceStats(): Promise<ApiResponse<ExperienceStats>> {
  * @param id - 面经ID
  * @returns 操作结果响应
  */
-export function incrementExperienceViews(id: number): Promise<ApiResponse<{ views: number }>> {
+export function incrementExperienceViews(id: string): Promise<ApiResponse<{ views: number }>> {
   return postWithAuth(`/experiences/${id}/view`, {}) as Promise<ApiResponse<{ views: number }>>;
 }
 
@@ -172,7 +172,7 @@ export function incrementExperienceViews(id: number): Promise<ApiResponse<{ view
  * @returns 评论列表响应
  */
 export function getExperienceComments(
-  experienceId: number,
+  experienceId: string,
   page: number = 1,
   size: number = 20,
 ): Promise<ExperienceCommentListResponse> {
@@ -197,7 +197,7 @@ export function createExperienceComment(
  * @param commentId - 评论ID
  * @returns 删除结果响应
  */
-export function deleteExperienceComment(commentId: number): Promise<ApiResponse<void>> {
+export function deleteExperienceComment(commentId: string): Promise<ApiResponse<void>> {
   return delWithAuth(`/experiences/comments/${commentId}`) as Promise<ApiResponse<void>>;
 }
 
@@ -206,7 +206,7 @@ export function deleteExperienceComment(commentId: number): Promise<ApiResponse<
  * @param commentId - 评论ID
  * @returns 操作结果响应
  */
-export function likeExperienceComment(commentId: number): Promise<ApiResponse<{ likes: number }>> {
+export function likeExperienceComment(commentId: string): Promise<ApiResponse<{ likes: number }>> {
   return postWithAuth(`/experiences/comments/${commentId}/like`, {}) as Promise<ApiResponse<{ likes: number }>>;
 }
 
@@ -215,7 +215,7 @@ export function likeExperienceComment(commentId: number): Promise<ApiResponse<{ 
  * @param commentId - 评论ID
  * @returns 操作结果响应
  */
-export function unlikeExperienceComment(commentId: number): Promise<ApiResponse<{ likes: number }>> {
+export function unlikeExperienceComment(commentId: string): Promise<ApiResponse<{ likes: number }>> {
   return delWithAuth(`/experiences/comments/${commentId}/like`) as Promise<ApiResponse<{ likes: number }>>;
 }
 
@@ -260,7 +260,7 @@ export function getExperiencesByTags(
  * @param ids - 面经ID数组
  * @returns 删除结果响应
  */
-export function batchDeleteExperiences(ids: number[]): Promise<ApiResponse<{ success: number; failed: number }>> {
+export function batchDeleteExperiences(ids: string[]): Promise<ApiResponse<{ success: number; failed: number }>> {
   return postWithAuth('/experiences/batch-delete', { ids }) as Promise<ApiResponse<{ success: number; failed: number }>>;
 }
 
@@ -271,7 +271,7 @@ export function batchDeleteExperiences(ids: number[]): Promise<ApiResponse<{ suc
  * @returns 操作结果响应
  */
 export function batchUpdateTags(
-  ids: number[],
+  ids: string[],
   tags: string[],
 ): Promise<ApiResponse<void>> {
   return postWithAuth('/experiences/batch-update-tags', { ids, tags }) as Promise<ApiResponse<void>>;

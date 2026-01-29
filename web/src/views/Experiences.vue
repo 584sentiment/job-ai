@@ -187,14 +187,14 @@ async function loadExperiences() {
 /**
  * 跳转到详情页
  */
-function goToDetail(id: number) {
+function goToDetail(id: string) {
   router.push(`/experience-detail?id=${id}`)
 }
 
 /**
  * 切换收藏状态
  */
-async function handleToggleFavorite(id: number) {
+async function handleToggleFavorite(id: string) {
   try {
     await experienceStore.toggleFavorite(id)
   } catch (error) {

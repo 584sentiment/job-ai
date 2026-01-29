@@ -98,7 +98,7 @@ export const useExperienceStore = defineStore('experience', () => {
    * 根据ID获取面经详情
    * @param id - 面经ID
    */
-  async function fetchExperienceById(id: number) {
+  async function fetchExperienceById(id: string) {
     loading.value = true
     try {
       // 直接调用真实API
@@ -142,7 +142,7 @@ export const useExperienceStore = defineStore('experience', () => {
    * @param id - 面经ID
    * @param data - 更新数据
    */
-  async function updateExperience(id: number, data: ExperienceUpdateRequest) {
+  async function updateExperience(id: string, data: ExperienceUpdateRequest) {
     loading.value = true
     try {
       const response = await experienceApi.updateExperience(id, data)
@@ -169,7 +169,7 @@ export const useExperienceStore = defineStore('experience', () => {
    * 删除面经
    * @param id - 面经ID
    */
-  async function deleteExperience(id: number) {
+  async function deleteExperience(id: string) {
     loading.value = true
     try {
       const response = await experienceApi.deleteExperience(id)
@@ -196,7 +196,7 @@ export const useExperienceStore = defineStore('experience', () => {
    * 切换收藏状态
    * @param id - 面经ID
    */
-  async function toggleFavorite(id: number) {
+  async function toggleFavorite(id: string) {
     try {
       const response = await experienceApi.toggleExperienceFavorite(id)
 

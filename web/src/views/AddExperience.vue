@@ -400,7 +400,7 @@ onMounted(async () => {
 
   // 如果是编辑模式，加载数据
   if (isEditMode.value) {
-    const id = Number(route.query.id || route.params.id);
+    const id = (route.query.id || route.params.id) as string;
     await experienceStore.fetchExperienceById(id);
 
     if (experienceStore.currentExperience) {
@@ -657,7 +657,7 @@ async function handleSubmit() {
 
   try {
     if (isEditMode.value) {
-      const id = Number(route.query.id || route.params.id);
+      const id = (route.query.id || route.params.id) as string;
       await experienceStore.updateExperience(id, {
         id,
         ...formData.value,

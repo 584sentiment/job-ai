@@ -42,13 +42,13 @@ export enum ExperienceContentType {
  */
 export interface Experience {
   /** 面经ID */
-  id: number
+  id: string
 
   /** 关联岗位ID（可选） */
   positionId?: string
 
   /** 用户ID */
-  userId?: number
+  userId?: string
 
   /** 公司名称 */
   companyName: string
@@ -127,7 +127,7 @@ export interface ExperienceCreateRequest {
  */
 export interface ExperienceUpdateRequest {
   /** 面经ID */
-  id: number
+  id: string
 
   /** 关联岗位ID（可选） */
   positionId?: string
@@ -239,13 +239,13 @@ export interface ExperienceStats {
  */
 export interface ExperienceComment {
   /** 评论ID */
-  id: number
+  id: string
 
   /** 面经ID */
-  experienceId: number
+  experienceId: string
 
   /** 用户ID */
-  userId: number
+  userId: string
 
   /** 用户昵称 */
   userNickname: string
@@ -283,13 +283,13 @@ export interface ExperienceComment {
  */
 export interface ExperienceCommentCreateRequest {
   /** 面经ID */
-  experienceId: number
+  experienceId: string
 
   /** 父评论ID（可选，用于回复评论） */
-  parentId?: number
+  parentId?: string
 
   /** 被回复的用户ID（可选） */
-  replyToUserId?: number
+  replyToUserId?: string
 
   /** 评论内容 */
   content: string
