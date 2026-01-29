@@ -149,31 +149,188 @@
 
       <!-- 评论区 -->
       <div class="glass-card rounded-xl p-6">
-        <h3 class="text-lg font-semibold mb-4">评论 ({{ experience.comments }})</h3>
+        <h3 class="text-lg font-semibold mb-4">评论 ({{ commentStore.pagination.total }})</h3>
 
-        <!-- 评论列表（示例） -->
-        <div class="space-y-4 mb-6">
-          <div class="flex space-x-3">
-            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user1" class="w-10 h-10 rounded-full">
-            <div class="flex-1">
-              <div class="bg-gray-50 rounded-lg p-3">
-                <div class="flex items-center justify-between mb-1">
-                  <span class="font-medium text-sm">求职小王</span>
-                  <span class="text-xs text-gray-500">2小时前</span>
+        <!-- 加载状态 -->
+        <div v-if="commentStore.loading" class="flex items-center justify-center py-8">
+          <svg class="animate-spin h-6 w-6 text-primary mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 0 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span class="text-gray-600">加载中...</span>
+        </div>
+
+        <!-- 评论列表 -->
+        <div v-else-if="commentStore.comments.length > 0" class="space-y-6 mb-6">
+          <div
+            v-for="comment in commentStore.comments"
+            :key="comment.id"
+            class="border-b border-gray-100 pb-6 last:border-0 last:pb-0"
+          >
+            <!-- 一级评论 -->
+            <div class="flex space-x-3">
+              <!-- 头像 -->
+              <img
+                :src="comment.user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.user?.nickname || comment.user?.id}`"
+                class="w-10 h-10 rounded-full flex-shrink-0"
+              >
+
+              <div class="flex-1 min-w-0">
+                <!-- 评论头部 -->
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <span class="font-medium text-sm">{{ comment.user?.nickname || '匿名用户' }}</span>
+                    <span class="text-xs text-gray-500">{{ formatCommentTime(comment.createTime) }}</span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <!-- 删除按钮（只对作者显示） -->
+                    <button
+                      v-if="comment.userId === authStore.user?.id"
+                      @click="handleDeleteComment(comment.id)"
+                      class="text-xs text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      删除
+                    </button>
+                  </div>
                 </div>
-                <p class="text-sm text-gray-700">非常详细的面经，对我准备Vue面试很有帮助！感谢分享 👍</p>
+
+                <!-- 评论内容 -->
+                <div class="mb-2">
+                  <p class="text-sm text-gray-700 whitespace-pre-wrap break-words">{{ comment.content }}</p>
+                </div>
+
+                <!-- 评论操作 -->
+                <div class="flex items-center space-x-4">
+                  <button
+                    @click="handleLikeComment(comment)"
+                    :class="comment.isLiked ? 'text-red-500' : 'text-gray-400'"
+                    class="flex items-center space-x-1 text-xs hover:text-red-500 transition-colors"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span>{{ comment.likes || 0 }}</span>
+                  </button>
+
+                  <!-- 回复按钮 -->
+                  <button
+                    @click="setReplyComment(comment)"
+                    class="flex items-center space-x-1 text-xs text-gray-400 hover:text-primary transition-colors"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+                    </svg>
+                    <span>回复</span>
+                  </button>
+                </div>
+
+                <!-- 回复列表 -->
+                <div
+                  v-if="comment.replies && comment.replies.length > 0"
+                  class="mt-4 space-y-4 pl-4 border-l-2 border-gray-100"
+                >
+                  <div
+                    v-for="reply in comment.replies"
+                    :key="reply.id"
+                    class="flex space-x-3"
+                  >
+                    <img
+                      :src="reply.user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${reply.user?.nickname || reply.user?.id}`"
+                      class="w-8 h-8 rounded-full flex-shrink-0"
+                    >
+
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between mb-1">
+                        <div class="flex items-center space-x-2">
+                          <span class="font-medium text-xs">{{ reply.user?.nickname || '匿名用户' }}</span>
+                          <span class="text-xs text-gray-500">{{ formatCommentTime(reply.createTime) }}</span>
+                          <span v-if="reply.replyToUser" class="text-xs text-blue-600">
+                            回复 @{{ reply.replyToUser?.nickname }}
+                          </span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                          <!-- 删除按钮 -->
+                          <button
+                            v-if="reply.userId === authStore.user?.id"
+                            @click="handleDeleteComment(reply.id)"
+                            class="text-xs text-gray-400 hover:text-red-500 transition-colors"
+                          >
+                            删除
+                          </button>
+                        </div>
+                      </div>
+                      <p class="text-xs text-gray-700 whitespace-pre-wrap break-words">{{ reply.content }}</p>
+
+                      <!-- 回复的操作 -->
+                      <div class="mt-1 flex items-center space-x-4">
+                        <button
+                          @click="handleLikeComment(reply)"
+                          :class="reply.isLiked ? 'text-red-500' : 'text-gray-400'"
+                          class="flex items-center space-x-1 text-xs hover:text-red-500 transition-colors"
+                        >
+                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                          </svg>
+                          <span>{{ reply.likes || 0 }}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 回复输入框 -->
+                <div
+                  v-if="replyingTo === comment.id"
+                  class="mt-3 flex space-x-3"
+                >
+                  <img
+                    :src="authStore.user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${authStore.user?.nickname || authStore.user?.id}`"
+                    class="w-8 h-8 rounded-full flex-shrink-0"
+                  >
+                  <div class="flex-1">
+                    <textarea
+                      v-model="replyContent"
+                      rows="2"
+                      class="w-full px-3 py-2 text-sm rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none"
+                      :placeholder="`回复 ${comment.user?.nickname}...`"
+                    ></textarea>
+                    <div class="mt-2 flex space-x-2">
+                      <button
+                        @click="cancelReply"
+                        class="px-3 py-1.5 text-sm border border-border rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        取消
+                      </button>
+                      <button
+                        @click="submitReply(comment)"
+                        :disabled="!replyContent.trim()"
+                        class="px-3 py-1.5 text-sm bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        发表
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- 空状态 -->
+        <div v-else class="text-center py-8 text-gray-500">
+          <p>暂无评论，快来发表第一条评论吧~</p>
+        </div>
+
         <!-- 评论输入框 -->
-        <div class="flex space-x-3">
-          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=currentuser" class="w-10 h-10 rounded-full">
+        <div class="flex space-x-3 mt-6 pt-6 border-t border-gray-200">
+          <img
+            :src="authStore.user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${authStore.user?.nickname || authStore.user?.id}`"
+            class="w-10 h-10 rounded-full flex-shrink-0"
+          >
           <div class="flex-1">
             <textarea
               v-model="newComment"
-              rows="2"
+              rows="3"
               class="w-full px-4 py-3 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none"
               placeholder="写下你的评论..."
             ></textarea>
@@ -181,9 +338,12 @@
               <button
                 @click="submitComment"
                 :disabled="!newComment.trim()"
-                class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
-                发表评论
+                <svg v-if="submittingComment" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <span>{{ submittingComment ? '发表中...' : '发表评论' }}</span>
               </button>
             </div>
           </div>
@@ -197,12 +357,21 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useExperienceStore } from '@/store/experiences'
+import { useCommentStore } from '@/store/comments'
+import { useAuthStore } from '@/store/auth'
+import { useMessage } from 'naive-ui'
 
 const route = useRoute()
 const router = useRouter()
 const experienceStore = useExperienceStore()
+const commentStore = useCommentStore()
+const authStore = useAuthStore()
+const message = useMessage()
 
 const newComment = ref('')
+const replyingTo = ref<string | null>(null)
+const replyContent = ref('')
+const submittingComment = ref(false)
 
 // 当前面经
 const experience = computed(() => experienceStore.currentExperience)
@@ -214,6 +383,8 @@ async function loadDetail() {
   const id = (route.query.id || route.params.id) as string
   if (id) {
     await experienceStore.fetchExperienceById(id)
+    // 加载评论列表
+    await commentStore.fetchComments(id)
   }
 }
 
@@ -281,14 +452,181 @@ function goToJob() {
 }
 
 /**
+ * 格式化评论时间（相对时间）
+ */
+function formatCommentTime(timestamp: string | number | bigint): string {
+  let ms: number
+
+  // 处理 BigInt
+  if (typeof timestamp === 'bigint') {
+    ms = Number(timestamp)
+  }
+  // 处理数字字符串或数字
+  else if (typeof timestamp === 'string') {
+    if (/^\d+$/.test(timestamp)) {
+      ms = parseInt(timestamp)
+    } else {
+      return timestamp // 如果不是纯数字，直接返回
+    }
+  }
+  // 处理数字
+  else if (typeof timestamp === 'number') {
+    ms = timestamp
+  }
+  else {
+    return timestamp.toString()
+  }
+
+  const now = Date.now()
+  const diff = now - ms
+
+  // 计算相对时间
+  const minute = 60 * 1000
+  const hour = 60 * minute
+  const day = 24 * hour
+  const month = 30 * day
+  const year = 365 * day
+
+  if (diff < minute) {
+    return '刚刚'
+  } else if (diff < hour) {
+    return `${Math.floor(diff / minute)}分钟前`
+  } else if (diff < day) {
+    return `${Math.floor(diff / hour)}小时前`
+  } else if (diff < month) {
+    return `${Math.floor(diff / day)}天前`
+  } else if (diff < year) {
+    return `${Math.floor(diff / month)}个月前`
+  } else {
+    return `${Math.floor(diff / year)}年前`
+  }
+}
+
+/**
+ * 设置回复的评论
+ */
+function setReplyComment(comment: any) {
+  replyingTo.value = comment.id
+  replyContent.value = ''
+  // 自动聚焦回复输入框
+  setTimeout(() => {
+    const textarea = document.querySelector(`textarea[placeholder*="回复 ${comment.user?.nickname}"]`) as HTMLTextAreaElement
+    textarea?.focus()
+  }, 100)
+}
+
+/**
+ * 取消回复
+ */
+function cancelReply() {
+  replyingTo.value = null
+  replyContent.value = ''
+}
+
+/**
  * 提交评论
  */
-function submitComment() {
-  if (!newComment.value.trim()) return
+async function submitComment() {
+  if (!newComment.value.trim()) {
+    message.warning('请输入评论内容')
+    return
+  }
 
-  // TODO: 实现评论功能
-  alert('评论功能开发中...')
-  newComment.value = ''
+  if (!experience.value) {
+    message.error('面经信息加载中，请稍后重试')
+    return
+  }
+
+  submittingComment.value = true
+
+  try {
+    await commentStore.createComment({
+      experienceId: experience.value.id,
+      content: newComment.value.trim(),
+    })
+
+    message.success('评论成功')
+    newComment.value = ''
+
+    // 重新加载评论列表，确保数据最新
+    await commentStore.fetchComments(experience.value.id)
+  } catch (error: any) {
+    console.error('评论失败:', error)
+    message.error(error.message || '评论失败，请重试')
+  } finally {
+    submittingComment.value = false
+  }
+}
+
+/**
+ * 提交回复
+ */
+async function submitReply(parentComment: any) {
+  if (!replyContent.value.trim()) {
+    message.warning('请输入回复内容')
+    return
+  }
+
+  submittingComment.value = true
+
+  try {
+    await commentStore.createComment({
+      experienceId: experience.value!.id,
+      content: replyContent.value.trim(),
+      parentId: parentComment.id,
+      replyToUserId: parentComment.userId,
+    })
+
+    message.success('回复成功')
+    cancelReply()
+
+    // 重新加载评论列表
+    await commentStore.fetchComments(experience.value!.id)
+  } catch (error: any) {
+    console.error('回复失败:', error)
+    message.error(error.message || '回复失败，请重试')
+  } finally {
+    submittingComment.value = false
+  }
+}
+
+/**
+ * 删除评论
+ */
+async function handleDeleteComment(commentId: string) {
+  const confirmed = confirm('确定要删除这条评论吗？')
+  if (!confirmed) return
+
+  try {
+    await commentStore.deleteComment(commentId)
+    message.success('删除成功')
+
+    // 重新加载评论列表
+    if (experience.value) {
+      await commentStore.fetchComments(experience.value.id)
+    }
+  } catch (error: any) {
+    console.error('删除失败:', error)
+    message.error(error.message || '删除失败，请重试')
+  }
+}
+
+/**
+ * 点赞/取消点赞评论
+ */
+async function handleLikeComment(comment: any) {
+  try {
+    if (comment.isLiked) {
+      await commentStore.unlikeComment(comment.id)
+      comment.isLiked = false
+    } else {
+      await commentStore.likeComment(comment.id)
+      comment.isLiked = true
+    }
+  } catch (error: any) {
+    console.error('操作失败:', error)
+    message.error(error.message || '操作失败，请重试')
+  }
 }
 
 /**

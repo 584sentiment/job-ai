@@ -4,6 +4,7 @@
 import { Router } from 'express'
 import experienceController from '@/controllers/experience.controller'
 import { authMiddleware } from '@/middlewares/auth.middleware'
+import commentRoutes from './comment.routes'
 
 const router = Router()
 
@@ -69,5 +70,8 @@ router.post('/search', authMiddleware, experienceController.searchExperiences)
  * @access  Private
  */
 router.post('/batch-delete', authMiddleware, experienceController.batchDeleteExperiences)
+
+// 挂载评论相关路由
+router.use('/', commentRoutes)
 
 export default router
