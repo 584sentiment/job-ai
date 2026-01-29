@@ -19,10 +19,36 @@ export function createApp(): Application {
   app.use(helmet())
 
   // CORS 配置
-  const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000'
+  // CORS 配置
   app.use(cors({
-    origin: corsOrigin.split(',').map(origin => origin.trim()),
+    origin: (requestOrigin, callback) => {
+      // 允许没有 origin 的请求（比如 curl 或移动端）
+      if (!requestOrigin) {
+        return callback(null, true)
+      }
+
+      // 获取环境变量配置的白名单
+      const allowedOrigins = process.env.CORS_ORIGIN
+        ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+        : []
+
+      // 检查逻辑：
+      // 1. 在白名单中
+      // 2. 是开发环境 localhost
+      // 3. 是 Vercel 部署域名 (.vercel.app)
+      if (
+        allowedOrigins.includes(requestOrigin) ||
+        requestOrigin.includes('localhost') ||
+        requestOrigin.endsWith('.vercel.app')
+      ) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   }))
 
   // 解析请求体
