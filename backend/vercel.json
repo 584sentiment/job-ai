@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "dist",
   "builds": [
     {
       "src": "dist/index.js",
@@ -11,8 +13,5 @@
       "src": "/(.*)",
       "dest": "dist/index.js"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
