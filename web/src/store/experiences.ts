@@ -71,8 +71,14 @@ export const useExperienceStore = defineStore('experience', () => {
       const response = await experienceApi.getExperiencesPage(queryParams)
 
       if (response.code === 200 && response.data) {
-        // 如果后端返回的是分页响应结构 { list, total, page, pageSize }
-        if (response.data.list && Array.isArray(response.data.list)) {
+        // 如果后端返回的是分页响应结构 { records, total, current, size }
+        if (response.data.records && Array.isArray(response.data.records)) {
+          experiences.value = response.data.records
+          pagination.value.total = response.data.total || 0
+          pagination.value.current = response.data.current || 1
+          pagination.value.pages = Math.ceil(pagination.value.total / pagination.value.size)
+        } else if (response.data.list && Array.isArray(response.data.list)) {
+          // 兼容其他分页结构 { list, total, page, pageSize }
           experiences.value = response.data.list
           pagination.value.total = response.data.total || 0
           pagination.value.pages = Math.ceil(pagination.value.total / pagination.value.size)
