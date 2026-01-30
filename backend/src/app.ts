@@ -59,12 +59,12 @@ export function createApp(): Application {
   app.use(loggerMiddleware)
 
   // 健康检查
-  app.get('/health', (_req, res) => {
+  app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() })
   })
 
   // API 路由
-  app.use('/', routes)
+  app.use('/api', routes)
 
   // 404 处理
   app.use(notFoundMiddleware)

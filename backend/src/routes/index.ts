@@ -12,11 +12,11 @@ import aiRoutes from './ai.routes'
 const router = Router()
 
 // 注册各模块路由
-router.use('/api/users', userRoutes)
-router.use('/api/positions', positionRoutes)
-router.use('/api/interviews', interviewRoutes)
-router.use('/api/experiences', experienceRoutes)
-router.use('/api/summaries', summaryRoutes)
-router.use('/api/ai', aiRoutes)
+router.use('/users', userRoutes)
+router.use('/positions', positionRoutes)
+router.use('/interviews', interviewRoutes)
+router.use('/experiences', experienceRoutes)
+router.use('/summaries', summaryRoutes)
+router.use('/ai', aiRoutes)
 
 export default router
