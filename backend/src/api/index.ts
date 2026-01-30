@@ -2,6 +2,6 @@
  * Vercel Serverless Function Entry Point
  * This file lives in the /api directory which Vercel automatically recognizes.
  */
-import app from '../src/vercel';
+import app from '../vercel';
 
 export default app;
