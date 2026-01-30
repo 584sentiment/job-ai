@@ -36,10 +36,12 @@ export function createApp(): Application {
       // 1. 在白名单中
       // 2. 是开发环境 localhost
       // 3. 是 Vercel 部署域名 (.vercel.app)
+      // 4. 是自定义域名 (.100million.top)
       if (
         allowedOrigins.includes(requestOrigin) ||
         requestOrigin.includes('localhost') ||
-        requestOrigin.endsWith('.vercel.app')
+        requestOrigin.endsWith('.vercel.app') ||
+        requestOrigin.endsWith('.100million.top')
       ) {
         callback(null, true)
       } else {
