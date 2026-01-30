@@ -94,6 +94,18 @@
                         placeholder="面试官特别关注的技术点或软技能..."
                     ></textarea>
                 </div>
+
+                 <div>
+                     <label class="block text-sm font-medium text-gray-700 mb-2">
+                      备注 <span class="text-gray-400">(可选)</span>
+                    </label>
+                     <textarea
+                        v-model="contentData.remark"
+                        rows="2"
+                        class="w-full px-4 py-2.5 rounded-lg border border-border bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                        placeholder="其他的补充说明..."
+                    ></textarea>
+                </div>
             </div>
          </div>
 
@@ -162,6 +174,7 @@ const contentData = reactive({
     weakness: '',
     improvements: '',
     focus: '',
+    remark: ''
 })
 
 const isCompleted = ref(false)
@@ -188,6 +201,7 @@ onMounted(async () => {
             contentData.weakness = contentObj.weakness || summary.weakness || '';
             contentData.improvements = contentObj.improvements || summary.improvements || '';
             contentData.focus = contentObj.focus || '';
+            contentData.remark = contentObj.remark || '';
             
              // Check status
              isCompleted.value = summary.status === 'completed';
@@ -208,6 +222,7 @@ async function handleSubmit() {
             weakness: contentData.weakness,
             improvements: contentData.improvements,
             focus: contentData.focus,
+            remark: contentData.remark,
             status: isCompleted.value ? 'completed' : 'pending'
         });
 

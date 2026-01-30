@@ -205,6 +205,9 @@ model Summary {
   round         String?
   date          BigInt?    // 面试日期时间戳
 
+  // 统计
+  remarkCount   Int       @default(0)
+
   // 时间戳（毫秒）
   createTime    BigInt    @default(0)
   updateTime    BigInt    @default(0)
@@ -213,9 +216,23 @@ model Summary {
   user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   interview     Interview? @relation("SummaryInterview", fields: [interviewId], references: [id], onDelete: SetNull)
   position      Position?  @relation("PositionSummaries", fields: [positionId], references: [id], onDelete: SetNull)
+  remarks       SummaryRemark[]
 
   @@index([userId])
   @@index([interviewId])
   @@index([positionId])
   @@map("summaries")
+}
+
+// 面试总结备注表
+model SummaryRemark {
+  id            String    @id @default(uuid())
+  summaryId     String
+  content       String    @db.Text
+  createTime    BigInt    @default(0)
+
+  summary       Summary   @relation(fields: [summaryId], references: [id], onDelete: Cascade)
+
+  @@index([summaryId])
+  @@map("summary_remarks")
 }

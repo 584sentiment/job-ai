@@ -25,6 +25,7 @@ export interface SummaryDisplay extends Summary {
     weakness: string
     improvements: string
     comments: number
+    remark?: string
     color: string
 }
 

@@ -26,6 +26,7 @@ export const useSummariesStore = defineStore('summaries', () => {
             weakness = contentObj.weakness || contentObj.content || '' // 兼容舊字段
             improvements = Array.isArray(contentObj.improvements) ? contentObj.improvements.join(' ') : (contentObj.improvements || '')
             status = contentObj.status === 'completed' ? 'completed' : 'pending'
+            var remark = contentObj.remark || ''
         } catch (e) {
             console.error('Failed to parse summary content', e)
         }
@@ -42,6 +43,7 @@ export const useSummariesStore = defineStore('summaries', () => {
             weakness,
             improvements,
             comments: 0, // 暂时没有评论数据
+            remark,
             color: colors[colorIndex],
             date: Number(s.date) // 确保是数字
         }

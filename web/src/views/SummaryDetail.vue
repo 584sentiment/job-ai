@@ -95,6 +95,19 @@
                     {{ parsedContent.focus }}
                 </div>
             </div>
+
+             <!-- Remark -->
+            <div v-if="parsedContent.remark">
+                <h3 class="flex items-center text-lg font-semibold text-gray-900 mb-3">
+                     <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                    </svg>
+                    备注
+                </h3>
+                <div class="bg-gray-50 rounded-lg p-4 text-gray-700 whitespace-pre-wrap leading-relaxed">
+                    {{ parsedContent.remark }}
+                </div>
+            </div>
         </div>
       </div>
     </div>
