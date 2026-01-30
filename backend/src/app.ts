@@ -64,7 +64,7 @@ export function createApp(): Application {
   })
 
   // API 路由
-  app.use('/api', routes)
+  app.use('/', routes)
 
   // 404 处理
   app.use(notFoundMiddleware)
