@@ -45,6 +45,9 @@ export type {
   AIResponse
 } from './ai'
 
+// 导出总结相关类型
+export * from './summary'
+
 /**
  * 通用工具类型
  */

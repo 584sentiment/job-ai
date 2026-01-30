@@ -18,12 +18,15 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
         </div>
-        <button class="px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-secondary shadow-md hover:shadow-lg transition-all duration-200 flex items-center space-x-2">
+        <router-link
+          to="/add-summary"
+          class="px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-secondary shadow-md hover:shadow-lg transition-all duration-200 flex items-center space-x-2"
+        >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
           </svg>
           <span>添加总结</span>
-        </button>
+        </router-link>
       </div>
     </div>
 
@@ -110,6 +113,7 @@
       <div
         v-for="summary in filteredSummaries"
         :key="summary.id"
+        @click="$router.push(`/summary-detail?id=${summary.id}`)"
         class="glass-card rounded-xl p-6 hover:shadow-lg transition-shadow duration-200 cursor-pointer"
       >
         <div class="flex items-start justify-between mb-4">
@@ -132,7 +136,7 @@
             >
               {{ summary.status === 'pending' ? '待改进' : '已改进' }}
             </span>
-            <span class="text-xs text-gray-500">{{ summary.date }}</span>
+            <span class="text-xs text-gray-500">{{ formatDateDisplay(summary.date) }}</span>
           </div>
         </div>
 
@@ -180,11 +184,16 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useSummariesStore } from '@/store/summaries'
 
 const summariesStore = useSummariesStore()
 const searchKeyword = ref('')
+
+// Load data on mount
+onMounted(() => {
+  summariesStore.fetchSummaries()
+})
 
 const filterOptions = [
   { label: '全部', value: 'all' },
@@ -208,4 +217,10 @@ const filteredSummaries = computed(() => {
 })
 
 const summaryStats = computed(() => summariesStore.summaryStats)
+
+// Helper for date formatting in template
+const formatDateDisplay = (timestamp) => {
+    if (!timestamp) return ''
+    return new Date(Number(timestamp)).toLocaleDateString()
+}
 </script>

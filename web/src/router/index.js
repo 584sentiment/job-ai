@@ -79,6 +79,26 @@ const routes = [
     }
   },
   {
+    path: '/add-summary',
+    name: 'AddSummary',
+    component: () => import('@/views/AddSummary.vue'),
+    meta: {
+      title: '添加总结',
+      hideBottomNav: true,
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/summary-detail',
+    name: 'SummaryDetail',
+    component: () => import('@/views/SummaryDetail.vue'),
+    meta: {
+      title: '总结详情',
+      hideBottomNav: true,
+      requiresAuth: true
+    }
+  },
+  {
     path: '/ai-assistant',
     name: 'AIAssistant',
     component: () => import('@/views/AIAssistant.vue'),
