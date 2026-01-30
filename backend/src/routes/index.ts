@@ -2,12 +2,12 @@
  * 路由总入口
  */
 import { Router } from 'express'
-import userRoutes from './user.routes'
-import positionRoutes from './position.routes'
-import interviewRoutes from './interview.routes'
-import experienceRoutes from './experience.routes'
-import summaryRoutes from './summary.routes'
-import aiRoutes from './ai.routes'
+import userRoutes from './user.routes.js'
+import positionRoutes from './position.routes.js'
+import interviewRoutes from './interview.routes.js'
+import experienceRoutes from './experience.routes.js'
+import summaryRoutes from './summary.routes.js'
+import aiRoutes from './ai.routes.js'
 
 const router = Router()
 

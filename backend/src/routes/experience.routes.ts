@@ -4,7 +4,7 @@
 import { Router } from 'express'
 import experienceController from '@/controllers/experience.controller'
 import { authMiddleware } from '@/middlewares/auth.middleware'
-import commentRoutes from './comment.routes'
+import commentRoutes from './comment.routes.js'
 
 const router = Router()
 

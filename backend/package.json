@@ -8,7 +8,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "prisma generate && tsup src/index.ts src/vercel.ts --format esm --out-dir dist",
     "start": "node dist/index.js",
-    "vercel-build": "prisma generate && tsc",
+    "vercel-build": "prisma generate && tsup src/index.ts src/vercel.ts src/api/index.ts --format esm --out-dir dist",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:migrate": "prisma migrate dev",

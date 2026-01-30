@@ -1,5 +1,5 @@
-import createApp from './app';
-import PrismaConfig from './config/database';
+import createApp from './app.js';
+import PrismaConfig from './config/database.js';
 
 // Initialize Prisma Client
 PrismaConfig.getInstance();
