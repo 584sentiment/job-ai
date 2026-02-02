@@ -23,7 +23,7 @@ DOMAIN="job.100million.top"
 PROJECT_DIR="/var/www/job-ai"
 DB_NAME="jobai_db"
 DB_USER="jobai_user"
-GITHUB_REPO="your-username/job-ai"  # 请修改为你的 GitHub 仓库
+GITHUB_REPO="584sentiment/job-ai"  # 请修改为你的 GitHub 仓库
 
 # 检查是否为 root 用户
 if [ "$EUID" -ne 0 ]; then
