@@ -8,40 +8,131 @@
 
 ## 📥 当前状态
 
-### 正在进行的操作
-✅ **正在安装 PostgreSQL 18**
-- 使用 Homebrew 安装
-- 预计时间: 3-5 分钟
-- 状态: 进行中...
+### ⚠️ 网络问题
+❌ **Homebrew 下载 PostgreSQL 失败**
+- 原因: ghcr.io (GitHub Container Registry) 访问缓慢
+- 状态: 下载卡在 3% (620KB / ~20MB)
+- 时间: 已尝试 20+ 分钟
 
-### 安装完成后需要做的事情
-1. 启动 PostgreSQL 服务
-2. 创建数据库 `job_ai_dev`
-3. 配置项目环境
-4. 初始化数据库结构
-5. 测试连接
+### ✅ 推荐替代方案
+
+由于网络问题，建议使用以下方案之一：
+
+1. **方案 A: 使用 Docker（推荐）** - 最快速稳定
+2. **方案 B: 使用国内 Homebrew 镜像** - 中科大镜像源
+3. **方案 C: PostgreSQL@16（旧版本）** - 可能在本地缓存
+
+请查看下方的详细方案。
 
 ---
 
-## 🚀 完整步骤
+## 🚀 安装方案
 
-### 步骤 1: 安装 PostgreSQL（正在进行）
+### 方案 A: 使用 Docker（强烈推荐）⭐
+
+**优势**:
+- ✅ 5分钟内完成
+- ✅ 隔离环境，不污染系统
+- ✅ 数据持久化
+- ✅ 易于管理
+
+**安装步骤**:
 
 ```bash
-# 正在后台运行
+# 1. 确认 Docker 已安装并运行
+docker --version
+docker info
+
+# 2. 启动 PostgreSQL 容器
+docker run -d \
+  --name job-ai-postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=job_ai_dev \
+  -p 5432:5432 \
+  -v job-ai-db-data:/var/lib/postgresql/data \
+  postgres:18-alpine
+
+# 3. 验证容器运行
+docker ps | grep job-ai-postgres
+
+# 4. 测试连接
+docker exec -it job-ai-postgres psql -U postgres -c "SELECT version();"
+```
+
+**容器管理命令**:
+```bash
+# 停止
+docker stop job-ai-postgres
+
+# 启动
+docker start job-ai-postgres
+
+# 重启
+docker restart job-ai-postgres
+
+# 查看日志
+docker logs -f job-ai-postgres
+
+# 删除容器（数据会保留在 volume）
+docker rm job-ai-postgres
+```
+
+**环境变量配置**:
+```bash
+# backend/.env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/job_ai_dev"
+```
+
+---
+
+### 方案 B: 使用国内 Homebrew 镜像
+
+**配置中科大镜像源**:
+
+```bash
+# 1. 替换 Homebrew 镜像
+export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.ustc.edu.cn/brew.git"
+export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.ustc.edu.cn/homebrew-core.git"
+export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
+
+# 2. 安装 PostgreSQL
 brew install postgresql@18
-```
 
-**预计剩余时间**: 2-3 分钟
-
-**验证安装**:
-```bash
-# 安装完成后验证
+# 3. 验证安装
 postgres --version
-# 应显示: postgres (PostgreSQL) 18.x
 ```
 
-### 步骤 2: 启动 PostgreSQL 服务
+**如果仍然缓慢，尝试安装旧版本**:
+```bash
+brew install postgresql@16
+```
+
+---
+
+### 方案 C: PostgreSQL@16（旧版本）
+
+**为什么选择旧版本**:
+- 可能在 Homebrew 缓存中已有
+- 下载更快
+- 功能差异不大（开发环境够用）
+
+```bash
+# 安装 PostgreSQL 16
+brew install postgresql@16
+
+# 启动服务
+brew services start postgresql@16
+
+# 创建数据库
+psql -U postgres -c "CREATE DATABASE job_ai_dev;"
+```
+
+---
+
+## 📋 快速配置（安装完成后）
+
+### 步骤 1: 验证 PostgreSQL 状态
 
 ```bash
 # 启动服务
@@ -340,3 +431,34 @@ tail -f /usr/local/var/log/postgresql@18.log
 **安装完成后，请按照上述步骤继续配置！** 🚀
 
 **预计总配置时间**: 5-8 分钟
+
+---
+
+## 🔥 快速决策指南
+
+### 我该选择哪个方案？
+
+| 场景 | 推荐方案 | 理由 |
+|------|---------|------|
+| **已有 Docker** | 方案 A | 5分钟完成，最稳定 |
+| **不想安装 Docker** | 方案 C | 安装 PostgreSQL@16 更快 |
+| **网络稳定** | 方案 B | 使用镜像源安装最新版 |
+| **追求速度** | 方案 A | Docker 方案最快 |
+
+### 推荐流程
+
+1. **检查是否已有 Docker**:
+   ```bash
+   docker --version
+   ```
+   - 如果有 → 使用方案 A
+   - 如果没有 → 继续第2步
+
+2. **尝试安装 PostgreSQL@16**:
+   ```bash
+   brew install postgresql@16
+   ```
+   - 如果成功 → 使用方案 C
+   - 如果仍然缓慢 → 考虑安装 Docker
+
+3. **最坏情况**: 考虑使用云数据库或稍后重试

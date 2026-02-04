@@ -2,84 +2,68 @@
 
 **配置时间**: 2025-02-05
 **系统**: macOS
+**方案**: Docker（已安装 Docker 25.0.3）
 **目标**: 配置本地 PostgreSQL 数据库用于开发
 
 ---
 
-## 📋 待办事项
+## 📋 方案变更
 
-### ⏳ 正在进行（3-5 分钟）
+### ❌ 原方案问题
+- Homebrew 安装 PostgreSQL 18 网络超时
+- 下载卡在 3% (620KB / ~20MB)
+- 原因: ghcr.io 访问缓慢
 
-- [ ] **PostgreSQL 18 安装中**
-  - 命令: `brew install postgresql@18`
-  - 状态: 后台运行中
-  - 预计剩余: 2-3 分钟
-
-**请等待安装完成后再执行以下步骤**
+### ✅ 新方案
+- 使用 Docker 运行 PostgreSQL
+- 优势: 快速（5分钟）、稳定、隔离
+- 状态: **准备执行**
 
 ---
 
-### 📝 安装完成后的步骤
+## 🚀 执行步骤（5 分钟）
 
-#### 步骤 1: 验证安装
+### 步骤 1: 启动 Docker Desktop
 
 ```bash
-# 验证 PostgreSQL 已安装
-postgres --version
-
-# 应显示: postgres (PostgreSQL) 18.x
+# 打开 Docker Desktop
+open -a Docker
 ```
 
-#### 步骤 2: 启动 PostgreSQL 服务
+**等待 Docker 图标显示为运行状态**（约 30 秒）
+
+---
+
+### 步骤 2: 运行自动设置脚本
 
 ```bash
-# 启动服务
-brew services start postgresql@18
-
-# 验证服务状态
-brew services list | grep postgresql
-
-# 预期输出: postgresql@18 started
+# 从项目根目录运行
+bash scripts/setup-postgres-docker.sh
 ```
 
-#### 步骤 3: 创建应用数据库
+**脚本会自动完成**：
+- ✅ 检查 Docker 状态
+- ✅ 创建 PostgreSQL 容器
+- ✅ 配置数据持久化
+- ✅ 测试数据库连接
+- ✅ 验证数据库存在
 
-```bash
-# 方式 1: 使用 psql 命令行
-psql -U postgres
-# 在 psql 中输入: CREATE DATABASE job_ai_dev;
-# 然后输入: \q
+**预计时间**: 2 分钟
 
-# 方式 2: 使用一行命令
-psql -U postgres -c "CREATE DATABASE job_ai_dev;"
+**预期输出**:
+```
+✅ Docker 已运行
+✅ PostgreSQL 容器已启动
+✅ 数据库连接成功
+✅ 数据库 'job_ai_dev' 已存在
 ```
 
-#### 步骤 4: 检查数据库密码配置
+---
 
-**PostgreSQL on macOS 默认情况**:
-- 用户名: `postgres`
-- 密码: 通常为**空**
-
-**当前配置** (`backend/.env`):
-```bash
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/job_ai_dev"
-```
-
-**如果您的密码为空**，修改为:
-```bash
-DATABASE_URL="postgresql://postgres:@localhost:5432/job_ai_dev"
-```
-
-**编辑命令**:
-```bash
-nano backend/.env
-# 或
-vim backend/.env
-```
-
-#### 步骤 5: 初始化数据库结构
+### 步骤 3: 初始化数据库结构
 
 ```bash
+# 进入后端目录
 cd backend
 
 # 生成 Prisma Client
@@ -87,35 +71,43 @@ pnpm prisma generate
 
 # 推送数据库结构
 pnpm prisma db push
-
-# 预期输出: ✔ Connected to database
 ```
 
-#### 步骤 6: 测试数据库连接
+**预期输出**:
+```
+✔ Loaded env from .env
+✔ Generated Prisma Client
+✔ Connected to database
+...
+🚀 Done in Xs
+```
+
+---
+
+### 步骤 4: 验证配置
 
 ```bash
-# 方式 1: 命令行
-psql -U postgres -d job_ai_dev -c "SELECT version();"
-
-# 方式 2: Prisma Studio
+# 使用 Prisma Studio 查看数据库
 pnpm prisma studio
-# 浏览器访问: http://localhost:5555
-
-# 方式 3: 测试后端
-curl http://localhost:8080/api
 ```
 
-#### 步骤 7: 启动开发服务器
+浏览器访问: http://localhost:5555
 
-**终端 1 - 后端**:
+应该能看到所有数据表（User, Position, Interview 等）
+
+---
+
+### 步骤 5: 启动后端服务
+
 ```bash
 cd backend
 pnpm dev
 ```
 
-**终端 2 - 前端**:
-```bash
-pnpm dev
+**预期输出**:
+```
+Server is running on port 8080
+Database connected successfully
 ```
 
 ---
@@ -124,8 +116,8 @@ pnpm dev
 
 完成配置后，请确认以下项目：
 
-- [ ] PostgreSQL 已安装（`postgres --version`）
-- [ ] PostgreSQL 服务已启动（`brew services list`）
+- [ ] Docker Desktop 正在运行
+- [ ] 容器 `job-ai-postgres` 正在运行（`docker ps`）
 - [ ] 数据库 `job_ai_dev` 已创建
 - [ ] Prisma Client 已生成（`backend/node_modules/.prisma/client` 存在）
 - [ ] 数据库结构已推送（`pnpm prisma db push` 成功）
@@ -137,15 +129,17 @@ pnpm dev
 
 ## 🛠️ 常见问题解决
 
-### Q1: brew services 命令不存在
+### Q1: Docker 未运行
 
 ```bash
-# 安装 services tap
-brew tap homebrew/services
+# 启动 Docker Desktop
+open -a Docker
 
-# 重新启动
-brew services start postgresql@18
+# 等待 30 秒后验证
+docker info
 ```
+
+---
 
 ### Q2: 端口 5432 被占用
 
@@ -153,38 +147,39 @@ brew services start postgresql@18
 # 查找占用进程
 lsof -i :5432
 
-# 停止该进程
-sudo kill <PID>
+# 如果是 Homebrew PostgreSQL，停止它
+brew services stop postgresql@*  # 停止所有 Homebrew PostgreSQL
 
-# 重启 PostgreSQL
-brew services restart postgresql@18
+# 重新运行脚本
+bash scripts/setup-postgres-docker.sh
 ```
 
-### Q3: 密码认证失败
+---
 
-**方案 A**: 使用空密码
+### Q3: 容器启动失败
+
 ```bash
-DATABASE_URL="postgresql://postgres:@localhost:5432/job_ai_dev"
+# 查看容器日志
+docker logs job-ai-postgres
+
+# 删除容器重新创建
+docker rm -f job-ai-postgres
+bash scripts/setup-postgres-docker.sh
 ```
 
-**方案 B**: 重置密码
-```bash
-psql -U postgres
-ALTER USER postgres WITH PASSWORD 'new_password';
-\q
-```
+---
 
-### Q4: 数据库连接失败
+### Q4: Prisma 连接失败
 
 ```bash
-# 检查服务状态
-brew services list | grep postgresql
+# 确认 DATABASE_URL 正确
+cat backend/.env | grep DATABASE_URL
 
-# 重启服务
-brew services restart postgresql@18
+# 应该是:
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/job_ai_dev"
 
-# 检查端口
-lsof -i :5432
+# 测试连接
+docker exec -it job-ai-postgres psql -U postgres -d job_ai_dev -c "SELECT 1;"
 ```
 
 ---
@@ -192,29 +187,57 @@ lsof -i :5432
 ## 📚 参考文档
 
 ### 详细指南
-- **[INSTALL_GUIDE_MACOS.md](./INSTALL_GUIDE_MACOS.md)** - 完整安装指南
-- **[QUICK_SETUP_GUIDE.md](./QUICK_SETUP_GUIDE.md)** - 快速配置指南
-- **[docs/QUICK_START_LOCAL_DB.md](./docs/QUICK_START_LOCAL_DB.md)** - 本地数据库配置
+- **[INSTALL_GUIDE_MACOS.md](./INSTALL_GUIDE_MACOS.md)** - 完整安装指南（含 Docker 方案）
+- **[POSTGRES_INSTALL_QUICK.md](./POSTGRES_INSTALL_QUICK.md)** - 快速参考
+- **[scripts/setup-postgres-docker.sh](../scripts/setup-postgres-docker.sh)** - 自动化脚本
 
 ### 官方文档
 - PostgreSQL: https://www.postgresql.org/docs/
-- Homebrew: https://docs.brew.sh/
+- Docker Hub: https://hub.docker.com/_/postgres
 
 ---
 
 ## 🎯 下一步
 
-**PostgreSQL 安装完成后，请按照上述步骤 1-7 依次执行**
+**请按照上述步骤 1-5 依次执行**
 
-**预计总配置时间**: 8-10 分钟
+**预计总配置时间**: 5 分钟
 
 **完成后，您将拥有**:
-- ✅ 本地 PostgreSQL 数据库
+- ✅ Docker PostgreSQL 数据库
 - ✅ 完整的开发环境
 - ✅ 可以离线开发的系统
+- ✅ 数据持久化存储
 
 ---
 
-**当前状态**: ⏳ 等待 PostgreSQL 安装完成...
+## 📊 容器管理命令
 
-**建议**: 先休息一下，安装完成后回来继续配置！☕
+```bash
+# 查看运行状态
+docker ps | grep job-ai-postgres
+
+# 查看日志
+docker logs -f job-ai-postgres
+
+# 停止容器
+docker stop job-ai-postgres
+
+# 启动容器
+docker start job-ai-postgres
+
+# 重启容器
+docker restart job-ai-postgres
+
+# 删除容器（数据保留在 volume）
+docker rm -f job-ai-postgres
+
+# 连接到数据库
+docker exec -it job-ai-postgres psql -U postgres -d job_ai_dev
+```
+
+---
+
+**当前状态**: ✅ 准备就绪，等待执行
+
+**建议**: 打开 Docker Desktop，然后运行自动设置脚本！🚀

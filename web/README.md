@@ -133,17 +133,29 @@ git push origin main
 # 访问：https://username.github.io/job-ai/
 ```
 
-详细配置请查看：[GitHub Pages 部署指南](./GITHUB-PAGES.md)
+### Docker 部署
 
-### Vercel 部署
+使用 Docker Compose 进行本地或生产部署：
 
-也可以部署到 Vercel：
+```bash
+# 启动所有服务（前端 + 后端 + 数据库）
+docker-compose up -d
 
-1. 导入项目到 Vercel
-2. 配置环境变量 `VITE_API_BASE_URL`
-3. 点击部署
+# 查看日志
+docker-compose logs -f
 
-详细配置请查看：[Vercel 部署指南](./DEPLOYMENT.md)
+# 停止服务
+docker-compose down
+```
+
+### 其他部署方式
+
+项目也支持部署到：
+- 腾讯云
+- 宝塔面板
+- 其他支持静态网站和 Node.js 的平台
+
+详细部署文档请查看项目根目录的 [docs/](../docs/) 目录。
 
 ## 页面路由
 

@@ -16,14 +16,19 @@
  * 环境变量（可选）：
  *   API_BASE_URL - API 基础地址（默认：http://localhost:8080/api）
  *   API_TOKEN - 认证 Token（如果需要认证）
+ *
+ * 数据说明：
+ *   - 使用 @job-ai/shared 包中的类型定义
+ *   - 状态值使用 PositionStatus 枚举：'0', '1', '2', '3', '4', '5', '-1'
+ *   - 所有时间戳使用毫秒为单位
  */
 
 import fetch from 'node-fetch';
 
 // 配置
 const CONFIG = {
-  API_BASE_URL: process.env.SCRIPT_BASE_URL || 'http://localhost:8080',
-  API_TOKEN: process.env.API_TOKEN || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImE2MDk3YTM1LWNlZmEtNDE2My1hMmY5LWRjZTU5ZDU4NDc5ZSIsInBob25lIjoiMTg2NzE3MTk2NTIiLCJuaWNrbmFtZSI6IuiAgeeOiyIsImlhdCI6MTc2OTUzMTcwOSwiZXhwIjoxNzcwMTM2NTA5LCJhdWQiOiJqb2ItYWktdXNlcnMiLCJpc3MiOiJqb2ItYWktYmFja2VuZCJ9.iDzRvihlMdNPKdw2aRNAUhd1Z-uNSOwoVa8CQRidFZ0',
+  API_BASE_URL: process.env.SCRIPT_BASE_URL || 'http://localhost:8080/api',
+  API_TOKEN: process.env.API_TOKEN || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM5MWRmNmNhLTRjNDctNDQ5YS1hNTcxLWQzZWUyM2E4YmM3MyIsInBob25lIjoiMTg2NzE3MTk2NTIiLCJuaWNrbmFtZSI6IuiAgeeOiyIsImlhdCI6MTc3MDIyNjYxNSwiZXhwIjoxNzcwODMxNDE1LCJhdWQiOiJqb2ItYWktdXNlcnMiLCJpc3MiOiJqb2ItYWktYmFja2VuZCJ9.HroFBS7GRGBm_L5sn5uNcR3vncGESHAiA59rphPRYRI',
   TIMEOUT: 10000, // 10秒超时
 };
 
@@ -50,18 +55,34 @@ function log(message, color = 'reset') {
 
 /**
  * 生成指定范围内的随机日期（最近30天内）
+ * 返回毫秒时间戳
  */
 function randomDate(days = 30) {
   const now = new Date();
   const past = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
   const randomTime = past.getTime() + Math.random() * (now.getTime() - past.getTime());
   const date = new Date(randomTime);
-  return date.getTime(); // 时间戳
+  return date.getTime(); // 毫秒时间戳
 }
+
+/**
+ * 岗位状态枚举（与 @job-ai/shared 保持一致）
+ * PositionStatus: '0' | '1' | '2' | '3' | '4' | '5' | '-1'
+ */
+const POSITION_STATUS = {
+  TO_BE_DELIVERED: '0',    // 待投递
+  DELIVERED: '1',          // 已投递
+  IN_PROCESS: '2',         // 流程中
+  OFFER: '3',              // 已Offer
+  JOINED: '4',             // 已入职
+  REJECTED: '5',           // 已拒绝
+  NOT_PASS: '-1'           // 未通过
+};
 
 /**
  * 生成测试数据
  * 返回 10 条岗位数据，覆盖所有投递状态
+ * 符合 @job-ai/shared PositionCreateRequest 接口定义
  */
 function generateTestData() {
   const companies = [
@@ -77,19 +98,20 @@ function generateTestData() {
     { name: '滴滴', position: '移动端开发', location: '北京', salary: '25K-45K' },
   ];
 
-  const channels = ['BOSS直聘', '拉勾网', '企业官网', '内推', '猎聘', '智联招聘'];
+  const channels = ['BOSS直聘', '拉勾网', '企业官网', '内推', '猎聘', '智联招聘', '前程无忧'];
 
+  // 测试用例：覆盖所有状态
   const testCases = [
-    { status: '0', desc: '待投递' },
-    { status: '1', desc: '已投递' },
-    { status: '2', desc: '流程中' },
-    { status: '3', desc: '已Offer' },
-    { status: '4', desc: '已入职' },
-    { status: '5', desc: '已拒绝' },
-    { status: '-1', desc: '未通过' },
-    { status: '1', desc: '已投递' },
-    { status: '2', desc: '流程中' },
-    { status: '3', desc: '已Offer' },
+    { status: POSITION_STATUS.TO_BE_DELIVERED, desc: '待投递' },
+    { status: POSITION_STATUS.DELIVERED, desc: '已投递' },
+    { status: POSITION_STATUS.IN_PROCESS, desc: '流程中' },
+    { status: POSITION_STATUS.OFFER, desc: '已Offer' },
+    { status: POSITION_STATUS.JOINED, desc: '已入职' },
+    { status: POSITION_STATUS.REJECTED, desc: '已拒绝' },
+    { status: POSITION_STATUS.NOT_PASS, desc: '未通过' },
+    { status: POSITION_STATUS.DELIVERED, desc: '已投递' },
+    { status: POSITION_STATUS.IN_PROCESS, desc: '流程中' },
+    { status: POSITION_STATUS.OFFER, desc: '已Offer' },
   ];
 
   return companies.map((company, index) => {
@@ -103,8 +125,10 @@ function generateTestData() {
       deliveryDate: randomDate(30),
       workLocation: company.location,
       salaryRange: company.salary,
-      jobDescription: `${company.position}岗位，负责相关业务系统的开发和维护。`,
-      remarks: `${testCase.desc}状态 - 测试数据`,
+      jobDescription: `${company.position}岗位，负责相关业务系统的开发和维护。要求：\n1. 3年以上相关工作经验\n2. 熟悉相关技术栈\n3. 良好的团队协作能力`,
+      contactName: 'HR部门',
+      contactPhone: '400-888-8888',
+      remarks: `${testCase.desc}状态 - 自动生成的测试数据 - ${new Date().toLocaleString()}`,
       status: testCase.status,
       isCollected: Math.random() > 0.8 ? 1 : 0, // 20% 概率收藏
     };
@@ -162,7 +186,9 @@ async function seedData() {
 
   const testData = generateTestData();
 
-  log(`📊 准备插入 ${testData.length} 条测试数据\n`, 'blue');
+  log(`📊 准备插入 ${testData.length} 条测试数据`, 'blue');
+  log(`📝 使用状态枚举: ${Object.values(POSITION_STATUS).join(', ')}`, 'blue');
+  log(`⏰ 时间戳格式: 毫秒（13位数字）\n`, 'blue');
 
   let successCount = 0;
   let failCount = 0;
@@ -181,8 +207,8 @@ async function seedData() {
       if (response.code === 200 && response.data) {
         successCount++;
         const id = response.data.id;
-        log(`  ✅ 成功 - ID: ${id}, 状态: ${data.status}\n`, 'green');
-        results.push({ index, company: data.companyName, status: 'success', id });
+        log(`  ✅ 成功 - ID: ${id}, 状态: ${data.status} (${getStatusLabel(data.status)})\n`, 'green');
+        results.push({ index, company: data.companyName, status: 'success', id, statusCode: data.status });
       } else {
         failCount++;
         log(`  ❌ 失败 - ${response.message || '未知错误'}\n`, 'red');
@@ -214,8 +240,26 @@ async function seedData() {
     results
       .filter(r => r.status === 'success')
       .forEach(r => {
-        log(`  - ID ${r.id}: ${r.company}`, 'green');
+        const statusLabel = getStatusLabel(r.statusCode);
+        log(`  - ID ${r.id}: ${r.company} [${statusLabel}]`, 'green');
       });
+    log('');
+  }
+
+  // 输出状态分布统计
+  if (successCount > 0) {
+    const statusDistribution = {};
+    results
+      .filter(r => r.status === 'success')
+      .forEach(r => {
+        statusDistribution[r.statusCode] = (statusDistribution[r.statusCode] || 0) + 1;
+      });
+
+    log('📊 状态分布：', 'cyan');
+    Object.entries(statusDistribution).forEach(([status, count]) => {
+      const label = getStatusLabel(status);
+      log(`  ${status} [${label}]: ${count} 条`, 'blue');
+    });
     log('');
   }
 
@@ -232,12 +276,28 @@ async function seedData() {
   // 输出验证提示
   if (successCount > 0) {
     log('🔍 验证步骤：', 'cyan');
-    log(`  1. 打开应用首页: http://localhost:3002`, 'blue');
+    log(`  1. 打开应用首页`, 'blue');
     log(`  2. 查看岗位列表是否显示 ${successCount} 条新数据`, 'blue');
-    log(`  3. 测试状态筛选功能`, 'blue');
+    log(`  3. 测试状态筛选功能（检查所有 7 种状态）`, 'blue');
     log(`  4. 测试搜索功能`, 'blue');
     log(`  5. 点击岗位进入详情页验证数据完整性\n`, 'blue');
   }
+}
+
+/**
+ * 获取状态标签
+ */
+function getStatusLabel(status) {
+  const labels = {
+    '0': '待投递',
+    '1': '已投递',
+    '2': '流程中',
+    '3': '已Offer',
+    '4': '已入职',
+    '5': '已拒绝',
+    '-1': '未通过'
+  };
+  return labels[status] || status;
 }
 
 /**

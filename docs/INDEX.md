@@ -55,10 +55,9 @@
 ## 🚀 部署文档
 
 ### 云平台部署
-1. **[vercel-deployment.md](./vercel-deployment.md)** - Vercel 部署指南
-2. **[tencent-cloud-docker-deployment.md](./tencent-cloud-docker-deployment.md)** - 腾讯云部署指南
-3. **[github-secrets-guide.md](./github-secrets-guide.md)** - GitHub Secrets 配置
-4. **[vercel-config-summary.md](./vercel-config-summary.md)** - Vercel 配置总结
+1. **[tencent-cloud-deployment.md](./tencent-cloud-deployment.md)** - 腾讯云部署指南
+2. **[github-secrets-guide.md](./github-secrets-guide.md)** - GitHub Secrets 配置
+3. **[baota-deployment.md](./baota-deployment.md)** - 宝塔面板部署指南
 
 ### 网络修复
 1. **[git-network-fix.md](./git-network-fix.md)** - Git 网络问题修复

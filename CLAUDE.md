@@ -114,7 +114,7 @@ const job = await createJob({ company: '字节跳动', position: '前端工程�
 - **框架**: Express.js
 - **语言**: TypeScript
 - **ORM**: Prisma
-- **数据库**: PostgreSQL (通过 Supabase/Vercel Postgres)
+- **数据库**: PostgreSQL (本地 Docker 或云端 Supabase)
 - **认证**: JWT + bcrypt
 - **日志**: Winston
 - **安全**: Helmet + CORS + Rate Limiting
@@ -132,8 +132,7 @@ backend/
 │   ├── types/           # TypeScript 类型
 │   ├── utils/           # 工具函数
 │   ├── app.ts           # Express 应用配置
-│   ├── index.ts         # 服务入口
-│   └── vercel.ts        # Vercel Serverless 入口
+│   └── index.ts         # 服务入口
 ├── prisma/
 │   ├── schema.prisma    # 数据库模型定义
 │   └── seed.ts          # 数据库种子数据
@@ -271,29 +270,29 @@ Storage.set(STORAGE_KEYS.JOBS, jobs);
 
 ---
 
-## 四、部署配置 (`vercel.json`)
+## 四、部署配置
 
-项目使用 Vercel 部署，配置文件如下：
+### Docker 部署（推荐）
 
-```json
-{
-  "version": 2,
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.js"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/web/$1"
-    }
-  ]
-}
+项目使用 Docker Compose 进行部署，配置文件为 `docker-compose.yml`。
+
+**启动所有服务**：
+```bash
+docker-compose up -d
 ```
 
-**说明**：
-- `/api/*` 请求转发到 Serverless 函数 (`api/index.js`)
-- 其他请求转发到 Web 前端静态文件
+**服务包括**：
+- 前端（Vue 3 + Vite）
+- 后端（Express + TypeScript）
+- 数据库（PostgreSQL）
+
+### 其他部署方式
+
+项目也支持：
+- GitHub Pages（仅前端）
+- 腾讯云
+- 宝塔面板
+- 其他支持静态网站和 Node.js 的平台
 
 ---
 
@@ -415,9 +414,9 @@ PORT=3001               # 服务端口
 - Prisma ORM，类型安全的数据库操作
 
 ### 2. 部署灵活
-- 支持 Vercel 一键部署
+- 支持 Docker 一键部署
 - Serverless 架构，自动扩缩容
-- 支持多种部署平台（Vercel/GitHub Pages/腾讯云/宝塔）
+- 支持多种部署平台（Docker/GitHub Pages/腾讯云/宝塔）
 
 ### 3. 微信小程序独立运行
 - 本地存储方案，无需后端即可使用
@@ -521,6 +520,6 @@ cd web && npm run dev
 - [ ] 详情页数据展示正确
 
 ### 部署测试
-- [ ] Vercel 部署成功
+- [ ] Docker 部署验证
 - [ ] 生产环境功能正常
 - [ ] API 接口可访问
