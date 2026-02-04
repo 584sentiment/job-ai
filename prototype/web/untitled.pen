@@ -1,0 +1,1309 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "bi8Au",
+      "x": 0,
+      "y": 0,
+      "name": "Frame",
+      "clip": true,
+      "width": 800,
+      "height": 600,
+      "fill": "#FFFFFF",
+      "layout": "none"
+    },
+    {
+      "type": "frame",
+      "id": "fmK9L",
+      "x": 0,
+      "y": 0,
+      "name": "AI助手引导页-方案1",
+      "width": 1440,
+      "fill": "#F8FAFC",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "eHeHm",
+          "name": "header1",
+          "width": "fill_container",
+          "height": 64,
+          "padding": [
+            0,
+            80
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "zDe7U",
+              "name": "logoFrame1",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pgLMD",
+                  "name": "logoIcon1",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "#2563EB",
+                  "cornerRadius": 8
+                },
+                {
+                  "type": "text",
+                  "id": "dj0bY",
+                  "name": "logoText1",
+                  "fill": "#1E293B",
+                  "content": "求职助手",
+                  "fontFamily": "Poppins",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zLsD1",
+              "name": "skipBtn1",
+              "cornerRadius": 8,
+              "padding": [
+                8,
+                16
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "H5VGe",
+                  "name": "skipBtnText1",
+                  "fill": "#64748B",
+                  "content": "跳过",
+                  "fontFamily": "Open Sans",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "chIlx",
+          "name": "hero1",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            80,
+            80,
+            60,
+            80
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "frSGZ",
+              "name": "badge1",
+              "fill": "#DBEAFE",
+              "cornerRadius": 20,
+              "padding": [
+                6,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "j5BCB",
+                  "name": "badgeDot1",
+                  "fill": "#2563EB",
+                  "width": 6,
+                  "height": 6
+                },
+                {
+                  "type": "text",
+                  "id": "DapCk",
+                  "name": "badgeText1",
+                  "fill": "#2563EB",
+                  "content": "AI 智能助手",
+                  "fontFamily": "Open Sans",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 1
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "aJsuU",
+              "name": "title1",
+              "fill": "#1E293B",
+              "content": "让AI成为你的求职顾问",
+              "textAlign": "center",
+              "fontFamily": "Poppins",
+              "fontSize": 48,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "FKGkL",
+              "name": "subtitle1",
+              "fill": "#64748B",
+              "content": "四大AI功能全程陪伴，助你拿到理想offer",
+              "textAlign": "center",
+              "fontFamily": "Open Sans",
+              "fontSize": 18
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "oryLh",
+          "name": "featuresGrid1",
+          "width": "fill_container",
+          "gap": 24,
+          "padding": [
+            60,
+            80
+          ],
+          "justifyContent": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "fjTGS",
+              "name": "card1_1",
+              "width": 320,
+              "height": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 12,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#E2E8F0"
+              },
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "1FkpV",
+                  "name": "card1IconBg1",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#DBEAFE",
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "n7bu4",
+                      "name": "card1Icon1",
+                      "fill": "#2563EB",
+                      "content": "📊",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "l5uYd",
+                  "name": "card1Title1",
+                  "fill": "#1E293B",
+                  "content": "岗位匹配度分析",
+                  "fontFamily": "Poppins",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "8ZCQt",
+                  "name": "card1Desc1",
+                  "fill": "#64748B",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "AI深度解析JD，多维度评估匹配度",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Open Sans",
+                  "fontSize": 14
+                },
+                {
+                  "type": "frame",
+                  "id": "86o1b",
+                  "name": "card1Cta1",
+                  "fill": "#2563EB",
+                  "cornerRadius": 8,
+                  "padding": [
+                    10,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jB4vq",
+                      "name": "card1CtaText1",
+                      "fill": "#FFFFFF",
+                      "content": "立即体验",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "u4oWJ",
+              "name": "card1_2",
+              "width": 320,
+              "height": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 12,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#E2E8F0"
+              },
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hM7OH",
+                  "name": "card1IconBg2",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#FED7AA",
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Gk9L2",
+                      "name": "card1Icon2",
+                      "fill": "#F97316",
+                      "content": "📝",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "GzqNX",
+                  "name": "card1Title2",
+                  "fill": "#1E293B",
+                  "content": "简历优化",
+                  "fontFamily": "Poppins",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "4N2aj",
+                  "name": "card1Desc2",
+                  "fill": "#64748B",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "逐句分析优化措辞，突出核心优势",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Open Sans",
+                  "fontSize": 14
+                },
+                {
+                  "type": "frame",
+                  "id": "0K0VT",
+                  "name": "card1Cta2",
+                  "fill": "#F97316",
+                  "cornerRadius": 8,
+                  "padding": [
+                    10,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "myOrl",
+                      "name": "card1CtaText2",
+                      "fill": "#FFFFFF",
+                      "content": "立即体验",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "sHWsw",
+              "name": "card1_3",
+              "width": 320,
+              "height": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 12,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#E2E8F0"
+              },
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "5FeVp",
+                  "name": "card1IconBg3",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#DCFCE7",
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "XAdK3",
+                      "name": "card1Icon3",
+                      "fill": "#10B981",
+                      "content": "💼",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "ADJDD",
+                  "name": "card1Title3",
+                  "fill": "#1E293B",
+                  "content": "面试准备",
+                  "fontFamily": "Poppins",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "DzLqI",
+                  "name": "card1Desc3",
+                  "fill": "#64748B",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "预测面试问题，生成准备清单",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Open Sans",
+                  "fontSize": 14
+                },
+                {
+                  "type": "frame",
+                  "id": "MqtLd",
+                  "name": "card1Cta3",
+                  "fill": "#10B981",
+                  "cornerRadius": 8,
+                  "padding": [
+                    10,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "7G7s3",
+                      "name": "card1CtaText3",
+                      "fill": "#FFFFFF",
+                      "content": "立即体验",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mDEHz",
+              "name": "card1_4",
+              "width": 320,
+              "height": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 12,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#E2E8F0"
+              },
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "IOe3d",
+                  "name": "card1IconBg4",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#E0E7FF",
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "5ewpy",
+                      "name": "card1Icon4",
+                      "fill": "#6366F1",
+                      "content": "🎯",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "rPvw4",
+                  "name": "card1Title4",
+                  "fill": "#1E293B",
+                  "content": "技能梳理",
+                  "fontFamily": "Poppins",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "00keG",
+                  "name": "card1Desc4",
+                  "fill": "#64748B",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "构建技能树，识别差距推荐学习",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Open Sans",
+                  "fontSize": 14
+                },
+                {
+                  "type": "frame",
+                  "id": "WF5Kq",
+                  "name": "card1Cta4",
+                  "fill": "#6366F1",
+                  "cornerRadius": 8,
+                  "padding": [
+                    10,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qE70v",
+                      "name": "card1CtaText4",
+                      "fill": "#FFFFFF",
+                      "content": "立即体验",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "vWJX1",
+          "name": "ctaSection1",
+          "width": "fill_container",
+          "height": 488,
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            100,
+            80,
+            80,
+            80
+          ],
+          "justifyContent": "end",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Dg3dI",
+              "name": "startBtn1",
+              "fill": "#2563EB",
+              "cornerRadius": 12,
+              "padding": [
+                16,
+                48
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "FcVo7",
+                  "name": "startBtnText1",
+                  "fill": "#FFFFFF",
+                  "content": "开始使用AI助手",
+                  "fontFamily": "Open Sans",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "z1trv",
+              "name": "hintText1",
+              "fill": "#94A3B8",
+              "content": "已有 50,000+ 用户正在使用",
+              "fontFamily": "Open Sans",
+              "fontSize": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "qyPre",
+      "x": 1600,
+      "y": 0,
+      "name": "聊天对话页-方案1",
+      "width": "fill_container(1440)",
+      "height": "fill_container(724)",
+      "fill": "#F8FAFC",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "qF8sI",
+          "name": "chatHeader1",
+          "width": "fill_container",
+          "height": 64,
+          "padding": [
+            0,
+            80
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "UrYON",
+              "name": "chatHeaderLeft1",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "hnVET",
+                  "name": "chatAvatar1",
+                  "fill": "#2563EB",
+                  "width": 40,
+                  "height": 40
+                },
+                {
+                  "type": "frame",
+                  "id": "Oc4Rz",
+                  "name": "chatHeaderCenter1",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "7qP6P",
+                      "name": "chatTitle1",
+                      "fill": "#1E293B",
+                      "content": "AI 求职助手",
+                      "fontFamily": "Poppins",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "tmAlG",
+                      "name": "chatStatus1",
+                      "fill": "#10B981",
+                      "content": "在线",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 12
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "EJ7B9",
+          "name": "chatContent1",
+          "width": "fill_container",
+          "height": 566,
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            24,
+            80
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "BpxCO",
+              "name": "aiMsg1",
+              "width": "fill_container",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "yyXNn",
+                  "name": "aiAvatarBubble1",
+                  "fill": "#2563EB",
+                  "width": 36,
+                  "height": 36
+                },
+                {
+                  "type": "frame",
+                  "id": "WhmkP",
+                  "name": "aiBubble1",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "9vjG1",
+                      "name": "aiBubbleContent1",
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 12,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#E2E8F0"
+                      },
+                      "layout": "vertical",
+                      "gap": 8,
+                      "padding": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "XUmOP",
+                          "name": "aiBubbleText1",
+                          "fill": "#1E293B",
+                          "content": "你好！我是你的AI求职助手",
+                          "fontFamily": "Open Sans",
+                          "fontSize": 15
+                        },
+                        {
+                          "type": "text",
+                          "id": "PE2cO",
+                          "name": "aiBubbleText2",
+                          "fill": "#1E293B",
+                          "content": "我可以帮你进行岗位匹配度分析、简历优化、面试准备和技能梳理",
+                          "fontFamily": "Open Sans",
+                          "fontSize": 15
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "OrHal",
+              "name": "quickActions1",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "MizHQ",
+                  "name": "quickActionsTitle1",
+                  "fill": "#64748B",
+                  "content": "快速开始",
+                  "fontFamily": "Open Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "1v1Yu",
+                  "name": "quickActionsGrid1",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "1czft",
+                      "name": "quickCard1_1",
+                      "width": "fill_container",
+                      "height": 72,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 12,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#E2E8F0"
+                      },
+                      "gap": 12,
+                      "padding": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ojypc",
+                          "name": "quickCard1IconBg1",
+                          "width": 48,
+                          "height": 48,
+                          "fill": "#DBEAFE",
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "t2Vth",
+                          "name": "quickCard1Title1_1",
+                          "fill": "#1E293B",
+                          "content": "岗位匹配度分析",
+                          "fontFamily": "Poppins",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Uz01Z",
+                      "name": "quickCard1_2",
+                      "width": "fill_container",
+                      "height": 72,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 12,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#E2E8F0"
+                      },
+                      "gap": 12,
+                      "padding": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "jsToM",
+                          "name": "quickCard1IconBg2",
+                          "width": 48,
+                          "height": 48,
+                          "fill": "#FED7AA",
+                          "cornerRadius": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "vp864",
+                          "name": "quickCard1Title1_2",
+                          "fill": "#1E293B",
+                          "content": "简历优化",
+                          "fontFamily": "Poppins",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "eCTCF",
+              "name": "userMsg1",
+              "rotation": 0.3130297782282544,
+              "width": 1280,
+              "height": 282,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "GW4OI",
+                  "x": 733.0123422506695,
+                  "y": -0.25671493703742954,
+                  "name": "userBubble1",
+                  "width": 500,
+                  "fill": "#2563EB",
+                  "cornerRadius": 12,
+                  "padding": 12,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "t3Lcs",
+                      "name": "userBubbleText1",
+                      "fill": "#FFFFFF",
+                      "content": "帮我分析字节跳动前端岗位匹配度",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 15
+                    }
+                  ]
+                },
+                {
+                  "type": "ellipse",
+                  "id": "6EOwu",
+                  "x": 1246.0185357460236,
+                  "y": 0.011028178499884689,
+                  "name": "userAvatar1",
+                  "fill": "#F97316",
+                  "width": 36,
+                  "height": 36
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "dac4Z",
+          "name": "chatInput1",
+          "width": 1440,
+          "height": "fill_container",
+          "gap": 12,
+          "padding": [
+            0,
+            80,
+            24,
+            80
+          ],
+          "justifyContent": "center",
+          "alignItems": "end",
+          "children": [
+            {
+              "type": "frame",
+              "id": "mKomX",
+              "name": "inputWrapper1",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "#FFFFFF",
+              "cornerRadius": 24,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#E2E8F0"
+              },
+              "gap": 12,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "59ED4",
+                  "name": "inputField1",
+                  "fill": "#94A3B8",
+                  "content": "输入消息...",
+                  "fontFamily": "Open Sans",
+                  "fontSize": 15
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yYNfg",
+              "name": "sendBtn1",
+              "width": 48,
+              "height": 48,
+              "fill": "#2563EB",
+              "cornerRadius": 24,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "EbTf8",
+                  "name": "sendIcon1",
+                  "fill": "#FFFFFF",
+                  "content": "发送",
+                  "fontFamily": "Open Sans",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "oSvKK",
+      "x": 3200,
+      "y": 0,
+      "name": "历史对话列表页-方案1",
+      "width": 1440,
+      "fill": "#F8FAFC",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "YeLqP",
+          "name": "historyHeader1",
+          "width": "fill_container",
+          "height": 64,
+          "padding": [
+            0,
+            80
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "BmiKO",
+              "name": "historyHeaderLeft1",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Hj8lO",
+                  "name": "historyTitle1",
+                  "fill": "#1E293B",
+                  "content": "历史对话",
+                  "fontFamily": "Poppins",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "GcAoI",
+              "name": "newChatBtn1",
+              "fill": "#2563EB",
+              "cornerRadius": 8,
+              "padding": [
+                10,
+                20
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "sNCws",
+                  "name": "newChatBtnText1",
+                  "fill": "#FFFFFF",
+                  "content": "+ 新对话",
+                  "fontFamily": "Open Sans",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "3ISg4",
+          "name": "historyList1",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            24,
+            80,
+            80,
+            80
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "N5NhE",
+              "name": "historyItem1_1",
+              "width": "fill_container",
+              "height": 80,
+              "fill": "#FFFFFF",
+              "cornerRadius": 12,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#E2E8F0"
+              },
+              "gap": 16,
+              "padding": 20,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "WLyc5",
+                  "name": "historyIcon1_1",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#DBEAFE",
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "5LbBJ",
+                      "name": "historyIconText1_1",
+                      "fill": "#2563EB",
+                      "content": "分析",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dxzsi",
+                  "name": "historyContent1_1",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "CfUt9",
+                      "name": "historyTitle1_1",
+                      "fill": "#1E293B",
+                      "content": "字节跳动前端岗位匹配度分析",
+                      "fontFamily": "Poppins",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "PcWYL",
+                      "name": "historyPreview1_1",
+                      "fill": "#64748B",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "综合匹配度 85%，技能完全符合，经验略有不足",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 14
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bPNEU",
+                  "name": "historyMeta1_1",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "PkqMI",
+                      "name": "historyTime1_1",
+                      "fill": "#94A3B8",
+                      "content": "2小时前",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 12
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "2939y",
+              "name": "historyItem1_2",
+              "width": "fill_container",
+              "height": 80,
+              "fill": "#FFFFFF",
+              "cornerRadius": 12,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#E2E8F0"
+              },
+              "gap": 16,
+              "padding": 20,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Cg014",
+                  "name": "historyIcon1_2",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#FED7AA",
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "X3lG3",
+                      "name": "historyIconText1_2",
+                      "fill": "#F97316",
+                      "content": "简历",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "3AQ8C",
+                  "name": "historyContent1_2",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "3YBXf",
+                      "name": "historyTitle1_2",
+                      "fill": "#1E293B",
+                      "content": "简历优化建议",
+                      "fontFamily": "Poppins",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "pORSJ",
+                      "name": "historyPreview1_2",
+                      "fill": "#64748B",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "建议量化项目成果，使用更专业的措辞",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 14
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "7gla0",
+                  "name": "historyMeta1_2",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yf9pV",
+                      "name": "historyTime1_2",
+                      "fill": "#94A3B8",
+                      "content": "昨天",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 12
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "m57IE",
+              "name": "historyItem1_3",
+              "width": "fill_container",
+              "height": 80,
+              "fill": "#FFFFFF",
+              "cornerRadius": 12,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#E2E8F0"
+              },
+              "gap": 16,
+              "padding": 20,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Jwd0h",
+                  "name": "historyIcon1_3",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#DCFCE7",
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "OOLvr",
+                      "name": "historyIconText1_3",
+                      "fill": "#10B981",
+                      "content": "面试",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "X4fik",
+                  "name": "historyContent1_3",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "o8VlB",
+                      "name": "historyTitle1_3",
+                      "fill": "#1E293B",
+                      "content": "面试准备清单",
+                      "fontFamily": "Poppins",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "5yVhU",
+                      "name": "historyPreview1_3",
+                      "fill": "#64748B",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "已生成20道面试问题预测和准备清单",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 14
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "PdIJj",
+                  "name": "historyMeta1_3",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "EQCkz",
+                      "name": "historyTime1_3",
+                      "fill": "#94A3B8",
+                      "content": "3天前",
+                      "fontFamily": "Open Sans",
+                      "fontSize": 12
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

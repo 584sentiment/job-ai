@@ -1,0 +1,41 @@
+# Docker Compose 配置文件
+# 用于在生产环境中部署求职追踪助手
+
+version: '3.8'
+
+services:
+  # 后端服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: job-ai-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    env_file:
+      - ./backend/.env
+    networks:
+      - job-ai-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  job-ai-network:
+    driver: bridge
+
+# volumes:
+#   如果需要使用 Docker 容器的 PostgreSQL，可以取消注释以下配置
+#   postgres-data:

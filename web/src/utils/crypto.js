@@ -3,15 +3,8 @@
  * 支持 Web Crypto API 和 crypto-js 两种实现
  */
 
-// 动态导入 crypto-js（避免在 Node.js 环境中报错）
-let CryptoJS = null
-
-async function loadCryptoJS() {
-  if (!CryptoJS) {
-    CryptoJS = await import('crypto-js')
-  }
-  return CryptoJS
-}
+// 静态导入 crypto-js
+import CryptoJS from 'crypto-js'
 
 /**
  * 使用 Web Crypto API 进行 SHA-256 加密（推荐）
@@ -47,7 +40,6 @@ async function hashWithWebCrypto(password) {
  */
 async function hashWithCryptoJS(password) {
   try {
-    const CryptoJS = await loadCryptoJS()
     const hash = CryptoJS.SHA256(password)
     return hash.toString(CryptoJS.enc.Hex)
   } catch (error) {

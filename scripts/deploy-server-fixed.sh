@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 求职追踪助手 - 服务器一键部署脚本
+# 求职追踪助手 - 服务器一键部署脚本（修复版）
 # 系统: OpenCloudOS 9.4
 # 域名: job.100million.top
 # IP: 124.220.83.152
@@ -8,7 +8,7 @@
 set -e  # 遇到错误立即退出
 
 echo "======================================"
-echo "求职追踪助手 - 服务器部署脚本"
+echo "求职追踪助手 - 服务器部署脚本（修复版）"
 echo "======================================"
 echo ""
 
@@ -23,7 +23,6 @@ DOMAIN="job.100million.top"
 PROJECT_DIR="/var/www/job-ai"
 DB_NAME="jobai_db"
 DB_USER="jobai_user"
-GITHUB_REPO="584sentiment/job-ai"  # 请修改为你的 GitHub 仓库
 
 # 检查是否为 root 用户
 if [ "$EUID" -ne 0 ]; then
@@ -84,21 +83,49 @@ chmod 600 $DB_INFO_FILE
 echo -e "${YELLOW}数据库信息已保存到: ${DB_INFO_FILE}${NC}"
 echo ""
 
-# ==================== 第三步：安装 Node.js 和 PM2 ====================
+# ==================== 第三步：安装 Node.js（OpenCloudOS 兼容方案）====================
 echo -e "${GREEN}第三步：安装 Node.js 和 PM2${NC}"
 echo ""
 
-# 安装 Node.js 20.x
-curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
-yum install -y nodejs
+# 方案1: 使用 EPEL 仓库安装 Node.js
+echo -e "${YELLOW}正在从 EPEL 仓库安装 Node.js...${NC}"
+yum install -y epel-release
+yum install -y nodejs npm
 
 # 验证安装
-node_version=$(node -v)
-npm_version=$(npm -v)
-echo -e "Node.js 版本: ${node_version}"
-echo -e "npm 版本: ${npm_version}"
+if command -v node &> /dev/null; then
+    node_version=$(node -v)
+    npm_version=$(npm -v)
+    echo -e "${GREEN}Node.js 安装成功！${NC}"
+    echo -e "Node.js 版本: ${node_version}"
+    echo -e "npm 版本: ${npm_version}"
+else
+    echo -e "${RED}Node.js 安装失败，尝试方案2...${NC}"
+
+    # 方案2: 使用 NVM 安装最新 Node.js
+    echo -e "${YELLOW}正在使用 NVM 安装 Node.js...${NC}"
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    nvm install 20
+    nvm use 20
+    nvm alias default 20
+
+    # 创建全局链接
+    mkdir -p /usr/local/nvm
+    ln -sf $HOME/.nvm/versions/node/v20.*/bin/node /usr/local/bin/node
+    ln -sf $HOME/.nvm/versions/node/v20.*/bin/npm /usr/local/bin/npm
+    ln -sf $HOME/.nvm/versions/node/v20.*/bin/npx /usr/local/bin/npx
+
+    node_version=$(node -v)
+    npm_version=$(npm -v)
+    echo -e "${GREEN}Node.js 安装成功！${NC}"
+    echo -e "Node.js 版本: ${node_version}"
+    echo -e "npm 版本: ${npm_version}"
+fi
 
 # 安装 PM2
+echo -e "${YELLOW}正在安装 PM2...${NC}"
 npm install -g pm2
 
 echo -e "${GREEN}Node.js 和 PM2 安装完成！${NC}"
@@ -112,26 +139,40 @@ echo ""
 mkdir -p /var/www
 
 # 询问 GitHub 仓库地址
-read -p "请输入你的 GitHub 仓库地址 (如: https://github.com/username/job-ai.git 或 git@github.com:username/job-ai.git): " REPO_URL
+echo -e "${YELLOW}请提供 GitHub 仓库信息${NC}"
+read -p "GitHub 用户名: " GITHUB_USERNAME
+read -p "仓库名称 (如: job-ai): " REPO_NAME
 
-if [ -z "$REPO_URL" ]; then
-    echo -e "${RED}仓库地址不能为空！${NC}"
+# 构建 HTTPS 克隆地址
+REPO_URL="https://github.com/${GITHUB_USERNAME}/${REPO_NAME}.git"
+
+echo -e "${YELLOW}仓库地址: ${REPO_URL}${NC}"
+read -p "确认克隆? (y/n): " CONFIRM
+
+if [ "$CONFIRM" != "y" ] && [ "$CONFIRM" != "Y" ]; then
+    echo -e "${RED}已取消${NC}"
     exit 1
 fi
+
+# 获取当前用户
+CURRENT_USER=${SUDO_USER:-root}
 
 # 克隆项目
 if [ -d "$PROJECT_DIR" ]; then
     echo -e "${YELLOW}项目目录已存在，正在更新...${NC}"
     cd $PROJECT_DIR
-    git pull origin main
+    git pull origin main || git pull origin master
 else
     echo -e "${YELLOW}正在克隆项目...${NC}"
+    echo -e "${YELLOW}如果提示输入凭证：${NC}"
+    echo -e "  用户名：${GITHUB_USERNAME}"
+    echo -e "  密码：Personal Access Token (不是 GitHub 密码)"
     git clone $REPO_URL $PROJECT_DIR
     cd $PROJECT_DIR
 fi
 
 # 设置权限
-chown -R $SUDO_USER:$SUDO_USER $PROJECT_DIR
+chown -R $CURRENT_USER:$CURRENT_USER $PROJECT_DIR
 
 echo -e "${GREEN}项目代码克隆完成！${NC}"
 echo ""
@@ -142,32 +183,48 @@ echo ""
 
 cd $PROJECT_DIR/backend
 
-# 创建 .env 文件
-cat > .env << EOF
+# 检查是否存在 .env.example
+if [ -f ".env.example" ]; then
+    cp .env.example .env
+else
+    touch .env
+fi
+
+# 更新 .env 文件
+sed -i "s|DATABASE_URL=.*|DATABASE_URL=\"postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}\"|g" .env
+sed -i "s|JWT_SECRET=.*|JWT_SECRET=\"$(openssl rand -base64 64)\"|g" .env
+sed -i "s|PORT=.*|PORT=3001|g" .env
+sed -i "s|NODE_ENV=.*|NODE_ENV=production|g" .env
+sed -i "s|CORS_ORIGIN=.*|CORS_ORIGIN=\"https://${DOMAIN}\"|g" .env
+
+# 如果 .env 为空或不存在这些配置，直接写入
+if ! grep -q "DATABASE_URL" .env; then
+    cat > .env << EOF
 DATABASE_URL="postgresql://${DB_USER}:${DB_PASSWORD}@localhost:5432/${DB_NAME}"
 JWT_SECRET="$(openssl rand -base64 64)"
 PORT=3001
 NODE_ENV=production
 CORS_ORIGIN="https://${DOMAIN}"
 EOF
+fi
 
 echo -e "${GREEN}.env 文件创建完成！${NC}"
 
 # 安装依赖
 echo -e "${YELLOW}正在安装后端依赖...${NC}"
-su - $SUDO_USER -c "cd $PROJECT_DIR/backend && npm install"
+sudo -u $CURRENT_USER bash -c "cd $PROJECT_DIR/backend && npm install"
 
 # 生成 Prisma Client
 echo -e "${YELLOW}正在生成 Prisma Client...${NC}"
-su - $SUDO_USER -c "cd $PROJECT_DIR/backend && npm run prisma:generate"
+sudo -u $CURRENT_USER bash -c "cd $PROJECT_DIR/backend && npm run prisma:generate"
 
 # 推送数据库 schema
 echo -e "${YELLOW}正在推送数据库 schema...${NC}"
-su - $SUDO_USER -c "cd $PROJECT_DIR/backend && npm run prisma:push"
+sudo -u $CURRENT_USER bash -c "cd $PROJECT_DIR/backend && npm run prisma:push"
 
 # 构建项目
 echo -e "${YELLOW}正在构建后端...${NC}"
-su - $SUDO_USER -c "cd $PROJECT_DIR/backend && npm run build"
+sudo -u $CURRENT_USER bash -c "cd $PROJECT_DIR/backend && npm run build"
 
 echo -e "${GREEN}后端配置完成！${NC}"
 echo ""
@@ -180,11 +237,11 @@ cd $PROJECT_DIR/web
 
 # 安装依赖
 echo -e "${YELLOW}正在安装前端依赖...${NC}"
-su - $SUDO_USER -c "cd $PROJECT_DIR/web && npm install"
+sudo -u $CURRENT_USER bash -c "cd $PROJECT_DIR/web && npm install"
 
 # 构建生产版本
 echo -e "${YELLOW}正在构建前端...${NC}"
-su - $SUDO_USER -c "cd $PROJECT_DIR/web && npm run build"
+sudo -u $CURRENT_USER bash -c "cd $PROJECT_DIR/web && npm run build"
 
 echo -e "${GREEN}前端构建完成！${NC}"
 echo ""
@@ -219,9 +276,9 @@ module.exports = {
 EOF
 
 # 启动 PM2 服务
-su - $SUDO_USER -c "cd $PROJECT_DIR/backend && pm2 start ecosystem.config.js"
-su - $SUDO_USER -c "pm2 save"
-su - $SUDO_USER -c "pm2 startup"
+sudo -u $CURRENT_USER bash -c "cd $PROJECT_DIR/backend && pm2 start ecosystem.config.js"
+sudo -u $CURRENT_USER bash -c "pm2 save"
+sudo -u $CURRENT_USER bash -c "pm2 startup"
 
 echo -e "${GREEN}PM2 配置完成！${NC}"
 echo ""

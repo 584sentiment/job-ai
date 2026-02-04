@@ -19,7 +19,8 @@ export function createApp(): Application {
   app.use(helmet())
 
   // CORS 配置
-  // CORS 配置
+  const isDevelopment = process.env.NODE_ENV === 'development'
+
   app.use(cors({
     origin: (requestOrigin, callback) => {
       // 允许没有 origin 的请求（比如 curl 或移动端）
@@ -27,19 +28,37 @@ export function createApp(): Application {
         return callback(null, true)
       }
 
-      // 获取环境变量配置的白名单
+      // 开发环境：允许所有本地请求
+      if (isDevelopment) {
+        // 允许 localhost（包括 IPv4 和 IPv6）
+        if (
+          requestOrigin.includes('localhost') ||
+          requestOrigin.includes('127.0.0.1') ||
+          requestOrigin.includes('[::1]') ||
+          requestOrigin.startsWith('http://[::')  // IPv6 地址
+        ) {
+          return callback(null, true)
+        }
+        // 开发环境下也允许明确的白名单
+        const allowedOrigins = process.env.CORS_ORIGIN
+          ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+          : []
+        if (allowedOrigins.includes(requestOrigin)) {
+          return callback(null, true)
+        }
+      }
+
+      // 生产环境：严格检查白名单
       const allowedOrigins = process.env.CORS_ORIGIN
         ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
         : []
 
       // 检查逻辑：
       // 1. 在白名单中
-      // 2. 是开发环境 localhost
-      // 3. 是 Vercel 部署域名 (.vercel.app)
-      // 4. 是自定义域名 (.100million.top)
+      // 2. 是 Vercel 部署域名 (.vercel.app)
+      // 3. 是自定义域名 (.100million.top)
       if (
         allowedOrigins.includes(requestOrigin) ||
-        requestOrigin.includes('localhost') ||
         requestOrigin.endsWith('.vercel.app') ||
         requestOrigin.endsWith('.100million.top')
       ) {
