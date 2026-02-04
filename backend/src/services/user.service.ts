@@ -1,7 +1,7 @@
 /**
  * 用户服务层
  */
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import PrismaConfig from '@/config/database'
 import { BadRequestError, NotFoundError, UnauthorizedError } from '@/utils/error'
 import type { User, Prisma } from '@prisma/client'
