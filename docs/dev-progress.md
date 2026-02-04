@@ -21,6 +21,7 @@
 - 2025-02-01: **完成腾讯云服务器部署指南**（完整的生产环境部署方案）
 - 2025-02-01: **完成 GitHub Actions 自动部署配置**（workflow 文件 + 配置文档）
 - 2025-02-05: **完成 Monorepo 优化**（pnpm workspace 架构、消除代码重复）
+- 2025-02-05: **完成腾讯云服务器部署配置**（Docker + GitHub Actions CI/CD）
 
 ## 当前进度
 
@@ -281,6 +282,41 @@
   - **文档完善** (100%)
     - packages/shared/README.md - 共享包使用指南
     - docs/monorepo-migration.md - 迁移完成报告
+- ✅ **腾讯云服务器部署配置完成** (2025-02-05)
+  - **Docker 容器化** (100%)
+    - web/Dockerfile - 前端 Docker 镜像（多阶段构建 + Nginx）
+    - web/nginx.conf - 前端 Nginx 配置（健康检查 + Gzip + 缓存）
+    - backend/Dockerfile - 后端 Docker 镜像（多阶段构建 + 安全加固）
+    - docker-compose.yml - 容器编排配置（链接 1Panel PostgreSQL）
+  - **GitHub Actions CI/CD** (100%)
+    - .github/workflows/deploy-production.yml - 自动部署 workflow
+    - 构建验证（pnpm + TypeScript）
+    - 分步部署（后端 + 前端）
+    - 健康检查（自动验证服务状态）
+  - **数据库备份** (100%)
+    - scripts/backup-db.sh - 自动备份脚本
+    - 定时任务配置（每天凌晨 2 点）
+    - 备份保留策略（7 天）
+  - **部署文档** (100%)
+    - docs/deployment-guide.md - 完整部署指南
+    - 第一步：PostgreSQL 配置（创建数据库和用户）
+    - 第二步：部署文件准备（Docker + 网络）
+    - 第三步：Nginx Proxy Manager 配置（反向代理 + SSL）
+    - 第四步：服务启动（容器构建 + 数据库初始化）
+    - 第五步：GitHub Actions 配置（SSH 密钥 + Secrets）
+    - 第六步：CI/CD 测试（自动部署验证）
+    - 第七步：数据库备份（定时任务配置）
+  - **服务器初始化脚本** (100%)
+    - scripts/deploy-setup.sh - 一键部署脚本
+    - Docker 网络配置
+    - 环境变量检查
+    - 容器启动和初始化
+    - 备份任务配置
+  - **环境变量配置** (100%)
+    - backend/.env.example - 更新生产环境配置说明
+    - DATABASE_URL - PostgreSQL 连接字符串
+    - JWT_SECRET - 强随机密钥生成
+    - CORS_ORIGIN - 生产域名配置
 
 ### 进行中
 - 无(核心功能已完成)
@@ -435,6 +471,7 @@
 | **后端API开发完成** | **2025-01-29** | **✅已完成** | **Express + TypeScript + Prisma** |
 | **Web端与后端对接** | **2025-01-30** | **✅已完成** | **完整API对接、评论功能** |
 | **Monorepo架构优化** | 2025-02-05 | ✅已完成 | **pnpm workspace、共享包、消除重复** |
+| **腾讯云服务器部署配置** | 2025-02-05 | ✅已完成 | **Docker + GitHub Actions CI/CD** |
 | 用户体验增强 | 待定 | ⏳待开始 | 编辑个人资料、系统设置、便捷功能 |
 | Web端功能增强 | 待定 | ⏳待开始 | 岗位编辑、总结详情、导出功能 |
 | 便捷功能开发 | 待定 | ⏳待开始 | 批量操作、草稿、分享、撤销 |

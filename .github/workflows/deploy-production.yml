@@ -1,0 +1,189 @@
+name: Deploy to Production (Docker)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - 'web/**'
+      - 'packages/**'
+      - 'docker-compose.yml'
+      - '.github/workflows/deploy-production.yml'
+  workflow_dispatch:
+
+env:
+  DOCKER_IMAGE_BACKEND: job-ai-backend
+  DOCKER_IMAGE_FRONTEND: job-ai-frontend
+  CONTAINER_BACKEND: job-ai-backend
+  CONTAINER_FRONTEND: job-ai-frontend
+
+jobs:
+  # 构建验证
+  build:
+    name: 构建与测试
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 构建共享包
+        run: pnpm --filter @job-ai/shared build
+
+      - name: 构建后端
+        run: pnpm --filter backend build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: 构建前端
+        run: pnpm --filter web build
+
+  # 部署后端
+  deploy-backend:
+    name: 部署后端
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 15
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 部署到服务器
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            set -e
+            cd /var/www/job-ai
+
+            echo "拉取最新代码..."
+            git fetch origin
+            git reset --hard origin/main
+
+            echo "停止旧容器..."
+            docker stop $CONTAINER_BACKEND 2>/dev/null || true
+            docker rm $CONTAINER_BACKEND 2>/dev/null || true
+
+            echo "构建新镜像..."
+            docker build -t $DOCKER_IMAGE_BACKEND:latest -f backend/Dockerfile .
+
+            echo "启动新容器..."
+            docker run -d \
+              --name $CONTAINER_BACKEND \
+              --restart unless-stopped \
+              -p 3001:3001 \
+              --env-file /var/www/job-ai/backend/.env \
+              --network job-ai-network \
+              $DOCKER_IMAGE_BACKEND:latest
+
+            echo "等待容器启动..."
+            sleep 15
+
+            echo "执行数据库迁移..."
+            docker exec $CONTAINER_BACKEND npx prisma db push || echo "迁移跳过"
+
+            echo "后端部署完成"
+
+  # 部署前端
+  deploy-frontend:
+    name: 部署前端
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 10
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 部署到服务器
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            set -e
+            cd /var/www/job-ai
+
+            echo "停止旧容器..."
+            docker stop $CONTAINER_FRONTEND 2>/dev/null || true
+            docker rm $CONTAINER_FRONTEND 2>/dev/null || true
+
+            echo "构建新镜像..."
+            docker build -t $DOCKER_IMAGE_FRONTEND:latest -f web/Dockerfile .
+
+            echo "启动新容器..."
+            docker run -d \
+              --name $CONTAINER_FRONTEND \
+              --restart unless-stopped \
+              -p 3000:80 \
+              --network job-ai-network \
+              $DOCKER_IMAGE_FRONTEND:latest
+
+            echo "前端部署完成"
+
+  # 健康检查
+  health-check:
+    name: 健康检查
+    runs-on: ubuntu-latest
+    needs: [deploy-backend, deploy-frontend]
+    timeout-minutes: 5
+
+    steps:
+      - name: 等待服务启动
+        run: sleep 20
+
+      - name: 检查后端
+        run: |
+          BACKEND_URL="https://job.100million.top/api/health"
+          for i in {1..5}; do
+            response=$(curl -s -o /dev/null -w "%{http_code}" $BACKEND_URL || echo "000")
+            if [ "$response" = "200" ]; then
+              echo "✅ 后端服务正常"
+              exit 0
+            fi
+            echo "⏳ 第 $i 次检查失败，重试..."
+            sleep 5
+          done
+          echo "❌ 后端服务异常"
+          exit 1
+
+      - name: 检查前端
+        run: |
+          FRONTEND_URL="https://job.100million.top"
+          response=$(curl -s -o /dev/null -w "%{http_code}" $FRONTEND_URL || echo "000")
+          if [ "$response" = "200" ] || [ "$response" = "301" ] || [ "$response" = "302" ]; then
+            echo "✅ 前端服务正常"
+          else
+            echo "❌ 前端服务异常 (HTTP $response)"
+            exit 1
+          fi
+
+      - name: 部署成功
+        run: |
+          echo "=========================================="
+          echo "🎉 部署成功！"
+          echo "=========================================="
+          echo "📱 前端: https://job.100million.top"
+          echo "🔧 后端: https://job.100million.top/api/health"

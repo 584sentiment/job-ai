@@ -7,8 +7,8 @@ services:
   # 后端服务
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: job-ai-backend
     restart: unless-stopped
     ports:
@@ -18,6 +18,8 @@ services:
       - PORT=3001
     env_file:
       - ./backend/.env
+    external_links:
+      - postgres:postgres  # 链接到 1Panel 的 PostgreSQL 容器
     networks:
       - job-ai-network
     healthcheck:
@@ -32,9 +34,34 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # 前端服务
+  frontend:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /api
+    container_name: job-ai-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    networks:
+      - job-ai-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 networks:
   job-ai-network:
-    driver: bridge
+    external: true  # 使用外部网络（需要先创建）
 
 # volumes:
 #   如果需要使用 Docker 容器的 PostgreSQL，可以取消注释以下配置
