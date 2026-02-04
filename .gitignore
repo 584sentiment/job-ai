@@ -3,3 +3,10 @@ docs/API文档
 .DS_Store
 .env.development
 .env.product
+
+# 共享包编译输出
+packages/shared/dist
+packages/*/dist
+
+# pnpm
+.pnpm-store

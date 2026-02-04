@@ -1,7 +1,26 @@
 {
-    "scripts": {
-        "build": "cd web && npm install && npm run build && cd ../backend && npm install && npm run vercel-build",
-        "dev": "cd web && npm run dev",
-        "start": "cd backend && npm run dev"
-    }
+  "name": "job-ai-monorepo",
+  "version": "1.0.0",
+  "description": "求职追踪助手 - Monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter job-tracker-web dev",
+    "dev:web": "pnpm --filter job-tracker-web dev",
+    "dev:backend": "pnpm --filter job-ai-backend dev",
+    "build": "pnpm build:shared && pnpm build:web && pnpm build:backend",
+    "build:shared": "pnpm --filter @job-ai/shared build",
+    "build:web": "pnpm --filter job-tracker-web build",
+    "build:backend": "pnpm --filter job-ai-backend build",
+    "start": "pnpm --filter job-ai-backend start",
+    "type-check": "pnpm -r type-check",
+    "clean": "pnpm -r clean",
+    "install:all": "pnpm install"
+  },
+  "keywords": [
+    "job-tracker",
+    "monorepo",
+    "pnpm"
+  ],
+  "author": "",
+  "license": "MIT"
 }
