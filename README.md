@@ -542,6 +542,34 @@ const response = await AIHelper.chat(message);
 - ✅ 工具函数库
 - ✅ 本地存储封装
 
+---
+
+## 📚 文档导航
+
+### 快速开始
+- **[文档索引](docs/INDEX.md)** - 📖 所有文档的分类索引
+- **[CLAUDE.md](CLAUDE.md)** - 📖 项目开发指南（必读）
+
+### 配置指南
+- **[docs/QUICK_START.md](docs/QUICK_START.md)** - 快速开始
+- **[docs/QUICK_START_LOCAL_DB.md](docs/QUICK_START_LOCAL_DB.md)** - 本地数据库配置
+- **[docs/LOCAL_DB_SETUP_DONE.md](docs/LOCAL_DB_SETUP_DONE.md)** - 配置完成总结
+
+### 项目文档
+- **[docs/MONOREPO_SUMMARY.md](docs/MONOREPO_SUMMARY.md)** - Monorepo 优化总结
+- **[docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md)** - 项目状态报告
+- **[docs/TESTING_SUMMARY.md](docs/TESTING_SUMMARY.md)** - 测试总结
+
+### 部署文档
+- **[docs/DEPLOYMENT_CHECKLIST.md](docs/DEPLOYMENT_CHECKLIST.md)** - 部署检查清单
+
+### 脚本工具
+- 所有脚本位于 **[scripts/](scripts/)** 目录
+- **[scripts/setup-local-db.sh](scripts/setup-local-db.sh)** - 本地数据库配置
+- **[scripts/test-backend.sh](scripts/test-backend.sh)** - 后端测试
+
+---
+
 ## 📄 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
