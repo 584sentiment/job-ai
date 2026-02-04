@@ -145,7 +145,7 @@
 import { ref, computed, onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useSummariesStore } from '@/store/summaries';
-import type { SummaryCreateRequest } from '@/types';
+import type { SummaryCreateRequest } from '@job-ai/shared';
 
 const route = useRoute();
 const router = useRouter();

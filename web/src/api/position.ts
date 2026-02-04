@@ -11,7 +11,7 @@ import type {
   PositionDetailResponse,
   PositionMutationResponse,
   ApiResponse,
-} from '@/types';
+} from '@job-ai/shared';
 
 /**
  * 获取岗位列表

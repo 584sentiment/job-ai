@@ -9,7 +9,7 @@ import type {
   PrepListItem,
   AIMessage,
   AIResponse
-} from '@/types'
+} from '@job-ai/shared'
 
 /**
  * AI功能API类

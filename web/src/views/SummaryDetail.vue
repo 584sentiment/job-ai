@@ -122,7 +122,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useSummariesStore } from '@/store/summaries';
-import type { Summary } from '@/types';
+import type { Summary } from '@job-ai/shared';
 
 const route = useRoute();
 const router = useRouter();

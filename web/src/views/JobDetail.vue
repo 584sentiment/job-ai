@@ -614,10 +614,10 @@ import StatusUpdateDialog from '@/components/StatusUpdateDialog.vue'
 import { getStatusLabel } from '@/constants/position'
 import { formatDate } from '@/utils/mappers'
 import * as positionApi from '@/api/position'
-import { PositionStatus, type Interview, type InterviewCreateRequest } from '@/types'
+import { PositionStatus, type Interview, type InterviewCreateRequest } from '@job-ai/shared'
 import { useDialog, useMessage } from 'naive-ui'
 import aiAPI from '@/api/ai'
-import type { JobMatchAnalysis } from '@/types'
+import type { JobMatchAnalysis } from '@job-ai/shared'
 
 const route = useRoute()
 const router = useRouter()

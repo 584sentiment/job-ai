@@ -4,7 +4,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import * as commentApi from '@/api/experience'
-import type { ExperienceComment } from '@/types'
+import type { ExperienceComment } from '@job-ai/shared'
 
 export const useCommentStore = defineStore('comment', () => {
   // 状态

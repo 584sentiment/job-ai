@@ -1,8 +1,8 @@
 /**
  * API 请求工具（TypeScript 版本）
  */
-import { ResponseCode, HttpStatusCode } from '@/types'
-import type { ApiResponse } from '@/types'
+import { ResponseCode, HttpStatusCode } from '@job-ai/shared'
+import type { ApiResponse } from '@job-ai/shared'
 import router from '@/router'
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'

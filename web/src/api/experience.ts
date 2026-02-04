@@ -17,7 +17,7 @@ import type {
   ExperienceCommentListResponse,
   ExperienceFavoriteResponse,
   ApiResponse,
-} from '@/types';
+} from '@job-ai/shared';
 
 /**
  * ==================== 面经 CRUD ====================

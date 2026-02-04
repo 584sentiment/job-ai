@@ -139,7 +139,7 @@ import { useMessage } from 'naive-ui'
 import NavBar from '@/components/NavBar.vue'
 import BottomNav from '@/components/BottomNav.vue'
 import aiAPI from '@/api/ai'
-import type { AIMessage } from '@/types'
+import type { AIMessage } from '@job-ai/shared'
 
 const message = useMessage()
 const conversations = ref<AIMessage[]>([])

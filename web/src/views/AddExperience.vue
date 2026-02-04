@@ -305,7 +305,7 @@ import {
 } from 'naive-ui';
 import { useExperienceStore } from '@/store/experiences';
 import { useJobsStore } from '@/store/jobs';
-import type { ExperienceCreateRequest } from '@/types';
+import type { ExperienceCreateRequest } from '@job-ai/shared';
 import aiApi from '@/api/ai';
 import TiptapEditor from '@/components/TiptapEditor.vue';
 

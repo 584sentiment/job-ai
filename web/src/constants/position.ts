@@ -5,7 +5,7 @@ import {
   PositionStatus,
   PositionStatusLabels,
   PositionStatusClasses
-} from '@/types'
+} from '@job-ai/shared'
 
 // 重新导出枚举
 export { PositionStatus }

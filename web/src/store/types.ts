@@ -1,7 +1,7 @@
 /**
  * Store 类型定义
  */
-import type { Position, PositionStatus } from '@/types'
+import type { Position, PositionStatus } from '@job-ai/shared'
 
 /**
  * 岗位 Store 状态

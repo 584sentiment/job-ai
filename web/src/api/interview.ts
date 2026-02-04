@@ -11,7 +11,7 @@ import type {
   InterviewResponse,
   InterviewQueryParams,
   ApiResponse,
-} from '@/types';
+} from '@job-ai/shared';
 
 /**
  * 创建面试记录

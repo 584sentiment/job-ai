@@ -99,7 +99,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
-import { PositionStatus } from '@/types'
+import { PositionStatus } from '@job-ai/shared'
 
 interface Props {
   open: boolean

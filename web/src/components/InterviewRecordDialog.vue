@@ -211,9 +211,9 @@
 import { ref, watch, computed } from 'vue'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
 import { NSelect, NDatePicker, NInput, useMessage } from 'naive-ui'
-import { InterviewRound, InterviewForm, type Interview, type InterviewCreateRequest } from '@/types'
+import { InterviewRound, InterviewForm, type Interview, type InterviewCreateRequest } from '@job-ai/shared'
 import aiAPI from '@/api/ai'
-import type { PrepListItem } from '@/types'
+import type { PrepListItem } from '@job-ai/shared'
 
 interface Props {
   open: boolean

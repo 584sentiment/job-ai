@@ -4,7 +4,7 @@
  */
 import { Response } from 'express'
 import { ResponseCode, ResponseMessage } from '@/constants/responseCode'
-import type { ApiResponse } from '@/types'
+import type { ApiResponse } from '@job-ai/shared'
 
 /**
  * 将 BigInt 转换为字符串（用于 JSON 序列化）

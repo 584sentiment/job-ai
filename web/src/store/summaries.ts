@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { getSummariesPaginated, createSummary, updateSummary, deleteSummary, getSummaryById } from '@/api/summary'
-import type { Summary, SummaryDisplay, SummaryCreateRequest, SummaryUpdateRequest } from '@/types'
+import type { Summary, SummaryDisplay, SummaryCreateRequest, SummaryUpdateRequest } from '@job-ai/shared'
 
 export const useSummariesStore = defineStore('summaries', () => {
     // 状态

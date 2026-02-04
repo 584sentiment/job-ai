@@ -271,7 +271,7 @@ import { useRouter } from 'vue-router'
 import { useJobsStore } from '@/store/jobs'
 import { getStatusLabel, getStatusClass } from '@/constants/position'
 import { getGradientClass, formatDate } from '@/utils/mappers'
-import { PositionStatus } from '@/types'
+import { PositionStatus } from '@job-ai/shared'
 import { NPagination } from 'naive-ui'
 import { PAGE_SIZES } from '@/constants/common'
 

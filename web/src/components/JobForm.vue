@@ -361,7 +361,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { PositionStatus } from '@/types';
+import { PositionStatus } from '@job-ai/shared';
 import { NSelect, NDatePicker, useMessage } from 'naive-ui';
 import aiAPI from '@/api/ai';
 

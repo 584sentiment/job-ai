@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "求职追踪助手 - 共享类型和工具",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "commonjs",
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",

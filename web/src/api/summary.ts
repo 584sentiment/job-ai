@@ -11,7 +11,7 @@ import type {
     SummaryResponse,
     SummaryQueryParams,
     ApiResponse,
-} from '@/types';
+} from '@job-ai/shared';
 
 /**
  * 创建总结

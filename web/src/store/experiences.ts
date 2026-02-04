@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import * as experienceApi from '@/api/experience'
-import type { Experience, ExperienceCreateRequest, ExperienceUpdateRequest, ExperienceQueryParams } from '@/types'
+import type { Experience, ExperienceCreateRequest, ExperienceUpdateRequest, ExperienceQueryParams } from '@job-ai/shared'
 
 export const useExperienceStore = defineStore('experience', () => {
   // 状态

@@ -154,7 +154,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useJobsStore } from '@/store/jobs'
 import BottomNav from '@/components/BottomNav.vue'
-import type { Interview } from '@/types'
+import type { Interview } from '@job-ai/shared'
 
 const router = useRouter()
 const jobsStore = useJobsStore()

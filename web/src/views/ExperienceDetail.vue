@@ -419,9 +419,9 @@ import { useExperienceStore } from '@/store/experiences'
 import { useCommentStore } from '@/store/comments'
 import { useAuthStore } from '@/store/auth'
 import { useMessage } from 'naive-ui'
-import type { Position } from '@/types'
+import type { Position } from '@job-ai/shared'
 import { getPositionById } from '@/api/position'
-import { PositionStatus, PositionStatusLabels, PositionStatusClasses } from '@/types/enums'
+import { PositionStatus, PositionStatusLabels, PositionStatusClasses } from '@job-ai/shared'
 
 const route = useRoute()
 const router = useRouter()

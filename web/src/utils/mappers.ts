@@ -2,8 +2,8 @@
  * 数据映射工具（TypeScript 版本）
  * 由于类型定义已与后端保持一致，转换逻辑已大大简化
  */
-import type { Position, PositionCreateRequest } from '@/types'
-import { PositionStatus, PositionStatusLabels, PositionStatusClasses } from '@/types'
+import type { Position, PositionCreateRequest } from '@job-ai/shared'
+import { PositionStatus, PositionStatusLabels, PositionStatusClasses } from '@job-ai/shared'
 
 /**
  * 格式化时间戳为日期字符串（YYYY-MM-DD）

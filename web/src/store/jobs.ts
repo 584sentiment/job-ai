@@ -10,7 +10,7 @@ import {
   Interview,
   InterviewCreateRequest,
   InterviewUpdateRequest,
-} from '@/types';
+} from '@job-ai/shared';
 
 export const useJobsStore = defineStore('jobs', () => {
   // 状态

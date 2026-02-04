@@ -8,7 +8,7 @@ import type {
   UserInfoApiResponse,
   UserStatsApiResponse,
   ApiResponse
-} from '@/types'
+} from '@job-ai/shared'
 
 /**
  * 用户注册
