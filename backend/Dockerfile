@@ -1,22 +1,25 @@
 # 后端服务 Dockerfile
+# 构建上下文：项目根目录（/var/www/job-ai）
+# 注意：所有路径都需要加上 backend/ 前缀
+
 # 阶段 1: 构建阶段
 FROM node:20-alpine AS builder
 
 # 设置工作目录
 WORKDIR /app
 
-# 复制 package 文件
-COPY package*.json ./
+# 复制 package 文件（从 backend 目录）
+COPY backend/package*.json ./
 
-# 复制 prisma schema（如果存在）
+# 复制 prisma schema
 RUN mkdir -p ./prisma
-COPY prisma/schema.prisma ./prisma/schema.prisma
+COPY backend/prisma/schema.prisma ./prisma/schema.prisma
 
 # 安装依赖
 RUN npm ci
 
-# 复制源代码
-COPY . .
+# 复制源代码（从 backend 目录）
+COPY backend/ ./
 
 # 生成 Prisma Client
 RUN npx prisma generate
@@ -37,8 +40,8 @@ RUN addgroup -g 1001 -S nodejs && \
 # 设置工作目录
 WORKDIR /app
 
-# 复制 package 文件
-COPY package*.json ./
+# 复制 package 文件（从 backend 目录）
+COPY backend/package*.json ./
 
 # 只安装生产依赖
 RUN npm ci --only=production && \
@@ -48,9 +51,6 @@ RUN npm ci --only=production && \
 COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
-
-# 确保目录结构正确
-RUN mkdir -p ./prisma && ls -la ./prisma
 
 # 切换到非 root 用户
 USER nodejs
