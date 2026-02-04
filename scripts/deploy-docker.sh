@@ -98,19 +98,102 @@ echo ""
 # ==================== 第三步：克隆/更新代码 ====================
 print_info "获取项目代码..."
 
+# 配置 Git 以解决网络问题
+print_info "配置 Git 网络设置..."
+git config --global http.postBuffer 524288000
+git config --global http.lowSpeedLimit 0
+git config --global http.lowSpeedTime 999999
+git config --global core.compression 0
+
+# 函数：带重试的 Git 操作
+git_retry() {
+    local max_attempts=3
+    local attempt=1
+    local command="$1"
+
+    while [ $attempt -le $max_attempts ]; do
+        print_info "Git 操作尝试 $attempt/$max_attempts..."
+        if eval "$command"; then
+            return 0
+        fi
+        attempt=$((attempt + 1))
+        if [ $attempt -le $max_attempts ]; then
+            print_warning "Git 操作失败，5秒后重试..."
+            sleep 5
+        fi
+    done
+    return 1
+}
+
 if [ -d ".git" ]; then
     print_info "项目已存在，拉取最新代码..."
-    git fetch origin
-    git reset --hard origin/main
-    print_success "代码更新完成"
+
+    if git_retry "git fetch origin"; then
+        git reset --hard origin/main
+        print_success "代码更新完成"
+    else
+        print_error "无法从 GitHub 拉取代码"
+        print_warning "可能的原因："
+        echo "  1. 网络连接问题"
+        echo "  2. GitHub 访问受限"
+        echo ""
+        print_info "建议解决方案："
+        echo "  方案1: 手动上传代码到服务器"
+        echo "  方案2: 使用代理"
+        echo "  方案3: 使用 SSH 密钥克隆（推荐）"
+        echo ""
+        exit 1
+    fi
 else
     if [ -z "$REPO_URL" ]; then
-        echo -e "${YELLOW}请输入 GitHub 仓库地址 (例如: https://github.com/username/job-ai.git)${NC}"
-        read -p "仓库地址: " REPO_URL
+        echo -e "${YELLOW}请选择代码获取方式:${NC}"
+        echo "  1. HTTPS 克隆 (可能不稳定)"
+        echo "  2. SSH 克隆 (推荐，需要配置密钥)"
+        echo "  3. 跳过，手动上传代码"
+        echo ""
+        read -p "选择 (1/2/3, 默认 1): " CLONE_METHOD
+        CLONE_METHOD=${CLONE_METHOD:-1}
+
+        case $CLONE_METHOD in
+            1)
+                read -p "请输入 GitHub 仓库地址 (例如: https://github.com/584sentiment/job-ai.git): " REPO_URL
+                ;;
+            2)
+                read -p "请输入 GitHub SSH 地址 (例如: git@github.com:584sentiment/job-ai.git): " REPO_URL
+                ;;
+            3)
+                print_warning "跳过代码下载，请手动上传代码到 $PROJECT_DIR"
+                exit 0
+                ;;
+            *)
+                print_error "无效选择"
+                exit 1
+                ;;
+        esac
     fi
 
-    git clone $REPO_URL .
-    print_success "代码克隆完成"
+    if git_retry "git clone $REPO_URL ."; then
+        print_success "代码克隆完成"
+    else
+        print_error "代码克隆失败"
+        print_info "请尝试以下方案："
+        echo ""
+        echo "方案1: 手动上传代码"
+        echo "  在本地执行："
+        echo "    tar czf job-ai.tar.gz ."
+        echo "    scp job-ai.tar.gz root@你的服务器IP:/var/www/"
+        echo ""
+        echo "  在服务器执行："
+        echo "    cd /var/www/job-ai"
+        echo "    tar xzf /var/www/job-ai.tar.gz"
+        echo ""
+        echo "方案2: 使用 SSH 克隆"
+        echo "  1. 生成 SSH 密钥: ssh-keygen -t ed25519"
+        echo "  2. 复制公钥到 GitHub: cat ~/.ssh/id_ed25519.pub"
+        echo "  3. 使用 SSH 地址克隆: git@github.com:584sentiment/job-ai.git"
+        echo ""
+        exit 1
+    fi
 fi
 
 echo ""
