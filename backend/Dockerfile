@@ -7,7 +7,10 @@ WORKDIR /app
 
 # 复制 package 文件
 COPY package*.json ./
-COPY prisma ./prisma/
+
+# 复制 prisma schema（如果存在）
+RUN mkdir -p ./prisma
+COPY prisma/schema.prisma ./prisma/schema.prisma
 
 # 安装依赖
 RUN npm ci
@@ -45,6 +48,9 @@ RUN npm ci --only=production && \
 COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+
+# 确保目录结构正确
+RUN mkdir -p ./prisma && ls -la ./prisma
 
 # 切换到非 root 用户
 USER nodejs

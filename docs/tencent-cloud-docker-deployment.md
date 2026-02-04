@@ -278,9 +278,11 @@ location /api/ {
 | `SERVER_USERNAME` | SSH 登录用户名 | `root` 或 `ubuntu` |
 | `SSH_PRIVATE_KEY` | SSH 私钥内容 | （第一步生成的私钥） |
 | `SERVER_PORT` | SSH 端口（可选） | `22` |
-| `DATABASE_URL` | 数据库连接字符串 | `postgresql://jobai_user:password@localhost:5432/jobai_db` |
+| `DATABASE_URL` | 数据库连接字符串 | `postgresql://jobai_user:zM8m5eyP43re2hbZ@localhost:5432/jobai_db` |
 | `JWT_SECRET` | JWT 密钥 | （随机生成的密钥） |
 | `DOMAIN` | 域名 | `job.100million.top` |
+
+zM8m5eyP43re2hbZ
 
 **重要**：`SSH_PRIVATE_KEY` 的值应该是完整的私钥内容，包括：
 ```
