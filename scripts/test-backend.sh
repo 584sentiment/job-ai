@@ -7,8 +7,8 @@ set -e
 echo "=== 后端服务测试脚本 ==="
 echo ""
 
-# 切换到后端目录
-cd "$(dirname "$0")/backend"
+# 切换到后端目录（脚本在 scripts/，backend 在项目根目录）
+cd "$(dirname "$0")/.."
 
 echo "当前目录: $(pwd)"
 echo ""
