@@ -1,11 +1,18 @@
 # 后端服务 Dockerfile
 # 构建上下文：项目根目录（/var/www/job-ai）
-# 注意：所有路径都需要加上 backend/ 前缀
 
 # 阶段 1: 构建阶段
 FROM node:20-alpine AS builder
 
-# 设置工作目录
+# 安装 OpenSSL 和构建依赖（Prisma 需要）
+RUN apk add --no-cache \
+    openssl \
+    openssl1.1-compat \
+    curl \
+    python3 \
+    make \
+    g++
+
 WORKDIR /app
 
 # 复制 package 文件（从 backend 目录）
@@ -30,14 +37,18 @@ RUN npm run build
 # 阶段 2: 生产阶段
 FROM node:20-alpine AS production
 
-# 安装 dumb-init 用于正确的信号处理
-RUN apk add --no-cache dumb-init
+# 安装运行时依赖
+RUN apk add --no-cache \
+    dumb-init \
+    openssl \
+    openssl1.1-compat \
+    libgcc \
+    stdlibc++
 
 # 创建非 root 用户
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
 
-# 设置工作目录
 WORKDIR /app
 
 # 复制 package 文件（从 backend 目录）
@@ -51,6 +62,9 @@ RUN npm ci --only=production && \
 COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+
+# 设置 OpenSSL 库路径
+ENV LD_LIBRARY_PATH=/usr/lib:/usr/local/lib:/lib:/lib64
 
 # 切换到非 root 用户
 USER nodejs
