@@ -7,7 +7,6 @@ FROM node:20-alpine AS builder
 # 安装 OpenSSL 和构建依赖（Prisma 需要）
 RUN apk add --no-cache \
     openssl \
-    openssl1.1-compat \
     curl \
     python3 \
     make \
@@ -22,8 +21,11 @@ COPY backend/package*.json ./
 RUN mkdir -p ./prisma
 COPY backend/prisma/schema.prisma ./prisma/schema.prisma
 
-# 安装依赖
-RUN npm ci
+# 关键：复制 shared 包（npm 无法处理 workspace:* 依赖）
+COPY packages/shared/ ../packages/shared/
+
+# 安装依赖（使用 npm install 而不是 npm ci）
+RUN npm install
 
 # 复制源代码（从 backend 目录）
 COPY backend/ ./

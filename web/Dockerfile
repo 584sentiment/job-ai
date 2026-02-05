@@ -7,13 +7,15 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # 复制 package 文件
-COPY package*.json ./
+COPY web/package*.json ./
+# 关键：复制 shared 包（npm 无法处理 workspace:* 依赖）
+COPY packages/shared/ ../packages/shared/
 
-# 安装依赖
-RUN npm ci
+# 安装依赖（使用 npm install 而不是 npm ci）
+RUN npm install
 
 # 复制源代码
-COPY . .
+COPY web/ ./
 
 # 构建生产版本
 ARG VITE_API_BASE_URL=/api
