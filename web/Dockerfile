@@ -24,7 +24,7 @@ RUN npm run build
 FROM nginx:alpine AS production
 
 # 复制自定义 Nginx 配置
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY web/nginx.conf /etc/nginx/conf.d/default.conf
 
 # 从构建阶段复制构建产物
 COPY --from=builder /app/dist /usr/share/nginx/html
