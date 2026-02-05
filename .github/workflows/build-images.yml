@@ -15,8 +15,8 @@ on:
 env:
   # 腾讯云镜像仓库地址
   REGISTRY: ccr.ccs.tencentyun.com
-  # 你的命名空间，需要修改
-  NAMESPACE: your-namespace
+  # 你的命名空间
+  NAMESPACE: job-ai
   IMAGE_NAME_BACKEND: job-ai-backend
   IMAGE_NAME_FRONTEND: job-ai-frontend
 

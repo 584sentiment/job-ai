@@ -7,7 +7,7 @@ version: '3.8'
 services:
   # 后端服务
   backend:
-    image: ccr.ccs.tencentyun.com/your-namespace/job-ai-backend:main
+    image: ccr.ccs.tencentyun.com/job-ai/job-ai-backend:main
     container_name: job-ai-backend
     restart: unless-stopped
     ports:
@@ -35,7 +35,7 @@ services:
 
   # 前端服务
   frontend:
-    image: ccr.ccs.tencentyun.com/your-namespace/job-ai-frontend:main
+    image: ccr.ccs.tencentyun.com/job-ai/job-ai-frontend:main
     container_name: job-ai-frontend
     restart: unless-stopped
     ports:
