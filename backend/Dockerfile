@@ -41,9 +41,8 @@ FROM node:20-alpine AS production
 RUN apk add --no-cache \
     dumb-init \
     openssl \
-    openssl1.1-compat \
     libgcc \
-    stdlibc++
+    libstdc++
 
 # 创建非 root 用户
 RUN addgroup -g 1001 -S nodejs && \

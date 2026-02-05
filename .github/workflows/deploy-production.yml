@@ -59,15 +59,16 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 复制代码到服务器
+      - name: SCP 传输代码（Git 失败时的备用方案）
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "backend/,packages/,docker-compose.yml"
+          source: "backend/**,packages/**,docker-compose.yml,.dockerignore"
           target: "/var/www/job-ai/"
           strip_components: 0
+        continue-on-error: true
 
       - name: 部署到服务器
         uses: appleboy/ssh-action@v1.0.3
@@ -84,6 +85,19 @@ jobs:
             export CONTAINER_BACKEND="job-ai-backend"
 
             cd /var/www/job-ai
+
+            echo "尝试使用 Git 同步代码..."
+            set +e
+            git fetch origin && git reset --hard origin/main
+            GIT_EXIT_CODE=$?
+            set -e
+
+            if [ $GIT_EXIT_CODE -eq 0 ]; then
+              echo "✅ Git 同步成功"
+            else
+              echo "⚠️ Git 同步失败，使用 SCP 传输的代码"
+              echo "如果 SCP 也失败，请检查网络连接"
+            fi
 
             echo "停止旧容器..."
             docker stop $CONTAINER_BACKEND 2>/dev/null || true
@@ -120,15 +134,16 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 复制代码到服务器
+      - name: SCP 传输代码（Git 失败时的备用方案）
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "web/,packages/"
+          source: "web/**,packages/**,.dockerignore"
           target: "/var/www/job-ai/"
           strip_components: 0
+        continue-on-error: true
 
       - name: 部署到服务器
         uses: appleboy/ssh-action@v1.0.3
@@ -145,6 +160,19 @@ jobs:
             export CONTAINER_FRONTEND="job-ai-frontend"
 
             cd /var/www/job-ai
+
+            echo "尝试使用 Git 同步代码..."
+            set +e
+            git fetch origin && git reset --hard origin/main
+            GIT_EXIT_CODE=$?
+            set -e
+
+            if [ $GIT_EXIT_CODE -eq 0 ]; then
+              echo "✅ Git 同步成功"
+            else
+              echo "⚠️ Git 同步失败，使用 SCP 传输的代码"
+              echo "如果 SCP 也失败，请检查网络连接"
+            fi
 
             echo "停止旧容器..."
             docker stop $CONTAINER_FRONTEND 2>/dev/null || true
