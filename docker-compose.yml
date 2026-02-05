@@ -1,14 +1,13 @@
 # Docker Compose 配置文件
 # 用于在生产环境中部署求职追踪助手
+# 使用镜像仓库部署，不需要在服务器上构建
 
 version: '3.8'
 
 services:
   # 后端服务
   backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
+    image: ccr.ccs.tencentyun.com/your-namespace/job-ai-backend:main
     container_name: job-ai-backend
     restart: unless-stopped
     ports:
@@ -36,11 +35,7 @@ services:
 
   # 前端服务
   frontend:
-    build:
-      context: ./web
-      dockerfile: Dockerfile
-      args:
-        VITE_API_BASE_URL: /api
+    image: ccr.ccs.tencentyun.com/your-namespace/job-ai-frontend:main
     container_name: job-ai-frontend
     restart: unless-stopped
     ports:
@@ -48,7 +43,7 @@ services:
     networks:
       - job-ai-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
       interval: 30s
       timeout: 10s
       retries: 3
