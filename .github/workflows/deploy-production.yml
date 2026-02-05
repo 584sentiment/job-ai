@@ -95,8 +95,16 @@ jobs:
             if [ $GIT_EXIT_CODE -eq 0 ]; then
               echo "✅ Git 同步成功"
             else
-              echo "⚠️ Git 同步失败，使用 SCP 传输的代码"
-              echo "如果 SCP 也失败，请检查网络连接"
+              echo "⚠️ Git 同步失败，验证 SCP 传输的代码..."
+              # 验证关键文件是否存在
+              if [ ! -f "backend/Dockerfile" ] || [ ! -d "packages/shared" ]; then
+                echo "❌ SCP 传输失败，关键文件缺失"
+                echo "缺少文件："
+                [ ! -f "backend/Dockerfile" ] && echo "  - backend/Dockerfile"
+                [ ! -d "packages/shared" ] && echo "  - packages/shared/"
+                exit 1
+              fi
+              echo "✅ SCP 传输成功，代码已就绪"
             fi
 
             echo "停止旧容器..."
@@ -170,8 +178,16 @@ jobs:
             if [ $GIT_EXIT_CODE -eq 0 ]; then
               echo "✅ Git 同步成功"
             else
-              echo "⚠️ Git 同步失败，使用 SCP 传输的代码"
-              echo "如果 SCP 也失败，请检查网络连接"
+              echo "⚠️ Git 同步失败，验证 SCP 传输的代码..."
+              # 验证关键文件是否存在
+              if [ ! -f "web/Dockerfile" ] || [ ! -d "packages/shared" ]; then
+                echo "❌ SCP 传输失败，关键文件缺失"
+                echo "缺少文件："
+                [ ! -f "web/Dockerfile" ] && echo "  - web/Dockerfile"
+                [ ! -d "packages/shared" ] && echo "  - packages/shared/"
+                exit 1
+              fi
+              echo "✅ SCP 传输成功，代码已就绪"
             fi
 
             echo "停止旧容器..."
