@@ -55,14 +55,11 @@ WORKDIR /app
 # 复制 package 文件（从 backend 目录）
 COPY backend/package*.json ./
 
-# 只安装生产依赖
-RUN npm ci --only=production && \
-    npm cache clean --force
-
-# 从构建阶段复制文件
+# 从构建阶段复制所有文件（包括 node_modules）
+# 不需要在生产阶段重新安装依赖
 COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 
 # 设置 OpenSSL 库路径
 ENV LD_LIBRARY_PATH=/usr/lib:/usr/local/lib:/lib:/lib64
