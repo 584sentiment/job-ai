@@ -561,3 +561,164 @@ docker restart job-ai-backend
 ✅ **易于维护** - Docker 容器化管理
 
 部署完成后，您只需推送代码到 GitHub，系统将自动完成构建和部署，真正实现 CI/CD 自动化。
+
+---
+
+## 腾讯云容器镜像服务配置（2026-02-06 更新）
+
+> **重要变更**：从"服务器构建"改为"GitHub Actions 构建 + 镜像仓库部署"
+
+### 新架构优势
+
+```
+旧架构：代码 → GitHub Actions → SCP 传输 → 服务器构建 → 启动
+        ↓ 慢，大量文件    ↓ 慢，需要 Node.js
+
+新架构：代码 → GitHub Actions 构建镜像 → 推送到镜像仓库
+                                         ↓ 快（只传差异层）
+        服务器 docker compose pull → docker compose up -d
+        ↓ 快，只需 Docker
+```
+
+**优势**：
+- ✅ 服务器不需要访问 GitHub（解决国内网络问题）
+- ✅ 服务器不需要 Node.js/pnpm 等构建工具
+- ✅ 镜像可复用，只需拉取差异层
+- ✅ 部署速度更快
+- ✅ 更容易回滚（切换镜像标签）
+
+### 配置步骤
+
+#### 1. 创建腾讯云容器镜像服务
+
+1. 登录腾讯云控制台：https://console.cloud.tencent.com/tke2/registry
+2. 开通"容器镜像服务"（免费）
+3. 创建**命名空间**（Namespace）
+   - 例如：`job-ai`
+   - 记住命名空间名称
+
+#### 2. 获取访问凭证
+
+1. 在容器镜像服务控制台，选择"访问凭证"
+2. 点击"新建凭证"
+3. 记录生成的**用户名**和**密码**
+
+#### 3. 配置 GitHub Secrets
+
+在 GitHub 仓库添加以下 Secrets：
+
+| Secret 名称 | 值 | 说明 |
+|------------|-----|------|
+| `TENCENT_DOCKER_USER` | 腾讯云镜像仓库用户名 | 访问凭证中的用户名 |
+| `TENCENT_DOCKER_PASSWORD` | 腾讯云镜像仓库密码 | 访问凭证中的密码 |
+
+#### 4. 更新配置文件
+
+**4.1 修改 `.github/workflows/build-images.yml`（第 11 行）**
+```yaml
+# 修改前
+NAMESPACE: your-namespace
+
+# 修改后（使用你创建的命名空间）
+NAMESPACE: job-ai
+```
+
+**4.2 修改 `docker-compose.yml`**
+```yaml
+# 第 10 行
+image: ccr.ccs.tencentyun.com/job-ai/job-ai-backend:main
+
+# 第 38 行
+image: ccr.ccs.tencentyun.com/job-ai/job-ai-frontend:main
+```
+
+#### 5. 服务器首次配置
+
+SSH 登录服务器，执行：
+
+```bash
+cd /var/www/job-ai
+
+# 登录腾讯云镜像仓库
+docker login ccr.ccs.tencentyun.com
+
+# 输入用户名和密码（步骤 2 中获取的）
+
+# 拉取镜像（首次需要）
+docker compose pull
+
+# 启动服务
+docker compose up -d
+```
+
+### 工作流程
+
+```
+代码推送
+  ↓
+触发 build-images.yml
+  ↓
+GitHub Actions 构建镜像
+  ↓
+推送到腾讯云镜像仓库
+  ↓
+触发 deploy-production.yml
+  ↓
+服务器 docker compose pull
+  ↓
+服务器 docker compose up -d
+  ↓
+部署完成
+```
+
+### 验证配置
+
+#### 手动触发构建
+
+1. GitHub → Actions → "Build and Push Docker Images"
+2. 点击 "Run workflow" → 选择 `main` 分支
+3. 等待构建完成
+
+#### 检查镜像
+
+在腾讯云容器镜像服务控制台：
+1. 选择你的命名空间
+2. 查看 `job-ai-backend` 和 `job-ai-frontend` 镜像
+3. 确认有 `main` 标签
+
+### 故障排查
+
+**问题 1：docker login 失败**
+```bash
+# 使用非交互式登录
+echo "your-password" | docker login ccr.ccs.tencentyun.com -u your-username --password-stdin
+```
+
+**问题 2：镜像拉取失败**
+```bash
+Error: image not found
+```
+解决：
+1. 检查 GitHub Actions 构建是否成功
+2. 检查镜像名称和标签是否正确
+3. 检查服务器是否已登录镜像仓库
+
+**问题 3：health-check 失败**
+```bash
+# 检查容器状态
+docker compose ps
+
+# 查看日志
+docker compose logs backend
+docker compose logs frontend
+```
+
+### 更新的文件清单
+
+新增：
+- `.github/workflows/build-images.yml` - 构建并推送镜像
+
+更新：
+- `.github/workflows/deploy-production.yml` - 简化为 pull + up
+- `docker-compose.yml` - 使用镜像仓库地址
+
