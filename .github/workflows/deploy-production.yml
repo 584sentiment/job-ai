@@ -12,12 +12,6 @@ on:
       - '.github/workflows/deploy-production.yml'
   workflow_dispatch:
 
-env:
-  DOCKER_IMAGE_BACKEND: job-ai-backend
-  DOCKER_IMAGE_FRONTEND: job-ai-frontend
-  CONTAINER_BACKEND: job-ai-backend
-  CONTAINER_FRONTEND: job-ai-frontend
-
 jobs:
   # 构建验证
   build:
@@ -74,6 +68,11 @@ jobs:
           script_stop: true
           script: |
             set -e
+
+            # 定义环境变量
+            export DOCKER_IMAGE_BACKEND="job-ai-backend"
+            export CONTAINER_BACKEND="job-ai-backend"
+
             cd /var/www/job-ai
 
             echo "拉取最新代码..."
@@ -124,6 +123,11 @@ jobs:
           script_stop: true
           script: |
             set -e
+
+            # 定义环境变量
+            export DOCKER_IMAGE_FRONTEND="job-ai-frontend"
+            export CONTAINER_FRONTEND="job-ai-frontend"
+
             cd /var/www/job-ai
 
             echo "停止旧容器..."
