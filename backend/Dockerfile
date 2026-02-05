@@ -14,27 +14,26 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
-# 复制 package 文件（从 backend 目录）
-COPY backend/package*.json ./
+# 安装 pnpm
+RUN npm install -g pnpm
 
-# 复制 prisma schema
-RUN mkdir -p ./prisma
-COPY backend/prisma/schema.prisma ./prisma/schema.prisma
+# 复制 workspace 配置文件
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY packages/shared/package.json ./packages/shared/
+COPY backend/package*.json ./backend/
 
-# 关键：复制 shared 包（npm 无法处理 workspace:* 依赖）
-COPY packages/shared/ ../packages/shared/
+# 安装所有依赖（使用 pnpm）
+RUN pnpm install --frozen-lockfile
 
-# 安装依赖（使用 npm install 而不是 npm ci）
-RUN npm install
-
-# 复制源代码（从 backend 目录）
-COPY backend/ ./
+# 复制源代码
+COPY backend/ ./backend/
+COPY packages/shared/ ./packages/shared/
 
 # 生成 Prisma Client
-RUN npx prisma generate
+RUN pnpm --filter backend prisma generate
 
 # 构建项目
-RUN npm run build
+RUN pnpm --filter backend build
 
 # 阶段 2: 生产阶段
 FROM node:20-alpine AS production
@@ -52,14 +51,11 @@ RUN addgroup -g 1001 -S nodejs && \
 
 WORKDIR /app
 
-# 复制 package 文件（从 backend 目录）
-COPY backend/package*.json ./
-
-# 从构建阶段复制所有文件（包括 node_modules）
-# 不需要在生产阶段重新安装依赖
-COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
-COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
+# 从构建阶段复制文件
+COPY --from=builder --chown=nodejs:nodejs /app/backend/dist ./dist
+COPY --from=builder --chown=nodejs:nodejs /app/backend/prisma ./prisma
+COPY --from=builder --chown=nodejs:nodejs /app/backend/node_modules ./node_modules
+COPY --from=builder --chown=nodejs:nodejs /app/packages/shared ./packages/shared
 
 # 设置 OpenSSL 库路径
 ENV LD_LIBRARY_PATH=/usr/lib:/usr/local/lib:/lib:/lib64

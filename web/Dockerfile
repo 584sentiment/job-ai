@@ -6,21 +6,25 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# 复制 package 文件
-COPY web/package*.json ./
-# 关键：复制 shared 包（npm 无法处理 workspace:* 依赖）
-COPY packages/shared/ ../packages/shared/
+# 安装 pnpm
+RUN npm install -g pnpm
 
-# 安装依赖（使用 npm install 而不是 npm ci）
-RUN npm install
+# 复制 workspace 配置文件
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY packages/shared/package.json ./packages/shared/
+COPY web/package*.json ./web/
+
+# 安装所有依赖（使用 pnpm）
+RUN pnpm install --frozen-lockfile
 
 # 复制源代码
-COPY web/ ./
+COPY web/ ./web/
+COPY packages/shared/ ./packages/shared/
 
 # 构建生产版本
 ARG VITE_API_BASE_URL=/api
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
-RUN npm run build
+RUN pnpm --filter job-tracker-web build
 
 # 阶段 2: 生产阶段
 FROM nginx:alpine AS production
@@ -29,7 +33,7 @@ FROM nginx:alpine AS production
 COPY web/nginx.conf /etc/nginx/conf.d/default.conf
 
 # 从构建阶段复制构建产物
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/web/dist /usr/share/nginx/html
 
 # 暴露端口
 EXPOSE 80
