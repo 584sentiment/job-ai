@@ -3,8 +3,8 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: job-ai-backend
     restart: unless-stopped
     ports:
@@ -23,8 +23,8 @@ services:
   
   web:
     build:
-      context: ./web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: web/Dockerfile
     container_name: job-ai-web
     restart: unless-stopped
     ports:
