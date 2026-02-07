@@ -49,15 +49,17 @@ COPY --from=builder /app/backend/package.json ./backend/
 # 安装生产依赖（现在包含 prisma）
 RUN pnpm install --prod --frozen-lockfile
 
-# 从构建阶段复制产物
+# 从构建阶段复制产物到 backend 目录
 COPY --from=builder /app/backend/dist ./dist
-COPY --from=builder /app/backend/prisma ./prisma
+COPY --from=builder /app/backend/prisma ./backend/prisma
 
 # 复制环境变量文件（需要在服务器上创建 .env）
 COPY backend/.env .env
 
-# 生成 Prisma Client
+# 切换到 backend 目录生成 Prisma Client
+WORKDIR /app/backend
 RUN pnpm run prisma:generate
+WORKDIR /app
 
 EXPOSE 8080
 
