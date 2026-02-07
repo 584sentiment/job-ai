@@ -3,7 +3,7 @@
 # 构建命令：docker build -f backend/Dockerfile -t job-ai-backend .
 #
 # 阶段一：构建
-FROM node:18-alpine AS builder
+FROM node:18-slim AS builder
 
 WORKDIR /app
 
@@ -30,7 +30,9 @@ RUN pnpm run prisma:generate
 RUN pnpm run build
 
 # 阶段二：生产运行
-FROM node:18-alpine
+FROM node:18-slim
+
+# Prisma 7.x 原生支持 OpenSSL 3.x，无需额外安装
 
 WORKDIR /app
 
@@ -50,16 +52,17 @@ COPY --from=builder /app/backend/package.json ./backend/
 RUN pnpm install --prod --frozen-lockfile
 
 # 从构建阶段复制产物到 backend 目录
-COPY --from=builder /app/backend/dist ./dist
-COPY --from=builder /app/backend/prisma ./backend/prisma
+COPY --from=builder /app/backend/dist ./backend/dist/
+COPY --from=builder /app/backend/prisma ./backend/prisma/
 
-# 复制环境变量文件（需要在服务器上创建 .env）
-COPY backend/.env .env
+# 复制环境变量文件
+COPY backend/.env ./backend/.env
 
-# 切换到 backend 目录生成 Prisma Client
+# 切换到 backend 目录（这里有 type: module 配置）
 WORKDIR /app/backend
+
+# 生成 Prisma Client
 RUN pnpm run prisma:generate
-WORKDIR /app
 
 EXPOSE 8080
 
