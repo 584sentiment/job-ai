@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # 后端服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: job-ai-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./backend/.env
+    networks:
+      - job-ai-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # 前端服务
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        - BUILD_BASE_URL=/
+    container_name: job-ai-web
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    networks:
+      - job-ai-network
+    depends_on:
+      - backend
+
+networks:
+  job-ai-network:
+    driver: bridge
