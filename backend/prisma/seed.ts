@@ -2,10 +2,22 @@
  * Prisma 种子数据
  * 用于开发和测试
  */
-import { PrismaClient } from '@prisma/client'
-import bcrypt from 'bcrypt'
+import 'dotenv/config'
+import { PrismaClient } from '../generated/prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
+import bcrypt from 'bcryptjs'
 
-const prisma = new PrismaClient()
+// 创建连接池
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+})
+
+// 创建 adapter
+const adapter = new PrismaPg(pool)
+
+// 创建 Prisma Client
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
   console.log('开始初始化种子数据...')
@@ -26,7 +38,7 @@ async function main() {
     },
   })
 
-  console.log('创建用户:', user.phone)
+  console.log('创建用户:', user.phone, '密码: 123456')
 
   // 创建测试岗位
   const position = await prisma.position.upsert({
@@ -164,7 +176,11 @@ async function main() {
 
   console.log('创建总结:', summary.companyName, summary.round)
 
-  console.log('种子数据初始化完成!')
+  console.log('✅ 种子数据初始化完成!')
+  console.log('')
+  console.log('测试账号信息：')
+  console.log('  手机号: 13800138000')
+  console.log('  密码:   123456')
 }
 
 main()
@@ -174,4 +190,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect()
+    await pool.end()
   })

@@ -27,6 +27,7 @@
   "license": "MIT",
   "dependencies": {
     "@job-ai/shared": "workspace:*",
+    "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
@@ -36,6 +37,7 @@
     "helmet": "^8.0.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
+    "pg": "^8.18.0",
     "prisma": "^7.3.0",
     "tsup": "^8.5.1",
     "typescript": "^5.7.2",

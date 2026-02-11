@@ -2,7 +2,8 @@
 // 与前端 web/src/types/ 保持一致
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
