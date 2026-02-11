@@ -14,8 +14,8 @@
     "seed-data": "node scripts/seed-test-data.js"
   },
   "dependencies": {
-    "@job-ai/shared": "workspace:*",
     "@headlessui/vue": "^1.7.23",
+    "@job-ai/shared": "workspace:*",
     "@tiptap/extension-code-block-lowlight": "^3.18.0",
     "@tiptap/extension-image": "^3.18.0",
     "@tiptap/extension-link": "^3.18.0",
@@ -27,6 +27,7 @@
     "@vitejs/plugin-vue": "^5.0.0",
     "autoprefixer": "^10.4.16",
     "crypto-js": "^4.2.0",
+    "full-aui": "^1.0.0",
     "lowlight": "^3.3.0",
     "naive-ui": "^2.43.2",
     "node-fetch": "^3.3.2",

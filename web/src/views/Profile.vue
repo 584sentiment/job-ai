@@ -386,7 +386,7 @@
           <div class="py-4">
             <n-form ref="feedbackFormRef" :model="feedbackForm" label-placement="top">
               <n-form-item label="反馈类型" path="type">
-                <n-select v-model:value="feedbackForm.type" :options="feedbackTypes" placeholder="请选择反馈类型" />
+                <Select v-model="feedbackForm.type" :options="feedbackTypes" placeholder="请选择反馈类型" />
               </n-form-item>
               <n-form-item label="详细描述" path="content">
                 <n-input
@@ -445,9 +445,9 @@ import {
   NButton,
   NSwitch,
   NTabs,
-  NTabPane,
-  NSelect
+  NTabPane
 } from 'naive-ui'
+import { Select } from 'full-aui'
 import { useAuthStore } from '@/store/auth'
 import { useJobsStore } from '@/store/jobs'
 import { useInterviewsStore } from '@/store/interviews'

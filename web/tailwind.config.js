@@ -3,6 +3,7 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
+    "./node_modules/full-aui/**/*.{vue,js,ts}",
   ],
   theme: {
     extend: {
