@@ -7,7 +7,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@job-ai/shared': path.resolve(__dirname, '../packages/shared/src')
+      '@job-ai/shared': path.resolve(__dirname, '../packages/shared/src'),
+      // 开发模式：full-aui 指向本地组件库的 dist 目录
+      'full-aui': path.resolve(__dirname, '../../job-ai-components/dist')
     }
   },
   // 支持 TypeScript 文件

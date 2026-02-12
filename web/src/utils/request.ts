@@ -8,6 +8,38 @@ import router from '@/router'
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'
 
 /**
+ * 清除认证信息并跳转到登录页
+ */
+function handleUnauthorized(): void {
+  // 清除本地存储的 token 和用户信息
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+
+  // 清除 Pinia store 中的登录状态
+  // 注意：这里不调用 logout API，因为 token 已经过期
+  // 仅清除本地状态即可
+  // 使用动态 import 避免循环依赖
+  import('@/store/auth').then(({ useAuthStore }) => {
+    const authStore = useAuthStore()
+    // 清除 store 中的用户信息和登录状态
+    authStore.$patch({
+      user: null,
+      token: null,
+      isLoggedIn: false
+    })
+  }).catch(() => {
+    // store 导入失败，只清除 localStorage（已处理）
+  })
+
+  // 跳转到登录页，保存当前路径以便登录后返回
+  const currentPath = router.currentRoute.value.fullPath
+  router.push({
+    path: '/login',
+    query: currentPath !== '/login' ? { redirect: currentPath } : {}
+  })
+}
+
+/**
  * 请求配置
  */
 interface RequestOptions {
@@ -45,7 +77,7 @@ function handleHttpError(status: number): void {
       router.push('/404')
       break
     case HttpStatusCode.UNAUTHORIZED:
-      router.push('/login')
+      handleUnauthorized()
       break
     default:
       break
@@ -109,6 +141,10 @@ async function request<T = any>(url: string, options: RequestOptions = {}): Prom
 
     // 检查业务状态码
     if (result.code !== ResponseCode.SUCCESS) {
+      // 如果是认证失败（token 过期），清除认证信息并跳转登录页
+      if (result.code === ResponseCode.UNAUTHORIZED) {
+        handleUnauthorized()
+      }
       throw new Error(result.message || '请求失败')
     }
 
