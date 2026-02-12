@@ -31,12 +31,10 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                   面试轮次 <span class="text-red-500">*</span>
                 </label>
-                <NSelect
-                  v-model:value="form.interviewRound"
+                <Select
+                  v-model="form.interviewRound"
                   :options="roundOptions"
                   placeholder="请选择面试轮次"
-                  size="large"
-                  class="w-full"
                 />
               </div>
 
@@ -73,12 +71,10 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                   面试形式 <span class="text-red-500">*</span>
                 </label>
-                <NSelect
-                  v-model:value="form.interviewForm"
+                <Select
+                  v-model="form.interviewForm"
                   :options="formOptions"
                   placeholder="请选择面试形式"
-                  size="large"
-                  class="w-full"
                 />
               </div>
 
@@ -210,7 +206,8 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
-import { NSelect, NDatePicker, NInput, useMessage } from 'naive-ui'
+import { NDatePicker, NInput, useMessage } from 'naive-ui'
+import { Select } from 'full-aui'
 import { InterviewRound, InterviewForm, type Interview, type InterviewCreateRequest } from '@job-ai/shared'
 import aiAPI from '@/api/ai'
 import type { PrepListItem } from '@job-ai/shared'
@@ -250,11 +247,12 @@ const form = ref({
 
 // 面试轮次选项
 const roundOptions = [
-  { label: '笔试', value: InterviewRound.WRITTEN_TEST },
-  { label: '一面', value: InterviewRound.FIRST_ROUND },
-  { label: '二面', value: InterviewRound.SECOND_ROUND },
-  { label: '三面', value: InterviewRound.THIRD_ROUND },
-  { label: '终面', value: InterviewRound.FINAL_ROUND }
+  { label: '笔试', value: InterviewRound.WRITTEN },
+  { label: '一面', value: InterviewRound.FIRST },
+  { label: '二面', value: InterviewRound.SECOND },
+  { label: '三面', value: InterviewRound.THIRD },
+  { label: '终面', value: InterviewRound.FINAL },
+  { label: 'HR面', value: InterviewRound.HR }
 ]
 
 // 面试形式选项

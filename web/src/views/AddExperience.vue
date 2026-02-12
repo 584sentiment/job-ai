@@ -65,13 +65,10 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                   面试轮次 <span class="text-red-500">*</span>
                 </label>
-                <n-select
-                  v-model:value="formData.interviewRound"
+                <Select
+                  v-model="formData.interviewRound"
                   :options="roundOptions"
                   placeholder="请选择面试轮次"
-                  size="large"
-                  :theme-overrides="selectThemeOverrides"
-                  :consistent-menu-width="false"
                 />
               </div>
               <div>
@@ -293,19 +290,18 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
-  NSelect,
   NDatePicker,
   NMessageProvider,
   NDialogProvider,
   useMessage,
   useDialog,
-  type SelectOption,
-  SelectProps,
   DatePickerProps,
 } from 'naive-ui';
+import { Select } from 'full-aui';
 import { useExperienceStore } from '@/store/experiences';
 import { useJobsStore } from '@/store/jobs';
 import type { ExperienceCreateRequest } from '@job-ai/shared';
+import { ExperienceRound } from '@job-ai/shared';
 import aiApi from '@/api/ai';
 import TiptapEditor from '@/components/TiptapEditor.vue';
 
@@ -322,36 +318,14 @@ const submitting = ref(false);
 const tagsInput = ref('');
 
 // 面试轮次选项
-const roundOptions: SelectOption[] = [
-  { label: '笔试', value: '笔试' },
-  { label: '一面', value: '一面' },
-  { label: '二面', value: '二面' },
-  { label: '三面', value: '三面' },
-  { label: '终面', value: '终面' },
-  { label: 'HR面', value: 'HR面' },
+const roundOptions = [
+  { label: '笔试', value: ExperienceRound.WRITTEN },
+  { label: '一面', value: ExperienceRound.FIRST },
+  { label: '二面', value: ExperienceRound.SECOND },
+  { label: '三面', value: ExperienceRound.THIRD },
+  { label: '终面', value: ExperienceRound.FINAL },
+  { label: 'HR面', value: ExperienceRound.HR }
 ];
-
-// NSelect 主题覆盖 - 使其与现有输入框风格一致
-const selectThemeOverrides: NonNullable<SelectProps['themeOverrides']> = {
-  menuBoxShadow: '0 0 2px #3b82f6',
-  peers: {
-    InternalSelection: {
-      border: '1px solid #E2E8F0',
-      borderRadius: '0.5rem',
-      padding: '0.75rem 1rem',
-      fontSize: '1rem',
-      height: '48px',
-      color: '#fff',
-      caretColor: '#0369A1',
-      borderFocus: '1px solid #0369A1',
-      borderHover: '1px solid #0369A1',
-      borderActive: '1px solid var(--primary)',
-      boxShadowFocus: '0 0 0 2px rgba(14, 165, 233, 0.2)',
-      textColor: '#1E293B',
-      placeholderColor: '#9CA3AF',
-    },
-  },
-};
 
 // NDatePicker 主题覆盖
 const datePickerThemeOverrides: NonNullable<DatePickerProps['themeOverrides']> =
