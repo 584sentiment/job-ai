@@ -256,7 +256,7 @@
     </button>
 
     <!-- 编辑个人资料对话框 -->
-    <n-modal v-model:show="showEditProfile" preset="dialog" title="编辑个人资料" style="width: 500px;">
+    <Modal v-model="showEditProfile" title="编辑个人资料" size="md" @confirm="handleSaveProfile" @cancel="cancelEditProfile" :loading="savingProfile">
       <div class="space-y-4">
         <!-- 头像设置 -->
         <div class="flex flex-col items-center py-4 border-b border-gray-200">
@@ -286,84 +286,79 @@
             />
           </div>
           <div class="flex gap-2 mt-3">
-            <button
-              @click="triggerAvatarUpload"
-              class="px-3 py-1.5 text-sm bg-primary text-white rounded-lg hover:bg-secondary transition-colors"
-            >
+            <Button variant="primary" size="sm" @click="triggerAvatarUpload">
               上传图片
-            </button>
-            <button
-              @click="generateRandomAvatar"
-              class="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-            >
+            </Button>
+            <Button variant="secondary" size="sm" @click="generateRandomAvatar">
               随机生成
-            </button>
+            </Button>
           </div>
           <p class="text-xs text-gray-500 mt-2">支持 JPG、PNG 格式,建议尺寸 200x200</p>
         </div>
 
         <!-- 基本信息表单 -->
-        <n-form ref="editFormRef" :model="editForm" label-placement="left" label-width="80px">
-          <n-form-item label="昵称" path="nickname">
-            <n-input v-model:value="editForm.nickname" placeholder="请输入昵称" />
-          </n-form-item>
-          <n-form-item label="职位" path="jobTitle">
-            <n-input v-model:value="editForm.jobTitle" placeholder="请输入您的职位" />
-          </n-form-item>
-          <n-form-item label="工作经验" path="experience">
-            <n-input v-model:value="editForm.experience" placeholder="例如: 3年经验" />
-          </n-form-item>
-          <n-form-item label="个人简介" path="bio">
-            <n-input
-              v-model:value="editForm.bio"
+        <Form ref="editFormRef" :model="editForm">
+          <FormField label="昵称" name="nickname">
+            <Input v-model="editForm.nickname" placeholder="请输入昵称" />
+          </FormField>
+          <FormField label="职位" name="jobTitle">
+            <Input v-model="editForm.jobTitle" placeholder="请输入您的职位" />
+          </FormField>
+          <FormField label="工作经验" name="experience">
+            <Input v-model="editForm.experience" placeholder="例如: 3年经验" />
+          </FormField>
+          <FormField label="个人简介" name="bio">
+            <Input
+              v-model="editForm.bio"
               type="textarea"
               placeholder="简单介绍一下自己"
               :autosize="{ minRows: 3, maxRows: 5 }"
             />
-          </n-form-item>
-        </n-form>
+          </FormField>
+        </Form>
       </div>
-      <template #action>
-        <n-button @click="cancelEditProfile">取消</n-button>
-        <n-button type="primary" @click="handleSaveProfile" :loading="savingProfile">保存</n-button>
+      <template #footer>
+        <Button variant="outline" @click="cancelEditProfile">取消</Button>
+        <Button variant="primary" @click="handleSaveProfile" :loading="savingProfile">保存</Button>
       </template>
-    </n-modal>
+    </Modal>
 
     <!-- 设置对话框 -->
-    <n-modal v-model:show="showSettings" preset="dialog" title="设置">
+    <Modal v-model="showSettings" title="设置" size="md" @confirm="showSettings = false">
       <div class="space-y-4 py-2">
         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
           <div>
             <p class="font-medium">深色模式</p>
             <p class="text-sm text-gray-500">切换深色/浅色主题</p>
           </div>
-          <n-switch v-model:value="settings.darkMode" @update:value="handleDarkModeChange" />
+          <Switch v-model="settings.darkMode" @update:modelValue="handleDarkModeChange" />
         </div>
         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
           <div>
             <p class="font-medium">消息通知</p>
             <p class="text-sm text-gray-500">接收面试提醒通知</p>
           </div>
-          <n-switch v-model:value="settings.notifications" />
+          <Switch v-model="settings.notifications" />
         </div>
         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
           <div>
             <p class="font-medium">声音提醒</p>
             <p class="text-sm text-gray-500">开启声音提醒</p>
           </div>
-          <n-switch v-model:value="settings.sound" />
+          <Switch v-model="settings.sound" />
         </div>
       </div>
-      <template #action>
-        <n-button type="primary" @click="showSettings = false">关闭</n-button>
+      <template #footer>
+        <Button variant="primary" @click="showSettings = false">关闭</Button>
       </template>
-    </n-modal>
+    </Modal>
 
     <!-- 帮助与反馈对话框 -->
-    <n-modal v-model:show="showHelp" preset="dialog" title="帮助与反馈" style="width: 600px;">
-      <n-tabs type="line" animated>
-        <n-tab-pane name="help" tab="使用帮助">
-          <div class="space-y-4 py-4">
+    <Modal v-model="showHelp" title="帮助与反馈" size="lg">
+      <Tabs v-model="activeHelpTab" type="line" :items="helpTabs">
+        <template #default>
+          <!-- 使用帮助 -->
+          <div v-if="activeHelpTab === 'help'" class="space-y-4 py-4">
             <div class="p-4 bg-blue-50 rounded-lg">
               <h4 class="font-semibold mb-2">如何添加岗位?</h4>
               <p class="text-sm text-gray-600">点击首页的"新增岗位"按钮,填写公司、职位、薪资等信息即可添加。</p>
@@ -381,9 +376,8 @@
               <p class="text-sm text-gray-600">所有数据都保存在云端,登录同一个账号即可同步数据。</p>
             </div>
           </div>
-        </n-tab-pane>
-        <n-tab-pane name="feedback" tab="意见反馈">
-          <div class="py-4">
+          <!-- 意见反馈 -->
+          <div v-if="activeHelpTab === 'feedback'" class="py-4">
             <n-form ref="feedbackFormRef" :model="feedbackForm" label-placement="top">
               <n-form-item label="反馈类型" path="type">
                 <Select v-model="feedbackForm.type" :options="feedbackTypes" placeholder="请选择反馈类型" />
@@ -401,14 +395,13 @@
               </n-form-item>
             </n-form>
             <div class="flex justify-end mt-4">
-              <n-button type="primary" @click="handleSubmitFeedback" :loading="submittingFeedback">
+              <Button variant="primary" @click="handleSubmitFeedback" :loading="submittingFeedback">
                 提交反馈
-              </n-button>
+              </Button>
             </div>
           </div>
-        </n-tab-pane>
-        <n-tab-pane name="about" tab="关于我们">
-          <div class="py-4 text-center">
+          <!-- 关于我们 -->
+          <div v-if="activeHelpTab === 'about'" class="py-4 text-center">
             <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
               <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
@@ -423,12 +416,12 @@
               <p>© 2025 求职追踪助手. All rights reserved.</p>
             </div>
           </div>
-        </n-tab-pane>
-      </n-tabs>
-      <template #action>
-        <n-button type="primary" @click="showHelp = false">关闭</n-button>
+        </template>
+      </Tabs>
+      <template #footer>
+        <Button variant="primary" @click="showHelp = false">关闭</Button>
       </template>
-    </n-modal>
+    </Modal>
   </main>
 </template>
 
@@ -438,16 +431,11 @@ import { useRouter } from 'vue-router'
 import {
   useDialog,
   useMessage,
-  NModal,
   NForm,
   NFormItem,
-  NInput,
-  NButton,
-  NSwitch,
-  NTabs,
-  NTabPane
+  NInput
 } from 'naive-ui'
-import { Select } from 'full-aui'
+import { Select, Tabs, Modal, Button, Switch, Form, FormField, Input } from 'full-aui'
 import { useAuthStore } from '@/store/auth'
 import { useJobsStore } from '@/store/jobs'
 import { useInterviewsStore } from '@/store/interviews'
@@ -471,6 +459,14 @@ const showHelp = ref(false)
 const savingProfile = ref(false)
 const submittingFeedback = ref(false)
 const hasNotifications = ref(false)
+
+// 帮助与反馈 Tabs
+const activeHelpTab = ref('help')
+const helpTabs = [
+  { label: '使用帮助', value: 'help' },
+  { label: '意见反馈', value: 'feedback' },
+  { label: '关于我们', value: 'about' }
+]
 
 // 头像相关
 const avatarUploadRef = ref(null)
