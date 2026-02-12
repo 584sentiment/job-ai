@@ -58,11 +58,10 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                   面试地点 <span class="text-red-500">*</span>
                 </label>
-                <NInput
-                  v-model:value="form.interviewLocation"
+                <Input
+                  v-model="form.interviewLocation"
                   type="text"
                   placeholder="例如:北京海淀区中关村软件园"
-                  size="large"
                 />
               </div>
 
@@ -81,22 +80,20 @@
               <!-- 面试官信息 -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">面试官信息</label>
-                <NInput
-                  v-model:value="form.interviewerInfo"
+                <Input
+                  v-model="form.interviewerInfo"
                   type="text"
                   placeholder="例如:张经理（技术总监）"
-                  size="large"
                 />
               </div>
 
               <!-- 备注 -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">备注</label>
-                <NInput
-                  v-model:value="form.remarks"
+                <Input
+                  v-model="form.remarks"
                   type="textarea"
                   placeholder="面试注意事项、准备材料等"
-                  :autosize="{ minRows: 3, maxRows: 5 }"
                 />
               </div>
 
@@ -206,8 +203,8 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
-import { NDatePicker, NInput, useMessage } from 'naive-ui'
-import { Select } from 'full-aui'
+import { NDatePicker, useMessage } from 'naive-ui'
+import { Select, Input } from 'full-aui'
 import { InterviewRound, InterviewForm, type Interview, type InterviewCreateRequest } from '@job-ai/shared'
 import aiAPI from '@/api/ai'
 import type { PrepListItem } from '@job-ai/shared'
